@@ -73,7 +73,7 @@ import { RouterLink } from '@angular/router';
 
       <!-- social proof -->
       <div style="padding: 40px 56px; border-top:1px solid var(--hair); display:flex; align-items:center; gap:40px; font-size:13px; color:color-mix(in srgb, var(--ink) 65%, transparent); flex-wrap:wrap;">
-        <span style="font-family:var(--ge-serif); font-style:italic; font-size:17px; color:var(--ink);">„ჩემი ბიჭი 8 წუთში აკეთებდა, რასაც ერთი თვის წინ 20-ს ანდომებდა."</span>
+        <span style="font-family:var(--ge-serif); font-style:italic; font-size:17px; color:var(--ink);">„საუკეთესო  პლატფორმა ბავშვებისთვის"</span>
         <span style="margin-left:auto; white-space:nowrap;">— ნინო, მშობელი, თბილისი</span>
       </div>
       <div style="padding: 26px 56px; border-top:1px solid var(--hair); display:flex; justify-content:space-between; font-size:11px; color:color-mix(in srgb, var(--ink) 55%, transparent); flex-wrap:wrap; gap:12px;">
