@@ -20,8 +20,6 @@ appsettings.*.local.json
 secrets.json
 *.pfx
 
-# The Angular production build is copied here during the build; never commit it.
-src/Mentiq.Api/wwwroot/
 
 # ---------------------------------------------------------------------------
 # Node / Angular
