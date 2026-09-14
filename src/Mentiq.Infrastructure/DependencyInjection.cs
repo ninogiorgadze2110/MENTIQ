@@ -36,7 +36,10 @@ public static class DependencyInjection
 
         services.AddDbContext<MentiqDbContext>(options =>
             options.UseSqlServer(connectionString, sql =>
-                sql.MigrationsAssembly(typeof(MentiqDbContext).Assembly.FullName)));
+            {
+                sql.MigrationsAssembly(typeof(MentiqDbContext).Assembly.FullName);
+                sql.EnableRetryOnFailure();
+            }));
 
         services.AddScoped<IApplicationDbContext>(sp => sp.GetRequiredService<MentiqDbContext>());
     }

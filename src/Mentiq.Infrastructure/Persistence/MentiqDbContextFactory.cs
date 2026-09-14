@@ -13,7 +13,7 @@ namespace Mentiq.Infrastructure.Persistence;
 public sealed class MentiqDbContextFactory : IDesignTimeDbContextFactory<MentiqDbContext>
 {
     private const string FallbackConnectionString =
-        "Server=(localdb)\\MSSQLLocalDB;Database=MentiqDb;Trusted_Connection=True;MultipleActiveResultSets=true;TrustServerCertificate=true";
+        "Server=localhost;Database=MentiqDb;Trusted_Connection=True;MultipleActiveResultSets=true;TrustServerCertificate=true;Encrypt=False";
 
     public MentiqDbContext CreateDbContext(string[] args)
     {

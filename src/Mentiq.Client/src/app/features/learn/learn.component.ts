@@ -60,7 +60,7 @@ import { RouterLink } from '@angular/router';
 
             <div style="margin-top:20px; padding:20px; border:1px solid var(--gold); background:color-mix(in srgb, var(--gold) 5%, transparent); display:flex; align-items:center; gap:20px; flex-wrap:wrap;">
               <div style="flex:1; min-width:180px;"><div style="font-family:var(--ge-serif); font-style:italic; font-size:12px; color:var(--gold);">— ხრიკის ვარჯიში</div><div style="font-family:var(--ge-serif); font-size:20px; margin-top:4px;">10 კითხვა · 2 წუთი</div><div style="font-size:12.5px; color:color-mix(in srgb, var(--ink) 60%, transparent); margin-top:2px;">ხრიკის დამახსოვრება ვარჯიშით მუშაობს.</div></div>
-              <a routerLink="/practice" class="btn btn-primary" style="padding:12px 22px;">ვცადოთ →</a>
+              <a routerLink="/practice" [queryParams]="{ trick: 'mul11' }" class="btn btn-primary" style="padding:12px 22px;">ვცადოთ →</a>
             </div>
           </div>
         </div>
