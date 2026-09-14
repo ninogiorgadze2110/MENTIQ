@@ -1,6 +1,6 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 import { AuthService } from '../../core/services/auth.service';
 import { NotificationService } from '../../core/services/notification.service';
@@ -8,7 +8,7 @@ import { NotificationService } from '../../core/services/notification.service';
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink],
+  imports: [ReactiveFormsModule],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss'
 })
@@ -16,6 +16,7 @@ export class LoginComponent {
   private readonly fb = inject(FormBuilder);
   private readonly auth = inject(AuthService);
   private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
   private readonly notifications = inject(NotificationService);
 
   readonly mode = signal<'login' | 'register'>('login');
@@ -27,12 +28,20 @@ export class LoginComponent {
     password: ['', [Validators.required, Validators.minLength(8)]]
   });
 
-  toggleMode(): void {
-    const next = this.mode() === 'login' ? 'register' : 'login';
-    this.mode.set(next);
+  constructor() {
+    if (this.route.snapshot.queryParamMap.get('register') != null) {
+      this.setMode('register');
+    }
+  }
 
+  toggleMode(): void {
+    this.setMode(this.mode() === 'login' ? 'register' : 'login');
+  }
+
+  private setMode(mode: 'login' | 'register'): void {
+    this.mode.set(mode);
     const displayName = this.form.controls.displayName;
-    if (next === 'register') {
+    if (mode === 'register') {
       displayName.setValidators([Validators.required]);
     } else {
       displayName.clearValidators();
@@ -56,7 +65,7 @@ export class LoginComponent {
 
     request$.subscribe({
       next: () => {
-        this.notifications.success('Welcome to Mentiq!');
+        this.notifications.success('კეთილი იყოს შენი მობრძანება MENTIQ-ში!');
         this.router.navigate(['/dashboard']);
       },
       error: () => this.submitting.set(false)

@@ -3,69 +3,66 @@ import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth.guard';
 
 export const routes: Routes = [
+  // ---- Public marketing / auth ----
+  {
+    path: '',
+    loadComponent: () =>
+      import('./features/landing/landing.component').then((m) => m.LandingComponent)
+  },
   {
     path: 'login',
     loadComponent: () =>
       import('./features/auth/login.component').then((m) => m.LoginComponent)
   },
   {
+    path: 'onboarding',
+    loadComponent: () =>
+      import('./features/onboarding/onboarding.component').then((m) => m.OnboardingComponent)
+  },
+  {
+    path: 'pricing',
+    loadComponent: () =>
+      import('./features/pricing/pricing.component').then((m) => m.PricingComponent)
+  },
+
+  // ---- Authenticated full-screen focus modes (no sidebar) ----
+  {
+    path: 'practice',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./features/practice/practice.component').then((m) => m.PracticeComponent)
+  },
+  {
+    path: 'results',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./features/results/results.component').then((m) => m.ResultsComponent)
+  },
+
+  // ---- Authenticated app shell (sidebar) ----
+  {
     path: '',
+    canActivate: [authGuard],
     loadComponent: () =>
       import('./layout/shell/shell.component').then((m) => m.ShellComponent),
-    canActivate: [authGuard],
     children: [
-      { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
       {
         path: 'dashboard',
         loadComponent: () =>
           import('./features/dashboard/dashboard.component').then((m) => m.DashboardComponent)
       },
       {
-        path: 'practice',
+        path: 'levels',
         loadComponent: () =>
-          import('./features/placeholder/placeholder.component').then((m) => m.PlaceholderComponent),
-        data: {
-          title: 'Practice',
-          description: 'Sharpen your skills with targeted practice sessions.',
-          icon: '◎'
-        }
+          import('./features/levels/levels.component').then((m) => m.LevelsComponent)
       },
       {
         path: 'learn',
         loadComponent: () =>
-          import('./features/placeholder/placeholder.component').then((m) => m.PlaceholderComponent),
-        data: {
-          title: 'Learn',
-          description: 'Work through structured lessons and levels.',
-          icon: '◍'
-        }
-      },
-      {
-        path: 'progress',
-        loadComponent: () =>
-          import('./features/placeholder/placeholder.component').then((m) => m.PlaceholderComponent),
-        data: {
-          title: 'Progress',
-          description: 'Track how far you have come over time.',
-          icon: '◔'
-        }
-      },
-      {
-        path: 'achievements',
-        loadComponent: () =>
-          import('./features/placeholder/placeholder.component').then((m) => m.PlaceholderComponent),
-        data: {
-          title: 'Achievements',
-          description: 'Celebrate the milestones you have unlocked.',
-          icon: '★'
-        }
-      },
-      {
-        path: 'profile',
-        loadComponent: () =>
-          import('./features/profile/profile.component').then((m) => m.ProfileComponent)
+          import('./features/learn/learn.component').then((m) => m.LearnComponent)
       }
     ]
   },
+
   { path: '**', redirectTo: '' }
 ];

@@ -1,224 +1,220 @@
 /* =========================================================================
-   MENTIQ design system — global tokens and base styles
+   MENTIQ — "Classical" design system
+   Ported from the design canvas (MENTIQ.dc.html + _ds/classical styles.css).
+   Warm paper, thin lines, gold accent; Georgian serif headings.
    ========================================================================= */
 
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Georgian:wght@400;500;600;700&family=Noto+Serif+Georgian:wght@400;500;600&family=Cormorant+Garamond:wght@400;600&family=Lora:wght@400;600&display=swap');
+
 :root {
-  /* Brand palette */
-  --brand-50: #eef2ff;
-  --brand-100: #e0e7ff;
-  --brand-200: #c7d2fe;
-  --brand-400: #818cf8;
-  --brand-500: #6366f1;
-  --brand-600: #4f46e5;
-  --brand-700: #4338ca;
-  --accent-400: #2dd4bf;
-  --accent-500: #14b8a6;
+  /* ---- Classical tokens ---- */
+  --color-bg: #f3f2f2;
+  --color-surface: #eae9e9;
+  --color-text: #201f1d;
+  --color-accent: #b68235;
+  --color-accent-2: #ac803e;
+  --color-divider: color-mix(in srgb, #201f1d 16%, transparent);
 
-  /* Semantic surface + text (light) */
-  --bg: #f6f7fb;
-  --surface: #ffffff;
-  --surface-muted: #f1f3f9;
-  --border: #e2e6ef;
-  --text: #1b2333;
-  --text-muted: #5b6478;
-  --text-soft: #8a92a6;
+  --color-neutral-100: #f8f4f4;
+  --color-neutral-200: #eae7e7;
+  --color-neutral-300: #d7d3d3;
+  --color-neutral-400: #bab6b6;
+  --color-neutral-500: #9b9797;
+  --color-neutral-600: #7d7979;
+  --color-neutral-700: #605d5d;
+  --color-neutral-800: #444141;
+  --color-neutral-900: #2d2b2b;
 
-  /* Feedback */
-  --success: #16a34a;
-  --danger: #dc2626;
-  --warning: #d97706;
+  --color-accent-100: #fff3e4;
+  --color-accent-200: #ffe3bf;
+  --color-accent-300: #facb8d;
+  --color-accent-400: #e1ad66;
+  --color-accent-500: #c28d41;
+  --color-accent-600: #a06f24;
+  --color-accent-700: #7d5411;
+  --color-accent-800: #5a3b0a;
+  --color-accent-900: #3a270d;
 
-  /* Elevation */
-  --shadow-sm: 0 1px 2px rgba(16, 24, 40, 0.06);
-  --shadow-md: 0 6px 18px rgba(16, 24, 40, 0.08);
-  --shadow-lg: 0 16px 40px rgba(16, 24, 40, 0.12);
+  --font-heading: "Cormorant Garamond", system-ui, sans-serif;
+  --font-heading-weight: 600;
+  --font-body: "Lora", system-ui, sans-serif;
 
-  /* Shape + rhythm */
-  --radius-sm: 8px;
-  --radius-md: 12px;
-  --radius-lg: 18px;
-  --space-1: 4px;
-  --space-2: 8px;
-  --space-3: 12px;
-  --space-4: 16px;
-  --space-5: 24px;
-  --space-6: 32px;
-  --space-8: 48px;
+  --space-1: 4.6px;
+  --space-2: 9.2px;
+  --space-3: 13.8px;
+  --space-4: 18.4px;
+  --space-6: 27.6px;
+  --space-8: 36.8px;
 
-  --font-sans: 'Segoe UI', system-ui, -apple-system, 'Helvetica Neue', Arial, sans-serif;
+  --radius-sm: 2px;
+  --radius-md: 4px;
+  --radius-lg: 7px;
+
+  --shadow-sm: 0 1px 2px color-mix(in srgb, #2d2b2b 14%, transparent);
+  --shadow-md: 0 3px 10px color-mix(in srgb, #2d2b2b 16%, transparent);
+  --shadow-lg: 0 12px 32px color-mix(in srgb, #2d2b2b 22%, transparent);
+
+  /* ---- MENTIQ Georgian overrides (from MENTIQ.dc.html) ---- */
+  --ge: "Noto Sans Georgian", "FiraGO", system-ui, sans-serif;
+  --ge-serif: "Noto Serif Georgian", "Cormorant Garamond", serif;
+  --ink: var(--color-text);
+  --paper: var(--color-bg);
+  --gold: var(--color-accent);
+  --hair: var(--color-divider);
+  --deep: #1a1917;
 
   color-scheme: light;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme='light']) {
-    --bg: #0f1420;
-    --surface: #171d2c;
-    --surface-muted: #1e2536;
-    --border: #2a3346;
-    --text: #eef1f7;
-    --text-muted: #a7b0c4;
-    --text-soft: #7c869c;
-    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
-    --shadow-md: 0 6px 18px rgba(0, 0, 0, 0.45);
-    --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.55);
-    color-scheme: dark;
-  }
-}
+*, *::before, *::after { box-sizing: border-box; }
 
-:root[data-theme='dark'] {
-  --bg: #0f1420;
-  --surface: #171d2c;
-  --surface-muted: #1e2536;
-  --border: #2a3346;
-  --text: #eef1f7;
-  --text-muted: #a7b0c4;
-  --text-soft: #7c869c;
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
-  --shadow-md: 0 6px 18px rgba(0, 0, 0, 0.45);
-  --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.55);
-  color-scheme: dark;
-}
-
-* {
-  box-sizing: border-box;
-}
-
-html,
-body {
-  height: 100%;
-}
+html, body { height: 100%; }
 
 body {
   margin: 0;
-  background: var(--bg);
-  color: var(--text);
-  font-family: var(--font-sans);
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--ge);
   font-size: 15px;
   line-height: 1.55;
+  font-weight: 400;
   -webkit-font-smoothing: antialiased;
 }
 
-h1,
-h2,
-h3,
-h4 {
-  margin: 0 0 var(--space-3);
-  line-height: 1.25;
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--ge-serif);
   font-weight: 600;
+  line-height: 1.12;
+  letter-spacing: -0.01em;
+  margin: 0 0 var(--space-2);
 }
+h1 { font-size: 42px; }
+h2 { font-size: 32px; }
+h3 { font-size: 25px; }
+h4 { font-size: 20px; }
+h5 { font-size: 16px; }
+h6 { font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; }
+p { margin: 0 0 var(--space-3); }
+a { color: var(--gold); text-underline-offset: 3px; text-decoration: none; }
+img { display: block; max-width: 100%; }
+figure { margin: 0; }
 
-h1 {
-  font-size: 1.75rem;
-}
-h2 {
-  font-size: 1.35rem;
-}
+.text-muted { color: color-mix(in srgb, var(--ink) 55%, transparent); }
+:focus { outline: none; }
+:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+::selection { background: color-mix(in srgb, var(--gold) 30%, transparent); }
 
-p {
-  margin: 0 0 var(--space-3);
-  color: var(--text-muted);
-}
+/* — rules — */
+.hr { height: 1px; border: 0; margin: var(--space-4) 0; background: var(--hair); }
 
-a {
-  color: var(--brand-600);
-  text-decoration: none;
-}
-a:hover {
-  text-decoration: underline;
-}
-
-/* ---- Buttons ---- */
+/* — buttons (Classical: outlined, not filled) — */
 .btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-2);
-  padding: 10px 18px;
-  border: 1px solid transparent;
-  border-radius: var(--radius-sm);
-  font: inherit;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.15s ease, box-shadow 0.15s ease, transform 0.05s ease;
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  cursor: pointer; text-decoration: none;
+  font-family: var(--ge-serif); font-weight: var(--font-heading-weight);
+  font-size: 14px; line-height: 1.2; color: var(--ink);
+  background: transparent; border: 1px solid transparent;
+  padding: var(--space-2) calc(var(--space-3) * 1.2);
+  border-radius: var(--radius-md);
+  transition: background 0.15s ease;
 }
-.btn:active {
-  transform: translateY(1px);
-}
-.btn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-.btn-primary {
-  background: var(--brand-600);
-  color: #fff;
-}
-.btn-primary:hover:not(:disabled) {
-  background: var(--brand-700);
-}
-.btn-ghost {
-  background: transparent;
-  border-color: var(--border);
-  color: var(--text);
-}
-.btn-ghost:hover:not(:disabled) {
-  background: var(--surface-muted);
-}
-.btn-block {
-  width: 100%;
-}
+.btn svg { display: block; }
+.btn:disabled { opacity: 0.45; cursor: not-allowed; }
+.btn-primary { color: var(--gold); border-color: var(--gold); }
+.btn-primary:hover:not(:disabled) { background: color-mix(in srgb, var(--gold) 12%, transparent); }
+.btn-primary:active { background: color-mix(in srgb, var(--gold) 22%, transparent); }
+.btn-secondary { border-color: var(--hair); }
+.btn-secondary:hover:not(:disabled) { background: color-mix(in srgb, var(--ink) 7%, transparent); }
+.btn-secondary:active { background: color-mix(in srgb, var(--ink) 14%, transparent); }
+.btn-solid { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+.btn-solid:hover:not(:disabled) { background: var(--deep); }
+.btn-ghost { color: var(--gold); padding-inline: var(--space-1); }
+.btn-ghost:hover { background: color-mix(in srgb, var(--gold) 10%, transparent); }
+.btn-block { width: 100%; }
 
-/* ---- Card ---- */
-.card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-sm);
-  padding: var(--space-5);
-}
-
-/* ---- Forms ---- */
-.form-field {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-  margin-bottom: var(--space-4);
-}
-.form-field label {
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: var(--text-muted);
+/* — forms — */
+.field > label {
+  display: block; font-size: 12px; margin-bottom: 5px;
+  color: color-mix(in srgb, var(--ink) 70%, transparent);
 }
 .input {
-  width: 100%;
-  padding: 11px 13px;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  background: var(--surface);
-  color: var(--text);
-  font: inherit;
+  width: 100%; min-height: 40px; padding: 8px 12px; font: inherit;
+  font-size: 14px; color: var(--ink); caret-color: var(--gold);
+  background: #fff;
+  border: 1px solid var(--hair); border-radius: var(--radius-md);
 }
-.input:focus {
-  outline: none;
-  border-color: var(--brand-500);
-  box-shadow: 0 0 0 3px var(--brand-100);
-}
-.field-error {
-  color: var(--danger);
-  font-size: 0.8rem;
-}
+.input:hover { border-color: color-mix(in srgb, var(--ink) 45%, transparent); }
+.input:focus-visible { border-color: var(--gold); outline-offset: 0; }
+.field-error { color: #b22; font-size: 12px; }
 
-/* ---- Utility ---- */
-.badge {
-  display: inline-flex;
-  align-items: center;
-  padding: 3px 10px;
-  border-radius: 999px;
-  background: var(--brand-50);
-  color: var(--brand-700);
-  font-size: 0.75rem;
-  font-weight: 600;
+/* — cards — */
+.card {
+  display: flex; flex-direction: column; gap: var(--space-2);
+  padding: var(--space-3); border-radius: var(--radius-md);
+  background: #fff; border: 1px solid var(--hair);
 }
-.muted {
-  color: var(--text-muted);
+.elev-sm { box-shadow: var(--shadow-sm); }
+.elev-md { box-shadow: var(--shadow-md); }
+.elev-lg { box-shadow: var(--shadow-lg); }
+
+/* — tags — */
+.tag {
+  display: inline-flex; align-items: center; font-size: 11px;
+  letter-spacing: 0.02em; padding: 3px 10px; border-radius: calc(var(--radius-md) * 0.75);
+}
+.tag-accent { background: var(--color-accent-100); color: var(--color-accent-800); }
+.tag-neutral { background: var(--color-neutral-100); color: var(--color-neutral-800); }
+
+/* — tables — */
+.table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.table th {
+  text-align: left; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase;
+  color: color-mix(in srgb, var(--ink) 60%, transparent);
+  padding: var(--space-2); border-bottom: 1px solid var(--hair);
+}
+.table td { padding: var(--space-2); border-bottom: 1px solid var(--hair); }
+
+/* =========================================================================
+   App chrome (shared across in-app screens) — from MENTIQ.dc.html
+   ========================================================================= */
+.app { display: grid; grid-template-columns: 232px 1fr; grid-auto-rows: auto; background: var(--paper); min-height: 100vh; }
+.side { border-right: 1px solid var(--hair); padding: 24px 20px; display: flex; flex-direction: column; gap: 28px; }
+.brand { font-family: var(--ge-serif); font-size: 22px; letter-spacing: .02em; display: flex; align-items: baseline; gap: 6px; }
+.brand small { font-size: 9px; letter-spacing: .24em; text-transform: uppercase; color: var(--gold); font-family: var(--ge); }
+.side-nav { display: flex; flex-direction: column; gap: 2px; margin-top: 4px; }
+.side-nav a { display: flex; align-items: center; gap: 10px; padding: 9px 12px; font-size: 13.5px; color: var(--ink); text-decoration: none; border-radius: 4px; position: relative; }
+.side-nav a .n-ic { width: 16px; text-align: center; opacity: .7; }
+.side-nav a:hover { background: color-mix(in srgb, var(--ink) 5%, transparent); }
+.side-nav a.active { color: var(--gold); }
+.side-nav a.active::before { content: ""; position: absolute; left: -20px; top: 8px; bottom: 8px; width: 2px; background: var(--gold); }
+.side-foot { margin-top: auto; padding-top: 16px; border-top: 1px solid var(--hair); font-size: 12px; color: color-mix(in srgb, var(--ink) 55%, transparent); }
+.side-foot .u { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+.side-foot .av { width: 28px; height: 28px; border-radius: 50%; background: var(--color-accent-200); color: var(--color-accent-800); display: grid; place-items: center; font-family: var(--ge-serif); font-size: 14px; }
+.main { padding: 32px 40px; min-width: 0; }
+.top { display: flex; align-items: center; gap: 16px; margin-bottom: 28px; }
+.top h2 { font-family: var(--ge-serif); font-size: 28px; margin: 0; }
+.top .spacer { flex: 1; }
+.lang { display: inline-flex; border: 1px solid var(--hair); border-radius: 4px; overflow: hidden; font-size: 11px; flex-shrink: 0; cursor: pointer; }
+.lang span { padding: 6px 10px; white-space: nowrap; }
+.lang span.on { background: var(--ink); color: var(--paper); }
+.searchpill { display: flex; align-items: center; gap: 8px; padding: 7px 12px; border: 1px solid var(--hair); border-radius: 4px; font-size: 12.5px; color: color-mix(in srgb, var(--ink) 55%, transparent); min-width: 220px; flex-shrink: 0; white-space: nowrap; }
+
+/* Reusable page-section heading used inside .main */
+.section-head { display: flex; align-items: baseline; padding-bottom: 12px; border-bottom: 1px solid var(--hair); margin-bottom: 4px; }
+
+/* Toasts (kept from the app foundation, restyled) */
+.toasts { position: fixed; right: 24px; bottom: 24px; display: flex; flex-direction: column; gap: 10px; z-index: 60; }
+.toast { display: flex; align-items: center; gap: 16px; padding: 12px 16px; border-radius: var(--radius-md); background: #fff; border: 1px solid var(--hair); box-shadow: var(--shadow-lg); min-width: 260px; font-size: 13px; }
+.toast-error { border-left: 3px solid #b22; }
+.toast-success { border-left: 3px solid var(--gold); }
+.toast-info { border-left: 3px solid var(--ink); }
+.toast-close { margin-left: auto; border: none; background: none; font-size: 1.1rem; line-height: 1; cursor: pointer; color: color-mix(in srgb, var(--ink) 45%, transparent); }
+
+@media (max-width: 900px) {
+  .app { grid-template-columns: 1fr; }
+  .side { flex-direction: row; align-items: center; gap: 16px; overflow-x: auto; padding: 12px 16px; }
+  .side-nav { flex-direction: row; margin-top: 0; }
+  .side-nav a.active::before { display: none; }
+  .side-foot { display: none; }
+  .main { padding: 20px; }
 }

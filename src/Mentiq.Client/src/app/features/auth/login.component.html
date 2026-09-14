@@ -1,57 +1,51 @@
 <div class="auth-page">
-  <div class="auth-card card">
+  <div class="auth-card card elev-lg">
     <div class="auth-head">
-      <span class="brand-mark">M</span>
-      <h1>{{ mode() === 'login' ? 'Welcome back' : 'Create your account' }}</h1>
-      <p class="muted">
+      <div class="brand-mark">MENTIQ</div>
+      <h1>{{ mode() === 'login' ? 'კეთილი დაბრუნება' : 'შექმენი ანგარიში' }}</h1>
+      <p class="text-muted">
         {{ mode() === 'login'
-          ? 'Sign in to continue your learning journey.'
-          : 'Start practising and tracking your progress.' }}
+          ? 'შედი და გააგრძელე შენი სწავლის გზა.'
+          : 'დაიწყე ვარჯიში და თვალი ადევნე პროგრესს.' }}
       </p>
     </div>
 
     <form [formGroup]="form" (ngSubmit)="submit()">
       @if (mode() === 'register') {
-        <div class="form-field">
-          <label for="displayName">Display name</label>
+        <div class="field">
+          <label for="displayName">სახელი</label>
           <input id="displayName" class="input" type="text" formControlName="displayName" />
           @if (form.controls.displayName.touched && form.controls.displayName.invalid) {
-            <span class="field-error">Please enter your name.</span>
+            <span class="field-error">გთხოვთ, შეიყვანოთ სახელი.</span>
           }
         </div>
       }
 
-      <div class="form-field">
-        <label for="email">Email</label>
+      <div class="field">
+        <label for="email">ელ. ფოსტა</label>
         <input id="email" class="input" type="email" autocomplete="email" formControlName="email" />
         @if (form.controls.email.touched && form.controls.email.invalid) {
-          <span class="field-error">Enter a valid email address.</span>
+          <span class="field-error">შეიყვანეთ სწორი ელ. ფოსტა.</span>
         }
       </div>
 
-      <div class="form-field">
-        <label for="password">Password</label>
-        <input
-          id="password"
-          class="input"
-          type="password"
-          autocomplete="current-password"
-          formControlName="password"
-        />
+      <div class="field">
+        <label for="password">პაროლი</label>
+        <input id="password" class="input" type="password" autocomplete="current-password" formControlName="password" />
         @if (form.controls.password.touched && form.controls.password.invalid) {
-          <span class="field-error">Password must be at least 8 characters.</span>
+          <span class="field-error">პაროლი უნდა იყოს მინიმუმ 8 სიმბოლო.</span>
         }
       </div>
 
       <button type="submit" class="btn btn-primary btn-block" [disabled]="submitting()">
-        {{ submitting() ? 'Please wait…' : (mode() === 'login' ? 'Sign in' : 'Create account') }}
+        {{ submitting() ? 'დაელოდეთ…' : (mode() === 'login' ? 'შესვლა' : 'ანგარიშის შექმნა') }}
       </button>
     </form>
 
-    <p class="switch">
-      {{ mode() === 'login' ? "Don't have an account?" : 'Already have an account?' }}
+    <p class="switch text-muted">
+      {{ mode() === 'login' ? 'არ გაქვს ანგარიში?' : 'უკვე გაქვს ანგარიში?' }}
       <a href="javascript:void(0)" (click)="toggleMode()">
-        {{ mode() === 'login' ? 'Register' : 'Sign in' }}
+        {{ mode() === 'login' ? 'რეგისტრაცია' : 'შესვლა' }}
       </a>
     </p>
   </div>
