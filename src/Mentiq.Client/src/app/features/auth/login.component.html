@@ -1,0 +1,58 @@
+<div class="auth-page">
+  <div class="auth-card card">
+    <div class="auth-head">
+      <span class="brand-mark">M</span>
+      <h1>{{ mode() === 'login' ? 'Welcome back' : 'Create your account' }}</h1>
+      <p class="muted">
+        {{ mode() === 'login'
+          ? 'Sign in to continue your learning journey.'
+          : 'Start practising and tracking your progress.' }}
+      </p>
+    </div>
+
+    <form [formGroup]="form" (ngSubmit)="submit()">
+      @if (mode() === 'register') {
+        <div class="form-field">
+          <label for="displayName">Display name</label>
+          <input id="displayName" class="input" type="text" formControlName="displayName" />
+          @if (form.controls.displayName.touched && form.controls.displayName.invalid) {
+            <span class="field-error">Please enter your name.</span>
+          }
+        </div>
+      }
+
+      <div class="form-field">
+        <label for="email">Email</label>
+        <input id="email" class="input" type="email" autocomplete="email" formControlName="email" />
+        @if (form.controls.email.touched && form.controls.email.invalid) {
+          <span class="field-error">Enter a valid email address.</span>
+        }
+      </div>
+
+      <div class="form-field">
+        <label for="password">Password</label>
+        <input
+          id="password"
+          class="input"
+          type="password"
+          autocomplete="current-password"
+          formControlName="password"
+        />
+        @if (form.controls.password.touched && form.controls.password.invalid) {
+          <span class="field-error">Password must be at least 8 characters.</span>
+        }
+      </div>
+
+      <button type="submit" class="btn btn-primary btn-block" [disabled]="submitting()">
+        {{ submitting() ? 'Please wait…' : (mode() === 'login' ? 'Sign in' : 'Create account') }}
+      </button>
+    </form>
+
+    <p class="switch">
+      {{ mode() === 'login' ? "Don't have an account?" : 'Already have an account?' }}
+      <a href="javascript:void(0)" (click)="toggleMode()">
+        {{ mode() === 'login' ? 'Register' : 'Sign in' }}
+      </a>
+    </p>
+  </div>
+</div>
