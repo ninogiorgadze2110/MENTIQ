@@ -51,5 +51,8 @@ public sealed record ProgressResponse
     /// <summary>Accuracy of the most recent sessions, oldest → newest (for a sparkline).</summary>
     public int[] AccuracyTrend { get; init; } = System.Array.Empty<int>();
 
+    /// <summary>Average seconds/question of the most recent sessions, oldest → newest.</summary>
+    public double[] SecondsTrend { get; init; } = System.Array.Empty<double>();
+
     public IReadOnlyList<RecentSessionDto> RecentSessions { get; init; } = System.Array.Empty<RecentSessionDto>();
 }

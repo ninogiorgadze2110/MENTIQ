@@ -72,6 +72,7 @@ public sealed class PracticeService : IPracticeService
         }
 
         var trend = sessions.TakeLast(12).Select(s => s.Accuracy).ToArray();
+        var secondsTrend = sessions.TakeLast(12).Select(s => Math.Round(s.AvgSeconds, 1)).ToArray();
 
         var recent = sessions
             .OrderByDescending(s => s.CompletedAtUtc)
@@ -97,6 +98,7 @@ public sealed class PracticeService : IPracticeService
             BestStreak = sessions.Max(s => s.LongestStreak),
             WeeklyActivity = weekly,
             AccuracyTrend = trend,
+            SecondsTrend = secondsTrend,
             RecentSessions = recent
         };
     }

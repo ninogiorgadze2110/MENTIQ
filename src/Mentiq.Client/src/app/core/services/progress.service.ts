@@ -36,6 +36,7 @@ export interface ProgressResponse {
   bestStreak: number;
   weeklyActivity: number[];
   accuracyTrend: number[];
+  secondsTrend: number[];
   recentSessions: RecentSession[];
 }
 
