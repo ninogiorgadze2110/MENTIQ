@@ -67,6 +67,7 @@ export class ShellComponent {
     { path: '/levels', label: 'დონეები', icon: '△' },
     { path: '/progress', label: 'პროგრესი', icon: '◇' },
     { path: '/competition', label: 'შეჯიბრი', icon: '⚑' },
+    { path: '/achievements', label: 'მიღწევები', icon: '★' },
     { path: '/pricing', label: 'ფასი', icon: '₾' }
   ];
 

@@ -1,3 +1,4 @@
+using Mentiq.Application.Features.Achievements;
 using Mentiq.Application.Features.Auth;
 using Mentiq.Application.Features.Competition;
 using Mentiq.Application.Features.Practice;
@@ -13,6 +14,7 @@ public static class DependencyInjection
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IPracticeService, PracticeService>();
         services.AddScoped<ICompetitionService, CompetitionService>();
+        services.AddScoped<IAchievementService, AchievementService>();
 
         return services;
     }

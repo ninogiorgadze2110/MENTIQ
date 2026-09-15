@@ -17,6 +17,8 @@ public interface IApplicationDbContext
 
     DbSet<CompetitionEntry> CompetitionEntries { get; }
 
+    DbSet<UserAchievement> UserAchievements { get; }
+
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 
     /// <summary>Returns whether the underlying database is reachable.</summary>

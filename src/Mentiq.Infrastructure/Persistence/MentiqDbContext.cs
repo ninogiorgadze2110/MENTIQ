@@ -19,6 +19,8 @@ public sealed class MentiqDbContext : DbContext, IApplicationDbContext
 
     public DbSet<CompetitionEntry> CompetitionEntries => Set<CompetitionEntry>();
 
+    public DbSet<UserAchievement> UserAchievements => Set<UserAchievement>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
