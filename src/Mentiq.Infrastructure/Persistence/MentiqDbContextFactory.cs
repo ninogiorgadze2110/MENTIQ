@@ -20,7 +20,9 @@ public sealed class MentiqDbContextFactory : IDesignTimeDbContextFactory<MentiqD
 {
     private const string LocalFallbackConnectionString =
         "Server=localhost;Database=MentiqDb;Trusted_Connection=True;MultipleActiveResultSets=true;TrustServerCertificate=true;Encrypt=False";
-
+ private const string FallbackConnectionString =
+        "Server=db68276.public.databaseasp.net; Database=db68276; User Id=db68276; Password=G%p32J!yTc9=; Encrypt=False; MultipleActiveResultSets=True;";
+    
     public MentiqDbContext CreateDbContext(string[] args)
     {
         var environment =
