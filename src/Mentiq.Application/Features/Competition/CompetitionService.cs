@@ -83,7 +83,7 @@ public sealed class CompetitionService : ICompetitionService
         {
             Title = request.Title.Trim(),
             Grade = grade,
-            QuestionCount = request.QuestionCount,
+            QuizSeconds = request.QuizSeconds,
             StartsAtUtc = now,
             EndsAtUtc = now.AddHours(request.DurationHours),
             CreatedByUserId = userId,
@@ -150,6 +150,12 @@ public sealed class CompetitionService : ICompetitionService
         var me = await _db.Users.FirstOrDefaultAsync(u => u.Id == userId, cancellationToken)
             ?? throw new NotFoundException("User not found.");
 
+        // Only students of the competition's grade may participate.
+        if (me.Grade != competition.Grade)
+        {
+            throw new ForbiddenException($"ეს შეჯიბრი {competition.Grade} კლასისთვისაა.");
+        }
+
         _db.CompetitionEntries.Add(new CompetitionEntry
         {
             CompetitionId = competitionId,
@@ -204,6 +210,7 @@ public sealed class CompetitionService : ICompetitionService
         Title = c.Title,
         Grade = c.Grade,
         QuestionCount = c.QuestionCount,
+        QuizSeconds = c.QuizSeconds,
         StartsAtUtc = c.StartsAtUtc,
         EndsAtUtc = c.EndsAtUtc,
         Status = now < c.StartsAtUtc ? "upcoming" : now > c.EndsAtUtc ? "ended" : "active",

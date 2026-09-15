@@ -12,6 +12,7 @@ public sealed class CompetitionConfiguration : IEntityTypeConfiguration<Competit
         builder.HasKey(c => c.Id);
         builder.Property(c => c.Title).IsRequired().HasMaxLength(128);
         builder.Property(c => c.CreatedByName).HasMaxLength(128);
+        builder.Property(c => c.QuizSeconds).HasDefaultValue(120);
         builder.HasIndex(c => new { c.Grade, c.EndsAtUtc });
     }
 }

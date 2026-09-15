@@ -4,8 +4,7 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import {
   CompetitionDetailDto,
   CompetitionDto,
-  CompetitionService,
-  LeaderboardResponse
+  CompetitionService
 } from '../../core/services/competition.service';
 import { AuthService } from '../../core/services/auth.service';
 import { NotificationService } from '../../core/services/notification.service';
@@ -54,6 +53,14 @@ import { NotificationService } from '../../core/services/notification.service';
         </div>
         <div style="display:flex; gap:28px; flex-wrap:wrap; align-items:center;">
           <div>
+            <div style="font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:color-mix(in srgb, var(--ink) 55%, transparent); margin-bottom:6px;">კლასი</div>
+            <select class="input" style="width:110px;" [value]="newGrade()" (change)="newGrade.set(+$any($event.target).value)">
+              @for (g of gradeOptions; track g) {
+                <option [value]="g">{{ g }} კლასი</option>
+              }
+            </select>
+          </div>
+          <div>
             <div style="font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:color-mix(in srgb, var(--ink) 55%, transparent); margin-bottom:6px;">ხანგრძლივობა</div>
             <div class="seg">
               @for (h of hourOptions; track h) {
@@ -62,11 +69,15 @@ import { NotificationService } from '../../core/services/notification.service';
             </div>
           </div>
           <div>
-            <div style="font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:color-mix(in srgb, var(--ink) 55%, transparent); margin-bottom:6px;">კითხვები</div>
-            <div class="seg">
-              @for (n of countOptions; track n) {
-                <button type="button" [class.on]="count() === n" (click)="count.set(n)">{{ n }}</button>
-              }
+            <div style="font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:color-mix(in srgb, var(--ink) 55%, transparent); margin-bottom:6px;">დრო</div>
+            <div style="display:flex; align-items:center; gap:10px;">
+              <div class="seg">
+                @for (t of timeOptions; track t.s) {
+                  <button type="button" [class.on]="quizSecs() === t.s" (click)="quizSecs.set(t.s)">{{ t.label }}</button>
+                }
+              </div>
+              <input class="input" type="number" min="1" max="10" style="width:60px; text-align:center;" [value]="quizMins()" (input)="setMins($any($event.target).value)" />
+              <span style="font-size:12px; color:color-mix(in srgb, var(--ink) 55%, transparent);">წუთი</span>
             </div>
           </div>
           <button type="button" class="btn btn-primary" style="margin-left:auto; padding:12px 24px;" [disabled]="creating() || !title().trim()" (click)="create()">
@@ -90,7 +101,7 @@ import { NotificationService } from '../../core/services/notification.service';
 
       @if (d.competition.status === 'active' && !d.competition.played) {
         <div style="margin:18px 0; padding:18px 22px; border:1px solid var(--gold); background:color-mix(in srgb, var(--gold) 5%, transparent); display:flex; align-items:center; gap:16px; flex-wrap:wrap;">
-          <span style="font-size:13.5px;">ჯერ არ გითამაშია — {{ d.competition.questionCount }} შერეული მაგალითი ({{ d.competition.grade }} კლასი).</span>
+          <span style="font-size:13.5px;">ჯერ არ გითამაშია — {{ dur(d.competition.quizSeconds) }}, შერეული მაგალითები ({{ d.competition.grade }} კლასი).</span>
           <a routerLink="/practice" [queryParams]="playParams(d.competition)" class="btn btn-primary" style="margin-left:auto; padding:10px 20px;">მონაწილეობა →</a>
         </div>
       }
@@ -134,7 +145,7 @@ import { NotificationService } from '../../core/services/notification.service';
                   <span class="badge2" [class.b-active]="c.status === 'active'" [class.b-ended]="c.status !== 'active'">{{ statusLabel(c.status) }}</span>
                 </div>
                 <div style="font-size:12.5px; color:color-mix(in srgb, var(--ink) 60%, transparent); margin-top:4px;">
-                  {{ c.questionCount }} მაგალითი · {{ c.participants }} მონაწილე · {{ timeLeft(c) }}
+                  {{ dur(c.quizSeconds) }} · {{ c.participants }} მონაწილე · {{ timeLeft(c) }}
                   @if (c.played) { · <span style="color:var(--gold);">შენი ქულა: {{ c.myScore }}</span> }
                 </div>
               </div>
@@ -146,27 +157,6 @@ import { NotificationService } from '../../core/services/notification.service';
             </div>
           }
         </div>
-      }
-
-      <!-- All-time ranking -->
-      @if (board(); as b) {
-        @if (b.entries.length) {
-          <div style="display:flex; align-items:baseline; padding:12px 0; border-bottom:1px solid var(--hair); margin-top:36px;">
-            <h4 style="font-family:var(--ge-serif); font-size:18px; margin:0; font-weight:500;">საერთო რეიტინგი</h4>
-            <span style="margin-left:auto; font-size:12px; color:color-mix(in srgb, var(--ink) 55%, transparent);">ვარჯიშის ჯამური ქულა</span>
-          </div>
-          <table class="table">
-            <tbody>
-              @for (e of b.entries; track e.rank) {
-                <tr class="lb-row" [class.me]="e.isCurrentUser">
-                  <td class="rank">{{ e.rank }}</td>
-                  <td style="font-family:var(--ge-serif); font-size:15px;">{{ e.displayName }}@if (e.isCurrentUser) { <span style="font-size:11px; color:var(--gold); margin-left:6px;">(შენ)</span> }</td>
-                  <td style="text-align:right; font-family:var(--ge-serif); color:var(--gold); font-feature-settings:'tnum';">{{ e.totalScore }}</td>
-                </tr>
-              }
-            </tbody>
-          </table>
-        }
       }
     }
     }
@@ -180,28 +170,35 @@ export class CompetitionComponent {
 
   readonly loading = signal(true);
   readonly competitions = signal<CompetitionDto[]>([]);
-  readonly board = signal<LeaderboardResponse | null>(null);
   readonly detail = signal<CompetitionDetailDto | null>(null);
 
   readonly showCreate = signal(false);
   readonly title = signal('');
   readonly hours = signal(12);
-  readonly count = signal(20);
+  readonly quizSecs = signal(120);
+  readonly newGrade = signal(1);
   readonly creating = signal(false);
+  readonly gradeOptions = Array.from({ length: 12 }, (_, i) => i + 1);
 
   readonly hourOptions = [1, 6, 12, 24, 48];
-  readonly countOptions = [10, 20, 30];
+  readonly timeOptions = [
+    { s: 60, label: '1 წთ' },
+    { s: 120, label: '2 წთ' },
+    { s: 180, label: '3 წთ' },
+    { s: 300, label: '5 წთ' }
+  ];
 
   readonly myGrade = computed(() => this.auth.user()?.grade ?? 1);
+  readonly quizMins = computed(() => Math.round(this.quizSecs() / 60));
 
   constructor() {
+    this.newGrade.set(this.myGrade() || 1);
     const id = this.route.snapshot.queryParamMap.get('id');
     if (id) {
       this.open(id);
     } else {
       this.reload();
     }
-    this.service.getLeaderboard().subscribe({ next: (b) => this.board.set(b) });
   }
 
   private reload(): void {
@@ -228,7 +225,7 @@ export class CompetitionComponent {
   create(): void {
     if (!this.title().trim() || this.creating()) return;
     this.creating.set(true);
-    this.service.create({ title: this.title().trim(), grade: 0, durationHours: this.hours(), questionCount: this.count() })
+    this.service.create({ title: this.title().trim(), grade: this.newGrade(), durationHours: this.hours(), quizSeconds: this.quizSecs() })
       .subscribe({
         next: () => {
           this.notify.success('შეჯიბრი შექმნილია!');
@@ -242,7 +239,16 @@ export class CompetitionComponent {
   }
 
   playParams(c: CompetitionDto): Record<string, unknown> {
-    return { mix: 1, grade: c.grade, count: c.questionCount, competition: c.id };
+    return { mix: 1, grade: c.grade, time: c.quizSeconds, competition: c.id };
+  }
+
+  dur(sec: number): string {
+    return sec % 60 === 0 ? `${sec / 60} წუთი` : `${Math.round(sec / 60)} წუთი`;
+  }
+
+  setMins(value: string): void {
+    const n = Math.min(10, Math.max(1, Math.floor(Number(value) || 1)));
+    this.quizSecs.set(n * 60);
   }
 
   statusLabel(s: string): string {

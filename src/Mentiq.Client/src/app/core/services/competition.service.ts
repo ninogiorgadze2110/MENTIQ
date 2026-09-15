@@ -25,6 +25,7 @@ export interface CompetitionDto {
   title: string;
   grade: number;
   questionCount: number;
+  quizSeconds: number;
   startsAtUtc: string;
   endsAtUtc: string;
   status: 'active' | 'upcoming' | 'ended';
@@ -51,7 +52,7 @@ export interface CreateCompetitionRequest {
   title: string;
   grade: number;
   durationHours: number;
-  questionCount: number;
+  quizSeconds: number;
 }
 
 export interface SubmitEntryRequest {

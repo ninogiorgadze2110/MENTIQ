@@ -353,12 +353,17 @@ export class PracticeComponent implements OnDestroy {
     } else if (params.get('mix') != null) {
       // Competition / mixed-operations drill for a grade (skip the picker).
       const grade = Number(params.get('grade')) || 4;
-      const count = Number(params.get('count')) || 20;
+      const time = Number(params.get('time'));
       this.mixMode.set(true);
       this.competitionId.set(params.get('competition'));
       this.selectedGrade.set(Math.min(12, Math.max(1, grade)));
-      this.mode.set('count');
-      this.count.set(count);
+      if (time > 0) {
+        this.mode.set('time');
+        this.timeLimit.set(time);
+      } else {
+        this.mode.set('count');
+        this.count.set(Number(params.get('count')) || 20);
+      }
       this.start();
     }
   }

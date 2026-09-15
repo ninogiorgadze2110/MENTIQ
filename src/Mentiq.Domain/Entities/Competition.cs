@@ -16,6 +16,9 @@ public class Competition : BaseEntity
 
     public int QuestionCount { get; set; } = 20;
 
+    /// <summary>Duration of a single participant's timed attempt, in seconds.</summary>
+    public int QuizSeconds { get; set; } = 120;
+
     public DateTime StartsAtUtc { get; set; } = DateTime.UtcNow;
     public DateTime EndsAtUtc { get; set; }
 

@@ -36,8 +36,9 @@ public sealed record CreateCompetitionRequest
     [Range(1, 168)]
     public int DurationHours { get; init; } = 12;
 
-    [Range(5, 100)]
-    public int QuestionCount { get; init; } = 20;
+    /// <summary>Length of each participant's timed attempt, in seconds (30–600).</summary>
+    [Range(30, 600)]
+    public int QuizSeconds { get; init; } = 120;
 }
 
 public sealed record SubmitEntryRequest
@@ -58,6 +59,7 @@ public sealed record CompetitionDto
     public string Title { get; init; } = string.Empty;
     public int Grade { get; init; }
     public int QuestionCount { get; init; }
+    public int QuizSeconds { get; init; }
     public DateTime StartsAtUtc { get; init; }
     public DateTime EndsAtUtc { get; init; }
     /// <summary>"active", "upcoming" or "ended".</summary>
