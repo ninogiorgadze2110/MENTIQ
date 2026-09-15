@@ -260,7 +260,7 @@ const fmt = (sec: number) =>
                   }
                 </div>
               } @else {
-                <div style="display:grid; grid-template-columns:repeat(6, 64px); gap:8px; justify-content:center;">
+                <div class="keypad">
                   @for (k of keys; track k) {
                     <button type="button" class="key" [class.enter]="k === '↵'" [class.back]="k === '←'" [class.hit]="hit() === k" [disabled]="awaitingNext() && k !== '↵'" (click)="press(k)">{{ k }}</button>
                   }

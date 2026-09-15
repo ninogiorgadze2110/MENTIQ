@@ -210,11 +210,57 @@ figure { margin: 0; }
 .toast-info { border-left: 3px solid var(--ink); }
 .toast-close { margin-left: auto; border: none; background: none; font-size: 1.1rem; line-height: 1; cursor: pointer; color: color-mix(in srgb, var(--ink) 45%, transparent); }
 
+/* Practice keypad — responsive grid (shared by the practice screen) */
+.keypad { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; max-width: 440px; margin: 32px auto 0; }
+.keypad .key { width: 100%; }
+
 @media (max-width: 900px) {
   .app { grid-template-columns: 1fr; }
   .side { flex-direction: row; align-items: center; gap: 16px; overflow-x: auto; padding: 12px 16px; }
+  .side .brand { flex-shrink: 0; }
   .side-nav { flex-direction: row; margin-top: 0; }
+  .side-nav a { white-space: nowrap; }
   .side-nav a.active::before { display: none; }
   .side-foot { display: none; }
-  .main { padding: 20px; }
+  .main { padding: 20px 16px; }
+}
+
+/* ---------------------------------------------------------------------------
+   Mobile responsiveness — inline grids/paddings/type collapse gracefully.
+   --------------------------------------------------------------------------- */
+html, body { max-width: 100%; overflow-x: hidden; }
+
+@media (max-width: 760px) {
+  /* Any inline multi-column grid stacks to one column. Class-based grids
+     (.keypad, .op-grid, .grid, .grades, .seg) are unaffected. */
+  [style*="grid-template-columns"] { grid-template-columns: 1fr !important; }
+  .top { flex-wrap: wrap; }
+}
+
+@media (max-width: 640px) {
+  /* Trim oversized horizontal padding on full-bleed sections. */
+  [style*="56px 72px"], [style*="80px 56px"], [style*="56px 56px"],
+  [style*="40px 56px"], [style*="26px 56px"], [style*="22px 56px"],
+  [style*="18px 56px"], [style*="64px 72px"], [style*="48px 52px"],
+  [style*="48px 56px"], [style*="40px 72px"], [style*="44px 52px"],
+  [style*="32px 40px"], [style*="56px 24px"] {
+    padding-left: 16px !important; padding-right: 16px !important;
+  }
+  /* Rein in the largest display type so it never overflows a phone.
+     The DOM serializes inline styles with a space after the colon
+     ("font-size: 72px"), so selectors must match that spaced form. */
+  [style*="font-size: 180px"], [style*="font-size:180px"] { font-size: 68px !important; }
+  [style*="font-size: 80px"],  [style*="font-size:80px"]  { font-size: 44px !important; }
+  [style*="font-size: 72px"],  [style*="font-size:72px"]  { font-size: 38px !important; }
+  [style*="font-size: 70px"],  [style*="font-size:70px"]  { font-size: 38px !important; }
+  [style*="font-size: 66px"],  [style*="font-size:66px"]  { font-size: 44px !important; }
+  [style*="font-size: 46px"],  [style*="font-size:46px"]  { font-size: 32px !important; }
+  [style*="font-size: 44px"],  [style*="font-size:44px"]  { font-size: 32px !important; }
+  [style*="font-size: 40px"],  [style*="font-size:40px"]  { font-size: 30px !important; }
+  [style*="font-size: 56px"],  [style*="font-size:56px"]  { font-size: 34px !important; }
+  [style*="font-size: 50px"],  [style*="font-size:50px"]  { font-size: 32px !important; }
+  [style*="font-size: 52px"],  [style*="font-size:52px"]  { font-size: 32px !important; }
+  [style*="font-size: 36px"],  [style*="font-size:36px"]  { font-size: 26px !important; }
+  [style*="font-size: 32px"],  [style*="font-size:32px"]  { font-size: 25px !important; }
+  .keypad { grid-template-columns: repeat(3, 1fr); max-width: 260px; }
 }
