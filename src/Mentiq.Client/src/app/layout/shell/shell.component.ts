@@ -63,9 +63,9 @@ export class ShellComponent {
   readonly nav: NavItem[] = [
     { path: '/dashboard', label: 'მთავარი', icon: '◈' },
     { path: '/practice', label: 'ვარჯიში', icon: '◐' },
-    { path: '/learn', label: 'ხრიკები', icon: '☰' },
+    { path: '/learn', label: 'ისწავლე', icon: '☰' },
     { path: '/levels', label: 'დონეები', icon: '△' },
-    { path: '/results', label: 'შედეგები', icon: '◇' },
+    { path: '/progress', label: 'პროგრესი', icon: '◇' },
     { path: '/pricing', label: 'ფასი', icon: '₾' }
   ];
 

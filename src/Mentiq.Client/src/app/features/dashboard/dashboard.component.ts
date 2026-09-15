@@ -14,9 +14,8 @@ import { AuthService } from '../../core/services/auth.service';
         <h2>გამარჯობა, {{ firstName() }}.</h2>
       </div>
       <div class="spacer"></div>
-      <div class="searchpill">🔍 მოძებნე ხრიკი ან სავარჯიშო…</div>
-      <div class="lang"><span class="on">KA</span><span>EN</span></div>
-      <div style="width:34px; height:34px; border-radius:50%; background:var(--color-accent-200); color:var(--color-accent-800); display:grid; place-items:center; font-family:var(--ge-serif);">{{ initial() }}</div>
+      <!-- <div class="lang"><span class="on">KA</span><span>EN</span></div> -->
+      <!-- <div style="width:34px; height:34px; border-radius:50%; background:var(--color-accent-200); color:var(--color-accent-800); display:grid; place-items:center; font-family:var(--ge-serif);">{{ initial() }}</div> -->
     </div>
 
     <div style="display:grid; grid-template-columns: 1.4fr 1fr; gap:20px;">

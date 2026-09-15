@@ -1,6 +1,7 @@
 import { Component, HostListener, OnDestroy, computed, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AnsweredQuestion, PracticeSessionService } from '../../core/services/practice-session.service';
+import { ProgressService } from '../../core/services/progress.service';
 
 type OpKey = 'add' | 'sub' | 'mul' | 'div' | 'cmp' | 'miss' | 'chain';
 type Mode = 'count' | 'time';
@@ -62,6 +63,14 @@ const TRICKS: Record<string, TrickDef> = {
   add9: {
     name: '9-ის დამატება', prompt: 'დაუმატე', hint: 'ხრიკი — დაუმატე 10, მერე გამოაკელი 1', count: 10,
     gen: () => { const a = rnd(10, 99); return numQ(`${a} + 9 = `, `${a} + 9`, a + 9); }
+  },
+  pct10: {
+    name: 'პროცენტები — 10%', prompt: 'იპოვე 10%', hint: 'ხრიკი — გადაწიე მძიმე ერთი ციფრით მარცხნივ', count: 10,
+    gen: () => { const a = rnd(2, 50) * 10; return numQ(`${a}-ის 10% = `, `${a}-ის 10%`, a / 10); }
+  },
+  sq5: {
+    name: 'კვადრატი (5-ით)', prompt: 'იპოვე კვადრატი', hint: 'ხრიკი — n × (n+1), ბოლოში მიაწერე 25', count: 9,
+    gen: () => { const t = rnd(1, 9); const n = t * 10 + 5; return numQ(`${n}² = `, `${n}²`, n * n); }
   }
 };
 
@@ -274,6 +283,7 @@ const fmt = (sec: number) =>
 export class PracticeComponent implements OnDestroy {
   private readonly router = inject(Router);
   private readonly sessions = inject(PracticeSessionService);
+  private readonly progress = inject(ProgressService);
   private timer: ReturnType<typeof setInterval> | null = null;
 
   private questionStart = 0;
@@ -298,6 +308,7 @@ export class PracticeComponent implements OnDestroy {
   readonly count = signal(30);
   readonly timeLimit = signal(60);
   readonly trickKey = signal<string | null>(null);
+  readonly fromLearn = signal(false);
 
   readonly currentQ = signal<Question>({ before: '', after: '', display: '', answer: 0, mode: 'num' });
   readonly index = signal(0);
@@ -314,11 +325,26 @@ export class PracticeComponent implements OnDestroy {
   readonly done = signal(false);
 
   constructor() {
-    const key = inject(ActivatedRoute).snapshot.queryParamMap.get('trick');
-    if (key && TRICKS[key]) {
-      this.trickKey.set(key);
+    const params = inject(ActivatedRoute).snapshot.queryParamMap;
+    const trick = params.get('trick');
+    const op = params.get('op') as OpKey | null;
+    const gradeForOp: Record<OpKey, number> = {
+      add: 2, sub: 2, mul: 3, div: 3, cmp: 4, miss: 3, chain: 3
+    };
+
+    if (trick && TRICKS[trick]) {
+      this.trickKey.set(trick);
+      this.fromLearn.set(true);
       this.mode.set('count');
-      this.count.set(TRICKS[key].count);
+      this.count.set(TRICKS[trick].count);
+      this.start();
+    } else if (op && op in gradeForOp) {
+      // Launch a lesson-specific operation drill straight away (skip the picker).
+      this.fromLearn.set(true);
+      this.selectedOp.set(op);
+      this.selectedGrade.set(gradeForOp[op]);
+      this.mode.set('count');
+      this.count.set(10);
       this.start();
     }
   }
@@ -333,7 +359,7 @@ export class PracticeComponent implements OnDestroy {
     return OPS[this.selectedOp()].name;
   });
   readonly levelLabel = computed(() => (this.trickKey() ? '' : `კლასი ${this.selectedGrade()} · `));
-  readonly exitTarget = computed(() => (this.trickKey() ? '/learn' : '/dashboard'));
+  readonly exitTarget = computed(() => (this.fromLearn() ? '/learn' : '/dashboard'));
   readonly remaining = computed(() => Math.max(0, this.timeLimit() - this.elapsed()));
   readonly clock = computed(() => (this.mode() === 'time' ? fmt(this.remaining()) : fmt(this.elapsed())));
   readonly clockColor = computed(() => (this.mode() === 'time' && this.remaining() <= 10 ? '#b22' : 'var(--ink)'));
@@ -537,22 +563,45 @@ export class PracticeComponent implements OnDestroy {
     if (this.done()) return;
     this.done.set(true);
     if (this.timer) clearInterval(this.timer);
-    const total = this.answered.length || 1;
+    const answeredCount = this.answered.length;
+    const total = answeredCount || 1;
     const correct = this.answered.filter((x) => x.correct).length;
     const totalSeconds = this.answered.reduce((sum, x) => sum + x.seconds, 0);
     const base = this.trickKey() ? this.opName() : `${this.opName()} · კლასი ${this.selectedGrade()}`;
+    const title = base + (this.mode() === 'time' ? ` · ${this.timeLabel()}` : '');
+    const accuracy = Math.round((correct / total) * 100);
+    const avgSeconds = totalSeconds / total;
+
     this.sessions.set({
-      title: base + (this.mode() === 'time' ? ` · ${this.timeLabel()}` : ''),
+      title,
       startedAt: this.startedAt.toISOString(),
       score: this.score(),
-      accuracy: Math.round((correct / total) * 100),
-      avgSeconds: totalSeconds / total,
+      accuracy,
+      avgSeconds,
       longestStreak: this.maxStreak,
       correctCount: correct,
-      wrongCount: this.answered.length - correct,
+      wrongCount: answeredCount - correct,
       questions: this.answered,
       resumeTrick: this.trickKey()
     });
+
+    // Persist the session so progress (streaks, averages) can be computed server-side.
+    if (answeredCount > 0) {
+      this.progress.saveSession({
+        title,
+        mode: this.mode(),
+        totalQuestions: answeredCount,
+        correctCount: correct,
+        wrongCount: answeredCount - correct,
+        score: this.score(),
+        longestStreak: this.maxStreak,
+        accuracy,
+        avgSeconds,
+        durationSeconds: this.elapsed(),
+        startedAtUtc: this.startedAt.toISOString()
+      }).subscribe({ error: () => {} });
+    }
+
     this.router.navigate(['/results']);
   }
 

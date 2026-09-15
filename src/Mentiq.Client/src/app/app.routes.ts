@@ -60,6 +60,11 @@ export const routes: Routes = [
         path: 'learn',
         loadComponent: () =>
           import('./features/learn/learn.component').then((m) => m.LearnComponent)
+      },
+      {
+        path: 'progress',
+        loadComponent: () =>
+          import('./features/progress/progress.component').then((m) => m.ProgressComponent)
       }
     ]
   },

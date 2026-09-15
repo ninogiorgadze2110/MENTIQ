@@ -12,6 +12,10 @@ public sealed record RegisterRequest
 
     [Required, MinLength(8), MaxLength(128)]
     public string Password { get; init; } = string.Empty;
+
+    /// <summary>School grade / class, 1–12.</summary>
+    [Range(1, 12)]
+    public int Grade { get; init; } = 1;
 }
 
 public sealed record LoginRequest
@@ -28,6 +32,7 @@ public sealed record UserDto
     public Guid Id { get; init; }
     public string Email { get; init; } = string.Empty;
     public string DisplayName { get; init; } = string.Empty;
+    public int Grade { get; init; }
 }
 
 public sealed record AuthResponse

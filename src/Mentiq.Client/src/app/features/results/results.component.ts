@@ -23,7 +23,8 @@ interface Bar {
             <div style="font-family:var(--ge-serif); font-size:10px; letter-spacing:.24em; text-transform:uppercase; color:var(--gold);">— ვარჯიშის ანგარიში</div>
             <div style="font-family:var(--ge-serif); font-style:italic; font-size:14px; color:color-mix(in srgb, var(--ink) 60%, transparent); margin-top:6px;">{{ dateLine() }}</div>
           </div>
-          <div style="text-align:right; font-family:var(--ge-serif); font-size:14px;">Volume IV · <span style="color:var(--gold);">{{ s.title }}</span></div>
+          <div style="text-align:right; font-family:var(--ge-serif); font-size:14px;">
+            <span style="color:var(--gold);">{{ s.title }}</span></div>
         </div>
 
         <div style="display:grid; grid-template-columns: 1.2fr 1fr; gap:56px; padding: 36px 0;">

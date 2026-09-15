@@ -1,4 +1,5 @@
 using Mentiq.Application.Features.Auth;
+using Mentiq.Application.Features.Practice;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Mentiq.Application;
@@ -9,6 +10,7 @@ public static class DependencyInjection
     public static IServiceCollection AddApplication(this IServiceCollection services)
     {
         services.AddScoped<IAuthService, AuthService>();
+        services.AddScoped<IPracticeService, PracticeService>();
 
         return services;
     }

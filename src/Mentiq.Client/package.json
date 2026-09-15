@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
+    "start": "ng serve --port 5200",
     "api": "dotnet run --project ../Mentiq.Api --launch-profile https",
     "dev": "concurrently -k -n API,WEB -c blue,green \"npm:api\" \"npm:start\"",
     "build": "ng build",

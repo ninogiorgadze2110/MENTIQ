@@ -11,6 +11,8 @@ public interface IApplicationDbContext
 {
     DbSet<User> Users { get; }
 
+    DbSet<PracticeSession> PracticeSessions { get; }
+
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 
     /// <summary>Returns whether the underlying database is reachable.</summary>

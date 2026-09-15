@@ -36,7 +36,8 @@ public sealed class AuthService : IAuthService
         {
             Email = email,
             DisplayName = request.DisplayName.Trim(),
-            PasswordHash = _passwordHasher.Hash(request.Password)
+            PasswordHash = _passwordHasher.Hash(request.Password),
+            Grade = Math.Clamp(request.Grade, 1, 12)
         };
 
         _db.Users.Add(user);
@@ -74,7 +75,8 @@ public sealed class AuthService : IAuthService
             {
                 Id = user.Id,
                 Email = user.Email,
-                DisplayName = user.DisplayName
+                DisplayName = user.DisplayName,
+                Grade = user.Grade
             }
         };
     }
