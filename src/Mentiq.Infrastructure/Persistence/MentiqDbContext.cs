@@ -21,6 +21,10 @@ public sealed class MentiqDbContext : DbContext, IApplicationDbContext
 
     public DbSet<UserAchievement> UserAchievements => Set<UserAchievement>();
 
+    public DbSet<Subscription> Subscriptions => Set<Subscription>();
+
+    public DbSet<SubscriptionHistory> SubscriptionHistory => Set<SubscriptionHistory>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);

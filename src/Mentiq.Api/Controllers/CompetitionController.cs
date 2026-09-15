@@ -1,5 +1,4 @@
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
+using Mentiq.Api.Authorization;
 using Mentiq.Application.Features.Competition;
 using Mentiq.Application.Features.Competition.Dtos;
 using Microsoft.AspNetCore.Authorization;
@@ -10,7 +9,7 @@ namespace Mentiq.Api.Controllers;
 [ApiController]
 [Route("api/competition")]
 [Authorize]
-public sealed class CompetitionController : ControllerBase
+public sealed class CompetitionController : ApiControllerBase
 {
     private readonly ICompetitionService _competition;
 
@@ -32,6 +31,7 @@ public sealed class CompetitionController : ControllerBase
         => Ok(await _competition.GetListAsync(GetUserId(), cancellationToken));
 
     [HttpPost]
+    [RequireSubscription]
     [ProducesResponseType(typeof(CompetitionDto), StatusCodes.Status200OK)]
     public async Task<ActionResult<CompetitionDto>> Create(CreateCompetitionRequest request, CancellationToken cancellationToken)
         => Ok(await _competition.CreateAsync(GetUserId(), request, cancellationToken));
@@ -42,21 +42,10 @@ public sealed class CompetitionController : ControllerBase
         => Ok(await _competition.GetDetailAsync(GetUserId(), id, cancellationToken));
 
     [HttpPost("{id:guid}/submit")]
+    [RequireSubscription]
     public async Task<IActionResult> Submit(Guid id, SubmitEntryRequest request, CancellationToken cancellationToken)
     {
         await _competition.SubmitAsync(GetUserId(), id, request, cancellationToken);
         return NoContent();
-    }
-
-    private Guid GetUserId()
-    {
-        var raw =
-            User.FindFirstValue(ClaimTypes.NameIdentifier)
-            ?? User.FindFirstValue(JwtRegisteredClaimNames.Sub)
-            ?? User.FindFirstValue("sub");
-
-        return Guid.TryParse(raw, out var id)
-            ? id
-            : throw new UnauthorizedAccessException("The token does not contain a valid user id.");
     }
 }

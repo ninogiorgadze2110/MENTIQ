@@ -15,6 +15,7 @@ export interface UserDto {
   email: string;
   displayName: string;
   grade: number;
+  role: string;
 }
 
 export interface AuthResponse {

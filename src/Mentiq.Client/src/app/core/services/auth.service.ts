@@ -4,6 +4,7 @@ import { Observable, tap } from 'rxjs';
 
 import { environment } from '../../../environments/environment';
 import { AuthResponse, LoginRequest, RegisterRequest, UserDto } from '../models/auth.model';
+import { SubscriptionService } from './subscription.service';
 
 const TOKEN_KEY = 'mentiq.access_token';
 const USER_KEY = 'mentiq.user';
@@ -11,12 +12,14 @@ const USER_KEY = 'mentiq.user';
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private readonly http = inject(HttpClient);
+  private readonly subscriptions = inject(SubscriptionService);
   private readonly baseUrl = `${environment.apiBaseUrl}/auth`;
 
   private readonly _user = signal<UserDto | null>(this.readStoredUser());
 
   readonly user = this._user.asReadonly();
   readonly isAuthenticated = computed(() => this._user() !== null);
+  readonly isAdmin = computed(() => this._user()?.role === 'Administrator');
 
   register(request: RegisterRequest): Observable<AuthResponse> {
     return this.http
@@ -34,6 +37,7 @@ export class AuthService {
     localStorage.removeItem(TOKEN_KEY);
     localStorage.removeItem(USER_KEY);
     this._user.set(null);
+    this.subscriptions.clear();
   }
 
   getToken(): string | null {

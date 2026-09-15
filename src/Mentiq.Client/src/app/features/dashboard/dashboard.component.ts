@@ -3,11 +3,12 @@ import { RouterLink } from '@angular/router';
 
 import { AuthService } from '../../core/services/auth.service';
 import { ProgressResponse, ProgressService } from '../../core/services/progress.service';
+import { SubscriptionBannerComponent } from '../../shared/subscription-banner.component';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [RouterLink],
+  imports: [RouterLink, SubscriptionBannerComponent],
   template: `
     <div class="top">
       <div>
@@ -17,42 +18,28 @@ import { ProgressResponse, ProgressService } from '../../core/services/progress.
       <div class="spacer"></div>
     </div>
 
-    <div style="display:grid; grid-template-columns: 1.4fr 1fr; gap:20px;">
-      <!-- Daily card -->
-      <div style="border:1px solid var(--hair); background:#fff; padding:32px; display:flex; gap:32px; align-items:center; flex-wrap:wrap;">
-        <div style="flex:1; min-width:220px;">
-          <div style="font-size:10px; letter-spacing:.22em; text-transform:uppercase; color:var(--gold);">— დღის ვარჯიში</div>
-          <h3 style="font-family:var(--ge-serif); font-size:32px; margin:10px 0 6px; font-weight:500; line-height:1.05;">შერეული, დროზე</h3>
-          <p style="font-size:13.5px; color:color-mix(in srgb, var(--ink) 65%, transparent); margin:0 0 20px; line-height:1.55;">დაასრულე დღევანდელი ვარჯიში და დაიცავი სერია.</p>
-          <div style="display:flex; gap:10px; align-items:center;">
-            <a routerLink="/practice" class="btn btn-primary" style="padding:12px 22px;">დაიწყე ვარჯიში →</a>
-            <span style="font-size:12.5px; color:color-mix(in srgb, var(--ink) 55%, transparent);">~ 7 წუთი</span>
-          </div>
-        </div>
-        <div style="width:170px; height:170px; position:relative; display:grid; place-items:center;">
-          <svg viewBox="0 0 100 100" style="width:100%; height:100%; transform:rotate(-90deg);">
-            <circle cx="50" cy="50" r="44" fill="none" stroke="var(--hair)" stroke-width="2"/>
-            <circle cx="50" cy="50" r="44" fill="none" stroke="var(--gold)" stroke-width="2" [attr.stroke-dasharray]="276" [attr.stroke-dashoffset]="ringOffset()" stroke-linecap="round"/>
-          </svg>
-          <div style="position:absolute; text-align:center;">
-            <div style="font-family:var(--ge-serif); font-size:46px; color:var(--gold); line-height:1;">{{ dayStreak() }}</div>
-            <div style="font-size:10px; letter-spacing:.18em; text-transform:uppercase; color:color-mix(in srgb, var(--ink) 60%, transparent); margin-top:6px;">დღიანი სერია</div>
-          </div>
+    <app-subscription-banner />
+
+    <!-- Daily card -->
+    <div style="border:1px solid var(--hair); background:#fff; padding:32px; display:flex; gap:32px; align-items:center; flex-wrap:wrap;">
+      <div style="flex:1; min-width:220px;">
+        <!-- <div style="font-size:10px; letter-spacing:.22em; text-transform:uppercase; color:var(--gold);">— დღის ვარჯიში</div> -->
+        <!-- <h3 style="font-family:var(--ge-serif); font-size:32px; margin:10px 0 6px; font-weight:500; line-height:1.05;">შერეული, დროზე</h3> -->
+        <p style="font-size:13.5px; color:color-mix(in srgb, var(--ink) 65%, transparent); margin:0 0 20px; line-height:1.55;">დაასრულე დღევანდელი ვარჯიში და დაიცავი სერია.</p>
+        <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+          <a routerLink="/practice" class="btn btn-primary" style="padding:12px 22px;">დაიწყე ვარჯიში →</a>
+          <!-- <span style="font-size:12.5px; color:color-mix(in srgb, var(--ink) 55%, transparent);">~ 7 წუთი</span> -->
+          <a routerLink="/achievements" style="font-size:12.5px; color:var(--gold); margin-left:8px;">★ ნახე მიღწევები →</a>
         </div>
       </div>
-      <!-- Level card -->
-      <div style="border:1px solid var(--hair); background:#fff; padding:28px 30px;">
-        <div style="font-size:10px; letter-spacing:.22em; text-transform:uppercase; color:color-mix(in srgb, var(--ink) 55%, transparent);">— შენი დონე</div>
-        <div style="display:flex; align-items:baseline; gap:12px; margin-top:8px;">
-          <div style="font-family:var(--ge-serif); font-size:66px; color:var(--gold); line-height:1;">IV</div>
-          <div><div style="font-family:var(--ge-serif); font-size:20px;">შუალედური</div><div style="font-size:12.5px; color:color-mix(in srgb, var(--ink) 60%, transparent);">{{ totalSessions() }} ვარჯიში</div></div>
-        </div>
-        <div style="margin-top:22px;">
-          <div style="display:flex; justify-content:space-between; font-size:11.5px; margin-bottom:6px;"><span>საუკეთესო სერია</span><span style="font-feature-settings:'tnum';">×{{ bestStreak() }}</span></div>
-          <div style="height:4px; background:var(--hair); position:relative;"><div [style.width.%]="ringPct()" style="height:100%; background:var(--gold);"></div></div>
-        </div>
-        <div style="margin-top:18px; padding-top:16px; border-top:1px solid var(--hair); font-size:12.5px; color:color-mix(in srgb, var(--ink) 65%, transparent);">
-          <a routerLink="/achievements" style="color:var(--gold);">★ ნახე მიღწევები →</a>
+      <div style="width:170px; height:170px; position:relative; display:grid; place-items:center;">
+        <svg viewBox="0 0 100 100" style="width:100%; height:100%; transform:rotate(-90deg);">
+          <circle cx="50" cy="50" r="44" fill="none" stroke="var(--hair)" stroke-width="2"/>
+          <circle cx="50" cy="50" r="44" fill="none" stroke="var(--gold)" stroke-width="2" [attr.stroke-dasharray]="276" [attr.stroke-dashoffset]="ringOffset()" stroke-linecap="round"/>
+        </svg>
+        <div style="position:absolute; text-align:center;">
+          <div style="font-family:var(--ge-serif); font-size:46px; color:var(--gold); line-height:1;">{{ dayStreak() }}</div>
+          <div style="font-size:10px; letter-spacing:.18em; text-transform:uppercase; color:color-mix(in srgb, var(--ink) 60%, transparent); margin-top:6px;">დღიანი სერია</div>
         </div>
       </div>
     </div>

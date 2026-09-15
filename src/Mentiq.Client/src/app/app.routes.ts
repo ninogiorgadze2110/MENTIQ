@@ -1,6 +1,8 @@
 import { Routes } from '@angular/router';
 
 import { authGuard } from './core/guards/auth.guard';
+import { subscriptionGuard } from './core/guards/subscription.guard';
+import { adminGuard } from './core/guards/admin.guard';
 
 export const routes: Routes = [
   // ---- Public marketing / auth ----
@@ -26,15 +28,16 @@ export const routes: Routes = [
   },
 
   // ---- Authenticated full-screen focus modes (no sidebar) ----
+  // Premium: require an active trial or paid subscription (backend-enforced).
   {
     path: 'practice',
-    canActivate: [authGuard],
+    canActivate: [authGuard, subscriptionGuard],
     loadComponent: () =>
       import('./features/practice/practice.component').then((m) => m.PracticeComponent)
   },
   {
     path: 'results',
-    canActivate: [authGuard],
+    canActivate: [authGuard, subscriptionGuard],
     loadComponent: () =>
       import('./features/results/results.component').then((m) => m.ResultsComponent)
   },
@@ -52,29 +55,34 @@ export const routes: Routes = [
           import('./features/dashboard/dashboard.component').then((m) => m.DashboardComponent)
       },
       {
-        path: 'levels',
-        loadComponent: () =>
-          import('./features/levels/levels.component').then((m) => m.LevelsComponent)
-      },
-      {
         path: 'learn',
+        canActivate: [subscriptionGuard],
         loadComponent: () =>
           import('./features/learn/learn.component').then((m) => m.LearnComponent)
       },
       {
         path: 'progress',
+        canActivate: [subscriptionGuard],
         loadComponent: () =>
           import('./features/progress/progress.component').then((m) => m.ProgressComponent)
       },
       {
         path: 'competition',
+        canActivate: [subscriptionGuard],
         loadComponent: () =>
           import('./features/competition/competition.component').then((m) => m.CompetitionComponent)
       },
       {
         path: 'achievements',
+        canActivate: [subscriptionGuard],
         loadComponent: () =>
           import('./features/achievements/achievements.component').then((m) => m.AchievementsComponent)
+      },
+      {
+        path: 'admin/subscriptions',
+        canActivate: [adminGuard],
+        loadComponent: () =>
+          import('./features/admin/admin-subscriptions.component').then((m) => m.AdminSubscriptionsComponent)
       }
     ]
   },

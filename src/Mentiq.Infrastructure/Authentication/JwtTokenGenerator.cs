@@ -26,7 +26,9 @@ public sealed class JwtTokenGenerator : IJwtTokenGenerator
             new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
             new Claim(JwtRegisteredClaimNames.Email, user.Email),
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-            new Claim("name", user.DisplayName)
+            new Claim("name", user.DisplayName),
+            // ClaimTypes.Role so [Authorize(Roles = "Administrator")] works out of the box.
+            new Claim(ClaimTypes.Role, string.IsNullOrWhiteSpace(user.Role) ? "Student" : user.Role)
         };
 
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_settings.Secret));

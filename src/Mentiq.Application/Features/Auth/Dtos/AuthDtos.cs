@@ -33,6 +33,9 @@ public sealed record UserDto
     public string Email { get; init; } = string.Empty;
     public string DisplayName { get; init; } = string.Empty;
     public int Grade { get; init; }
+
+    /// <summary>Authorization role: "Student" or "Administrator".</summary>
+    public string Role { get; init; } = "Student";
 }
 
 public sealed record AuthResponse

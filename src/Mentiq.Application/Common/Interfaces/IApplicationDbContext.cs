@@ -19,6 +19,10 @@ public interface IApplicationDbContext
 
     DbSet<UserAchievement> UserAchievements { get; }
 
+    DbSet<Subscription> Subscriptions { get; }
+
+    DbSet<SubscriptionHistory> SubscriptionHistory { get; }
+
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 
     /// <summary>Returns whether the underlying database is reachable.</summary>

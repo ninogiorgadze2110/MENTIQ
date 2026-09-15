@@ -1,5 +1,4 @@
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
+using Mentiq.Api.Authorization;
 using Mentiq.Application.Features.Practice;
 using Mentiq.Application.Features.Practice.Dtos;
 using Microsoft.AspNetCore.Authorization;
@@ -10,7 +9,7 @@ namespace Mentiq.Api.Controllers;
 [ApiController]
 [Route("api/practice")]
 [Authorize]
-public sealed class PracticeController : ControllerBase
+public sealed class PracticeController : ApiControllerBase
 {
     private readonly IPracticeService _practice;
 
@@ -19,7 +18,10 @@ public sealed class PracticeController : ControllerBase
         _practice = practice;
     }
 
+    // Recording a completed practice session is premium functionality: it
+    // requires an active trial or paid subscription, enforced server-side.
     [HttpPost("sessions")]
+    [RequireSubscription]
     public async Task<IActionResult> SaveSession(SavePracticeSessionRequest request, CancellationToken cancellationToken)
     {
         await _practice.SaveSessionAsync(GetUserId(), request, cancellationToken);
@@ -32,17 +34,5 @@ public sealed class PracticeController : ControllerBase
     {
         var progress = await _practice.GetProgressAsync(GetUserId(), cancellationToken);
         return Ok(progress);
-    }
-
-    private Guid GetUserId()
-    {
-        var raw =
-            User.FindFirstValue(ClaimTypes.NameIdentifier)
-            ?? User.FindFirstValue(JwtRegisteredClaimNames.Sub)
-            ?? User.FindFirstValue("sub");
-
-        return Guid.TryParse(raw, out var id)
-            ? id
-            : throw new UnauthorizedAccessException("The token does not contain a valid user id.");
     }
 }

@@ -25,5 +25,10 @@ public sealed class UserConfiguration : IEntityTypeConfiguration<User>
         builder.Property(u => u.PasswordHash)
             .IsRequired()
             .HasMaxLength(512);
+
+        builder.Property(u => u.Role)
+            .IsRequired()
+            .HasMaxLength(32)
+            .HasDefaultValue(Domain.Entities.UserRoles.Student);
     }
 }

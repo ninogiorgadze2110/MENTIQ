@@ -24,6 +24,11 @@ interface NavItem {
               <span class="n-ic" aria-hidden="true">{{ item.icon }}</span> {{ item.label }}
             </a>
           }
+          @if (isAdmin()) {
+            <a routerLink="/admin/subscriptions" routerLinkActive="active">
+              <span class="n-ic" aria-hidden="true">⚙</span> ადმინი
+            </a>
+          }
         </nav>
         <div class="side-foot">
           <div class="u">
@@ -64,11 +69,12 @@ export class ShellComponent {
     { path: '/dashboard', label: 'მთავარი', icon: '◈' },
     { path: '/practice', label: 'ვარჯიში', icon: '◐' },
     { path: '/learn', label: 'ისწავლე', icon: '☰' },
-    { path: '/levels', label: 'დონეები', icon: '△' },
     { path: '/competition', label: 'შეჯიბრი', icon: '⚑' },
     { path: '/achievements', label: 'მიღწევები', icon: '★' },
     { path: '/pricing', label: 'ფასი', icon: '₾' }
   ];
+
+  readonly isAdmin = this.auth.isAdmin;
 
   displayName(): string {
     return this.auth.user()?.displayName ?? 'სტუმარი';

@@ -1,6 +1,7 @@
 using Mentiq.Api.Common;
 using Mentiq.Api.Middleware;
 using Mentiq.Application;
+using Mentiq.Application.Features.Subscription;
 using Mentiq.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 
@@ -40,6 +41,13 @@ builder.Services.AddOpenApi();
 
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
+
+// Subscription/pricing configuration (plans, trial length, manual-payment
+// instructions) is bound from the "Subscription" section and injected as a
+// plain settings object. Prices are configuration-driven, never hardcoded.
+var subscriptionSettings = new SubscriptionSettings();
+builder.Configuration.GetSection(SubscriptionSettings.SectionName).Bind(subscriptionSettings);
+builder.Services.AddSingleton(subscriptionSettings);
 
 // CORS is only needed for local development when the Angular dev server is
 // called directly (without the dev proxy). In production the SPA and API share
