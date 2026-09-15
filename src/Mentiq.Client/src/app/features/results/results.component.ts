@@ -92,7 +92,7 @@ interface Bar {
                 @for (m of mistakes(); track m.n) {
                   <div style="display:grid; grid-template-columns:auto 1fr auto auto; gap:16px; padding:14px 0; border-bottom:1px solid var(--hair); align-items:baseline;">
                     <span style="font-family:var(--ge-serif); font-size:12px; color:color-mix(in srgb, var(--ink) 55%, transparent);">№ {{ pad(m.n) }}</span>
-                    <span style="font-family:var(--ge-serif); font-size:20px;">{{ m.a }} {{ m.symbol }} {{ m.b }}</span>
+                    <span style="font-family:var(--ge-serif); font-size:20px;">{{ m.display }}</span>
                     <span style="font-family:var(--ge-serif); font-size:14px; text-decoration:line-through; color:color-mix(in srgb, var(--ink) 50%, transparent);">{{ m.userAnswer ?? '—' }}</span>
                     <span style="font-family:var(--ge-serif); font-size:14px; color:var(--gold);">{{ m.answer }}</span>
                   </div>

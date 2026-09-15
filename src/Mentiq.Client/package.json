@@ -4,6 +4,8 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
+    "api": "dotnet run --project ../Mentiq.Api --launch-profile https",
+    "dev": "concurrently -k -n API,WEB -c blue,green \"npm:api\" \"npm:start\"",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
@@ -27,6 +29,7 @@
     "@angular/cli": "^18.2.2",
     "@angular/compiler-cli": "^18.2.0",
     "@types/jasmine": "~5.1.0",
+    "concurrently": "^9.2.4",
     "jasmine-core": "~5.2.0",
     "karma": "~6.4.0",
     "karma-chrome-launcher": "~3.2.0",

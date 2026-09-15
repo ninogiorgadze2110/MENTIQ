@@ -17,4 +17,6 @@ public class User : BaseEntity
     public string PasswordHash { get; set; } = string.Empty;
 
     public DateTime? LastLoginAtUtc { get; set; }
+
+    public bool? IsDeleted { get; set; } = false;
 }

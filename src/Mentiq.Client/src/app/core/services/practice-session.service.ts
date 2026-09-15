@@ -1,12 +1,11 @@
 import { Injectable, signal } from '@angular/core';
 
 export interface AnsweredQuestion {
-  a: number;
-  b: number;
-  symbol: string;
-  answer: number;
+  /** Human-readable problem text, e.g. "47 + 28" or "46 + ? = 83". */
+  display: string;
+  answer: number | string;
   /** What the user entered; null when the question was skipped. */
-  userAnswer: number | null;
+  userAnswer: number | string | null;
   correct: boolean;
   /** Real time the user spent on this question, in seconds. */
   seconds: number;
