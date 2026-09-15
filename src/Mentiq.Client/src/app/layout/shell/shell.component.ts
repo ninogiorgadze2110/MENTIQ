@@ -66,6 +66,7 @@ export class ShellComponent {
     { path: '/learn', label: 'ისწავლე', icon: '☰' },
     { path: '/levels', label: 'დონეები', icon: '△' },
     { path: '/progress', label: 'პროგრესი', icon: '◇' },
+    { path: '/competition', label: 'შეჯიბრი', icon: '⚑' },
     { path: '/pricing', label: 'ფასი', icon: '₾' }
   ];
 

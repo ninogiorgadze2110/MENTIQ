@@ -19,4 +19,7 @@ public class User : BaseEntity
     public DateTime? LastLoginAtUtc { get; set; }
 
     public bool? IsDeleted { get; set; } = false;
+
+    /// <summary>School grade / class, 1–12.</summary>
+    public int Grade { get; set; } = 1;
 }

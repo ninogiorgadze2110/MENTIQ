@@ -13,6 +13,10 @@ public interface IApplicationDbContext
 
     DbSet<PracticeSession> PracticeSessions { get; }
 
+    DbSet<Competition> Competitions { get; }
+
+    DbSet<CompetitionEntry> CompetitionEntries { get; }
+
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 
     /// <summary>Returns whether the underlying database is reachable.</summary>

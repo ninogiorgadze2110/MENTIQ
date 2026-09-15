@@ -2,6 +2,7 @@ export interface RegisterRequest {
   email: string;
   displayName: string;
   password: string;
+  grade: number;
 }
 
 export interface LoginRequest {
@@ -13,6 +14,7 @@ export interface UserDto {
   id: string;
   email: string;
   displayName: string;
+  grade: number;
 }
 
 export interface AuthResponse {

@@ -15,6 +15,10 @@ public sealed class MentiqDbContext : DbContext, IApplicationDbContext
 
     public DbSet<PracticeSession> PracticeSessions => Set<PracticeSession>();
 
+    public DbSet<Competition> Competitions => Set<Competition>();
+
+    public DbSet<CompetitionEntry> CompetitionEntries => Set<CompetitionEntry>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);

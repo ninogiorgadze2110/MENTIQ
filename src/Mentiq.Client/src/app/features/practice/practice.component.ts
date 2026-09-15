@@ -2,6 +2,7 @@ import { Component, HostListener, OnDestroy, computed, inject, signal } from '@a
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AnsweredQuestion, PracticeSessionService } from '../../core/services/practice-session.service';
 import { ProgressService } from '../../core/services/progress.service';
+import { CompetitionService } from '../../core/services/competition.service';
 
 type OpKey = 'add' | 'sub' | 'mul' | 'div' | 'cmp' | 'miss' | 'chain';
 type Mode = 'count' | 'time';
@@ -284,6 +285,7 @@ export class PracticeComponent implements OnDestroy {
   private readonly router = inject(Router);
   private readonly sessions = inject(PracticeSessionService);
   private readonly progress = inject(ProgressService);
+  private readonly competition = inject(CompetitionService);
   private timer: ReturnType<typeof setInterval> | null = null;
 
   private questionStart = 0;
@@ -309,6 +311,8 @@ export class PracticeComponent implements OnDestroy {
   readonly timeLimit = signal(60);
   readonly trickKey = signal<string | null>(null);
   readonly fromLearn = signal(false);
+  readonly mixMode = signal(false);
+  readonly competitionId = signal<string | null>(null);
 
   readonly currentQ = signal<Question>({ before: '', after: '', display: '', answer: 0, mode: 'num' });
   readonly index = signal(0);
@@ -346,6 +350,16 @@ export class PracticeComponent implements OnDestroy {
       this.mode.set('count');
       this.count.set(10);
       this.start();
+    } else if (params.get('mix') != null) {
+      // Competition / mixed-operations drill for a grade (skip the picker).
+      const grade = Number(params.get('grade')) || 4;
+      const count = Number(params.get('count')) || 20;
+      this.mixMode.set(true);
+      this.competitionId.set(params.get('competition'));
+      this.selectedGrade.set(Math.min(12, Math.max(1, grade)));
+      this.mode.set('count');
+      this.count.set(count);
+      this.start();
     }
   }
 
@@ -354,12 +368,15 @@ export class PracticeComponent implements OnDestroy {
   );
   readonly q = computed(() => this.currentQ());
   readonly opName = computed(() => {
+    if (this.mixMode()) return 'შერეული';
     const t = this.trickKey();
     if (t && TRICKS[t]) return TRICKS[t].name;
     return OPS[this.selectedOp()].name;
   });
   readonly levelLabel = computed(() => (this.trickKey() ? '' : `კლასი ${this.selectedGrade()} · `));
-  readonly exitTarget = computed(() => (this.fromLearn() ? '/learn' : '/dashboard'));
+  readonly exitTarget = computed(() =>
+    this.competitionId() ? '/competition' : this.fromLearn() ? '/learn' : '/dashboard'
+  );
   readonly remaining = computed(() => Math.max(0, this.timeLimit() - this.elapsed()));
   readonly clock = computed(() => (this.mode() === 'time' ? fmt(this.remaining()) : fmt(this.elapsed())));
   readonly clockColor = computed(() => (this.mode() === 'time' && this.remaining() <= 10 ? '#b22' : 'var(--ink)'));
@@ -386,6 +403,7 @@ export class PracticeComponent implements OnDestroy {
       : 'color-mix(in srgb, #b22 6%, transparent)'
   );
   readonly prompt = computed(() => {
+    if (this.mixMode()) return 'იპოვე პასუხი';
     const t = this.trickKey();
     if (t && TRICKS[t]) return TRICKS[t].prompt;
     switch (this.selectedOp()) {
@@ -399,6 +417,7 @@ export class PracticeComponent implements OnDestroy {
     }
   });
   readonly trick = computed(() => {
+    if (this.mixMode()) return 'შეჯიბრი — ყველა ტიპი შერეულად';
     const t = this.trickKey();
     if (t && TRICKS[t]) return TRICKS[t].hint;
     switch (this.selectedOp()) {
@@ -451,8 +470,10 @@ export class PracticeComponent implements OnDestroy {
   private genForMode(): Question {
     const t = this.trickKey();
     if (t && TRICKS[t]) return TRICKS[t].gen();
-    const op = this.selectedOp();
-    const [lo, hi] = GRADES[this.selectedGrade()].range[op] ?? [1, 20];
+    // Grades 7–12 reuse the hardest defined config (6).
+    const cfg = GRADES[this.selectedGrade()] ?? GRADES[6];
+    const op = this.mixMode() ? cfg.ops[Math.floor(Math.random() * cfg.ops.length)] : this.selectedOp();
+    const [lo, hi] = cfg.range[op] ?? [1, 20];
     return this.genQuestion(op, lo, hi);
   }
 
@@ -571,6 +592,22 @@ export class PracticeComponent implements OnDestroy {
     const title = base + (this.mode() === 'time' ? ` · ${this.timeLabel()}` : '');
     const accuracy = Math.round((correct / total) * 100);
     const avgSeconds = totalSeconds / total;
+
+    // Competition mode: submit the score and go to the competition leaderboard.
+    const compId = this.competitionId();
+    if (compId) {
+      if (answeredCount > 0) {
+        this.competition.submit(compId, {
+          score: this.score(),
+          correctCount: correct,
+          totalQuestions: answeredCount,
+          accuracy,
+          durationSeconds: this.elapsed()
+        }).subscribe({ error: () => {} });
+      }
+      this.router.navigate(['/competition'], { queryParams: { id: compId } });
+      return;
+    }
 
     this.sessions.set({
       title,

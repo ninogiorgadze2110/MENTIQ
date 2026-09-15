@@ -22,10 +22,13 @@ export class LoginComponent {
   readonly mode = signal<'login' | 'register'>('login');
   readonly submitting = signal(false);
 
+  readonly grades = Array.from({ length: 12 }, (_, i) => i + 1);
+
   readonly form = this.fb.nonNullable.group({
     displayName: [''],
     email: ['', [Validators.required, Validators.email]],
-    password: ['', [Validators.required, Validators.minLength(8)]]
+    password: ['', [Validators.required, Validators.minLength(8)]],
+    grade: [1, [Validators.required, Validators.min(1), Validators.max(12)]]
   });
 
   constructor() {
@@ -56,12 +59,12 @@ export class LoginComponent {
     }
 
     this.submitting.set(true);
-    const { email, password, displayName } = this.form.getRawValue();
+    const { email, password, displayName, grade } = this.form.getRawValue();
 
     const request$ =
       this.mode() === 'login'
         ? this.auth.login({ email, password })
-        : this.auth.register({ email, displayName, password });
+        : this.auth.register({ email, displayName, password, grade: Number(grade) });
 
     request$.subscribe({
       next: () => {

@@ -19,6 +19,14 @@
             <span class="field-error">გთხოვთ, შეიყვანოთ სახელი.</span>
           }
         </div>
+        <div class="field">
+          <label for="grade">კლასი</label>
+          <select id="grade" class="input" formControlName="grade">
+            @for (g of grades; track g) {
+              <option [value]="g">{{ g }} კლასი</option>
+            }
+          </select>
+        </div>
       }
 
       <div class="field">

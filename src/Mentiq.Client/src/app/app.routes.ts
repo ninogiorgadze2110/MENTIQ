@@ -65,6 +65,11 @@ export const routes: Routes = [
         path: 'progress',
         loadComponent: () =>
           import('./features/progress/progress.component').then((m) => m.ProgressComponent)
+      },
+      {
+        path: 'competition',
+        loadComponent: () =>
+          import('./features/competition/competition.component').then((m) => m.CompetitionComponent)
       }
     ]
   },
