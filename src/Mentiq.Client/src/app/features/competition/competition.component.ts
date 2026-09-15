@@ -36,7 +36,7 @@ import { NotificationService } from '../../core/services/notification.service';
         <h2>შეჯიბრი</h2>
       </div>
       <div class="spacer"></div>
-      @if (!detail()) {
+      @if (!detail() && isAdmin()) {
         <button type="button" class="btn btn-primary" style="padding:11px 20px;" (click)="showCreate.set(!showCreate())">
           {{ showCreate() ? 'დახურვა' : '+ ახალი შეჯიბრი' }}
         </button>
@@ -171,6 +171,7 @@ export class CompetitionComponent {
   readonly loading = signal(true);
   readonly competitions = signal<CompetitionDto[]>([]);
   readonly detail = signal<CompetitionDetailDto | null>(null);
+  readonly isAdmin = this.auth.isAdmin;
 
   readonly showCreate = signal(false);
   readonly title = signal('');

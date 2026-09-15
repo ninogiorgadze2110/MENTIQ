@@ -104,8 +104,15 @@ public sealed class CompetitionService : ICompetitionService
             return System.Array.Empty<CompetitionDto>();
         }
 
-        var competitions = await _db.Competitions
-            .Where(c => c.Grade == me.Grade)
+        var competitionsQuery = _db.Competitions.AsQueryable();
+
+        if (me.Role != "Administrator")
+        {
+            competitionsQuery = competitionsQuery
+                .Where(c => c.Grade == me.Grade);
+        }
+
+        var competitions = await competitionsQuery
             .OrderByDescending(c => c.EndsAtUtc)
             .Take(30)
             .ToListAsync(cancellationToken);
