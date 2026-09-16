@@ -28,6 +28,9 @@ interface NavItem {
             <a routerLink="/admin/subscriptions" routerLinkActive="active">
               <span class="n-ic" aria-hidden="true">⚙</span> ადმინი
             </a>
+            <a routerLink="/admin/contact" routerLinkActive="active">
+              <span class="n-ic" aria-hidden="true">✉</span> კომენტარები
+            </a>
           }
         </nav>
         <div class="side-foot">
@@ -71,7 +74,8 @@ export class ShellComponent {
     { path: '/learn', label: 'ისწავლე', icon: '☰' },
     { path: '/competition', label: 'შეჯიბრი', icon: '⚑' },
     { path: '/achievements', label: 'მიღწევები', icon: '★' },
-    { path: '/pricing', label: 'ფასი', icon: '₾' }
+    { path: '/pricing', label: 'ფასი', icon: '₾' },
+    { path: '/contact', label: 'კონტაქტი', icon: '✉' }
   ];
 
   readonly isAdmin = this.auth.isAdmin;

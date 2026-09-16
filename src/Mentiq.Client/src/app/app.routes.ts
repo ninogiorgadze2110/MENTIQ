@@ -79,10 +79,21 @@ export const routes: Routes = [
           import('./features/achievements/achievements.component').then((m) => m.AchievementsComponent)
       },
       {
+        path: 'contact',
+        loadComponent: () =>
+          import('./features/contact/contact.component').then((m) => m.ContactComponent)
+      },
+      {
         path: 'admin/subscriptions',
         canActivate: [adminGuard],
         loadComponent: () =>
           import('./features/admin/admin-subscriptions.component').then((m) => m.AdminSubscriptionsComponent)
+      },
+      {
+        path: 'admin/contact',
+        canActivate: [adminGuard],
+        loadComponent: () =>
+          import('./features/admin/admin-contact.component').then((m) => m.AdminContactComponent)
       }
     ]
   },

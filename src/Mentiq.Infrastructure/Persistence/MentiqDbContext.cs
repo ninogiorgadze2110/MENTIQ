@@ -27,6 +27,8 @@ public sealed class MentiqDbContext : DbContext, IApplicationDbContext
 
     public DbSet<DailyChallengeEntry> DailyChallengeEntries => Set<DailyChallengeEntry>();
 
+    public DbSet<ContactMessage> ContactMessages => Set<ContactMessage>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);

@@ -25,6 +25,8 @@ public interface IApplicationDbContext
 
     DbSet<DailyChallengeEntry> DailyChallengeEntries { get; }
 
+    DbSet<ContactMessage> ContactMessages { get; }
+
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 
     /// <summary>Returns whether the underlying database is reachable.</summary>
