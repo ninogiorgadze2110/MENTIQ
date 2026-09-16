@@ -66,7 +66,7 @@ import {
 
           <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px 14px; font-size:12.5px; padding:14px 0; border-top:1px solid var(--hair); border-bottom:1px solid var(--hair);">
             <div style="color:color-mix(in srgb, var(--ink) 55%, transparent);">სტატუსი</div><div><strong>{{ d.status.status }}</strong> ({{ d.status.hasAccess ? 'წვდომა' : 'ჩაკეტილი' }})</div>
-            <div style="color:color-mix(in srgb, var(--ink) 55%, transparent);">ტრიალი</div><div>{{ shortDate(d.status.trialStartDate) }} → {{ shortDate(d.status.trialEndDate) }}</div>
+            <div style="color:color-mix(in srgb, var(--ink) 55%, transparent);">საცდელი ვერსია</div><div>{{ shortDate(d.status.trialStartDate) }} → {{ shortDate(d.status.trialEndDate) }}</div>
             <div style="color:color-mix(in srgb, var(--ink) 55%, transparent);">გეგმა</div><div>{{ d.current.plan || '—' }}</div>
             <div style="color:color-mix(in srgb, var(--ink) 55%, transparent);">გამოწერა</div><div>{{ d.current.startDate ? (shortDate(d.current.startDate) + ' → ' + shortDate(d.current.endDate)) : '—' }}</div>
           </div>

@@ -33,6 +33,15 @@ public sealed class SubscriptionController : ApiControllerBase
     public async Task<ActionResult<SubscriptionDto>> GetCurrent(CancellationToken cancellationToken)
         => Ok(await _subscriptions.GetCurrentAsync(GetUserId(), cancellationToken));
 
+      // {
+      //   "Code": "yearly",
+      //   "Name": "წლიური",
+      //   "Price": 118,
+      //   "Currency": "₾",
+      //   "Period": "year",
+      //   "DurationDays": 365,
+      //   "Description": "სრული წვდომა ერთი წლით — 30%-იანი დაზოგვა."
+      // }
     /// <summary>Configured plans and manual-payment instructions for the pricing page.</summary>
     [HttpGet("plans")]
     [AllowAnonymous]

@@ -127,7 +127,7 @@ const fmt = (sec: number) =>
       .op-card.on { border-color: var(--gold); background: color-mix(in srgb, var(--gold) 6%, transparent); }
       .op-sym { font-family: var(--ge-serif); font-size: 40px; line-height: 1; color: var(--gold); width: 44px; text-align: center; }
 
-      .grades { display: flex; gap: 8px; flex-wrap: wrap; }
+      .grades { display: flex; gap: 8px; flex-wrap: wrap; justify-content:center; }
       .grade {
         min-width: 84px; padding: 10px 12px; text-align: center; cursor: pointer;
         border: 1px solid var(--hair); background: #fff; transition: all .12s ease;
@@ -629,7 +629,7 @@ export class PracticeComponent implements OnDestroy {
           totalQuestions: answeredCount,
           accuracy,
           durationSeconds: this.elapsed()
-        }).subscribe({ error: () => {} });
+        }).subscribe({ error: () => { } });
 
         this.progress.saveSession({
           title: 'დღის ამოცანა',
@@ -643,7 +643,7 @@ export class PracticeComponent implements OnDestroy {
           avgSeconds,
           durationSeconds: this.elapsed(),
           startedAtUtc: this.startedAt.toISOString()
-        }).subscribe({ error: () => {} });
+        }).subscribe({ error: () => { } });
       }
       this.router.navigate(['/dashboard'], { queryParams: { daily: 'done' } });
       return;
@@ -659,7 +659,7 @@ export class PracticeComponent implements OnDestroy {
           totalQuestions: answeredCount,
           accuracy,
           durationSeconds: this.elapsed()
-        }).subscribe({ error: () => {} });
+        }).subscribe({ error: () => { } });
       }
       this.router.navigate(['/competition'], { queryParams: { id: compId } });
       return;
@@ -692,7 +692,7 @@ export class PracticeComponent implements OnDestroy {
         avgSeconds,
         durationSeconds: this.elapsed(),
         startedAtUtc: this.startedAt.toISOString()
-      }).subscribe({ error: () => {} });
+      }).subscribe({ error: () => { } });
     }
 
     this.router.navigate(['/results']);

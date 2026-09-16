@@ -32,6 +32,9 @@ public sealed class SubscriptionPlanOption
 
     public decimal Price { get; set; }
 
+    /// <summary>Optional pre-discount "compare at" price, shown struck through for a sale.</summary>
+    public decimal? OldPrice { get; set; }
+
     public string Currency { get; set; } = "GEL";
 
     /// <summary>Billing period label, e.g. "month" or "year".</summary>

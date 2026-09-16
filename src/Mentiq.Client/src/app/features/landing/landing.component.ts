@@ -24,9 +24,9 @@ import { RouterLink } from '@angular/router';
         <div>
           <div style="font-size:10px; letter-spacing:.24em; text-transform:uppercase; color:var(--gold); margin-bottom:22px;">— ტვინის ვარჯიში, ყოველდღე</div>
           <h1 style="font-family:var(--ge-serif); font-size:72px; line-height:1; margin:0 0 22px; letter-spacing:-.02em; font-weight:500;">იფიქრე უფრო<br><em style="font-style:italic; color:var(--gold); font-weight:500;">სწრაფად.</em><br>გამოთვალე უფრო<br><em style="font-style:italic; font-weight:500;">ჭკვიანურად.</em></h1>
-          <p style="font-size:16px; line-height:1.65; max-width:42ch; color:color-mix(in srgb, var(--ink) 72%, transparent); margin:0 0 28px;">ავითარე გონებრივი მათემატიკის უნარი მოკლე, ფოკუსირებული ვარჯიშით. შვიდი წუთი დღეში — რვა კვირაში ტვინი განსხვავებულად მუშაობს.</p>
+          <p style="font-size:16px; line-height:1.65; max-width:42ch; color:color-mix(in srgb, var(--ink) 72%, transparent); margin:0 0 28px;">განავითარე გონებრივი მათემატიკის უნარი მოკლე, ფოკუსირებული ვარჯიშით. შვიდი წუთი დღეში — რვა კვირაში ტვინი განსხვავებულად მუშაობს.</p>
           <div style="display:flex; gap:14px; align-items:center; flex-wrap:wrap;">
-            <a routerLink="/onboarding" class="btn btn-primary" style="padding:14px 24px; font-size:15px;">დაიწყე 7-დღიანი ტრიალი</a>
+            <a routerLink="/onboarding" class="btn btn-primary" style="padding:14px 24px; font-size:15px;">დაიწყე 7-დღიანი საცდელი ვერსია უფასოდ</a>
             <a routerLink="/practice" class="btn btn-secondary" style="padding:14px 20px; font-size:14px;">სცადე გამოწვევა →</a>
           </div>
           <div style="margin-top:22px; font-size:12px; color:color-mix(in srgb, var(--ink) 55%, transparent); display:flex; gap:22px; flex-wrap:wrap;">

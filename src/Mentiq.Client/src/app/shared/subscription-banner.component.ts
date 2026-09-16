@@ -18,7 +18,7 @@ import { SubscriptionService } from '../core/services/subscription.service';
         <div style="border:1px solid var(--gold); background:color-mix(in srgb, var(--gold) 7%, transparent); padding:14px 18px; margin-bottom:20px; display:flex; align-items:center; gap:14px; flex-wrap:wrap;">
           <span style="font-size:20px;">🎁</span>
           <div style="flex:1; min-width:200px;">
-            <div style="font-family:var(--ge-serif); font-size:16px;">უფასო ტრიალი — დარჩა {{ countdown() }}</div>
+            <div style="font-family:var(--ge-serif); font-size:16px;">უფასო საცდელი ვერსია — დარჩა {{ countdown() }}</div>
             <div style="font-size:12.5px; color:color-mix(in srgb, var(--ink) 62%, transparent);">სრული წვდომა ყველა ფუნქციაზე. გამოიწერე ნებისმიერ დროს.</div>
           </div>
           <a routerLink="/pricing" class="btn btn-primary" style="padding:9px 18px;">გამოწერა →</a>
@@ -34,7 +34,7 @@ import { SubscriptionService } from '../core/services/subscription.service';
           <span style="font-size:20px;">🔒</span>
           <div style="flex:1; min-width:200px;">
             <div style="font-family:var(--ge-serif); font-size:16px;">შენი წვდომა არააქტიურია</div>
-            <div style="font-size:12.5px; color:color-mix(in srgb, var(--ink) 62%, transparent);">უფასო ტრიალი დასრულდა. აირჩიე გეგმა MENTIQ-ის გასაგრძელებლად.</div>
+            <div style="font-size:12.5px; color:color-mix(in srgb, var(--ink) 62%, transparent);">უფასო საცდელი ვერსია დასრულდა. აირჩიე გეგმა MENTIQ-ის გასაგრძელებლად.</div>
           </div>
           <a routerLink="/pricing" class="btn btn-primary" style="padding:9px 18px;">აირჩიე გეგმა →</a>
         </div>

@@ -79,6 +79,7 @@ public sealed class SubscriptionService : ISubscriptionService
                 Code = p.Code,
                 Name = p.Name,
                 Price = p.Price,
+                OldPrice = p.OldPrice,
                 Currency = p.Currency,
                 Period = p.Period,
                 DurationDays = p.DurationDays,

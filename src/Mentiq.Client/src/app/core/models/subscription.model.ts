@@ -29,6 +29,7 @@ export interface Plan {
   code: string;
   name: string;
   price: number;
+  oldPrice: number | null;
   currency: string;
   period: string;
   durationDays: number;

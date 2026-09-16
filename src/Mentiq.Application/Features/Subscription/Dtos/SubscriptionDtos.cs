@@ -50,6 +50,7 @@ public sealed record PlanDto
     public string Code { get; init; } = string.Empty;
     public string Name { get; init; } = string.Empty;
     public decimal Price { get; init; }
+    public decimal? OldPrice { get; init; }
     public string Currency { get; init; } = "GEL";
     public string Period { get; init; } = "month";
     public int DurationDays { get; init; }
