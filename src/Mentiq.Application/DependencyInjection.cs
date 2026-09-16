@@ -1,6 +1,7 @@
 using Mentiq.Application.Features.Achievements;
 using Mentiq.Application.Features.Auth;
 using Mentiq.Application.Features.Competition;
+using Mentiq.Application.Features.DailyChallenge;
 using Mentiq.Application.Features.Practice;
 using Mentiq.Application.Features.Subscription;
 using Microsoft.Extensions.DependencyInjection;
@@ -17,6 +18,7 @@ public static class DependencyInjection
         services.AddScoped<ICompetitionService, CompetitionService>();
         services.AddScoped<IAchievementService, AchievementService>();
         services.AddScoped<ISubscriptionService, SubscriptionService>();
+        services.AddScoped<IDailyChallengeService, DailyChallengeService>();
 
         return services;
     }

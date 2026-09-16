@@ -9,6 +9,13 @@ public sealed class PracticeService : IPracticeService
 {
     private readonly IApplicationDbContext _db;
 
+    // Streaks and weekly activity are measured in local (Tbilisi, fixed UTC+4)
+    // calendar days, not UTC — otherwise an evening session and the next
+    // morning's session can collapse into the same UTC day.
+    private static readonly TimeSpan TbilisiOffset = TimeSpan.FromHours(4);
+
+    private static DateOnly LocalDay(DateTime utc) => DateOnly.FromDateTime(utc.Add(TbilisiOffset));
+
     public PracticeService(IApplicationDbContext db)
     {
         _db = db;
@@ -50,11 +57,11 @@ public sealed class PracticeService : IPracticeService
         }
 
         var days = sessions
-            .Select(s => DateOnly.FromDateTime(s.CompletedAtUtc))
+            .Select(s => LocalDay(s.CompletedAtUtc))
             .ToHashSet();
 
-        // Day streak: consecutive days ending today (or yesterday if not yet practiced today).
-        var today = DateOnly.FromDateTime(DateTime.UtcNow);
+        // Day streak: consecutive local days ending today (or yesterday if not yet practiced today).
+        var today = LocalDay(DateTime.UtcNow);
         var cursor = days.Contains(today) ? today : today.AddDays(-1);
         var streak = 0;
         while (days.Contains(cursor))
@@ -63,12 +70,12 @@ public sealed class PracticeService : IPracticeService
             cursor = cursor.AddDays(-1);
         }
 
-        // Weekly activity: last 7 days, oldest → newest.
+        // Weekly activity: last 7 local days, oldest → newest.
         var weekly = new int[7];
         for (var i = 0; i < 7; i++)
         {
             var day = today.AddDays(-(6 - i));
-            weekly[i] = sessions.Count(s => DateOnly.FromDateTime(s.CompletedAtUtc) == day);
+            weekly[i] = sessions.Count(s => LocalDay(s.CompletedAtUtc) == day);
         }
 
         var trend = sessions.TakeLast(12).Select(s => s.Accuracy).ToArray();

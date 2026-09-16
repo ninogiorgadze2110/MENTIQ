@@ -3,6 +3,8 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AnsweredQuestion, PracticeSessionService } from '../../core/services/practice-session.service';
 import { ProgressService } from '../../core/services/progress.service';
 import { CompetitionService } from '../../core/services/competition.service';
+import { DailyChallengeService } from '../../core/services/daily-challenge.service';
+import { AuthService } from '../../core/services/auth.service';
 
 type OpKey = 'add' | 'sub' | 'mul' | 'div' | 'cmp' | 'miss' | 'chain';
 type Mode = 'count' | 'time';
@@ -102,12 +104,16 @@ const fmt = (sec: number) =>
       .expr {
         font-family: var(--ge-serif); font-weight: 400; line-height: 1;
         letter-spacing: -.02em; font-feature-settings: 'tnum';
-        display: flex; flex-wrap: wrap; justify-content: center; align-items: baseline;
-        font-size: clamp(44px, 8.5vw, 104px);
+        /* Keep the whole equation on a single line so the answer never
+           reflows/jumps down as digits are typed. Scales with the viewport. */
+        display: flex; flex-wrap: nowrap; white-space: nowrap;
+        justify-content: center; align-items: baseline; max-width: 100%;
+        font-size: clamp(38px, 8vw, 104px);
       }
+      .expr > span { white-space: nowrap; }
       .expr .slot {
         color: var(--ink); border-bottom: 3px solid var(--gold);
-        padding: 0 .28em; min-width: 1.2em; display: inline-block; text-align: center;
+        padding: 0 .28em; min-width: 1.6em; display: inline-block; text-align: center;
       }
 
       .op-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
@@ -154,15 +160,15 @@ const fmt = (sec: number) =>
             <div style="text-align:center; margin-bottom:28px;">
               <div style="font-size:10px; letter-spacing:.24em; text-transform:uppercase; color:var(--gold); margin-bottom:12px;">— დღის ვარჯიში</div>
               <h1 style="font-family:var(--ge-serif); font-size:50px; margin:0 0 8px; font-weight:500; line-height:1.02;">აირჩიე ვარჯიში</h1>
-              <p style="font-size:14px; color:color-mix(in srgb, var(--ink) 65%, transparent); margin:0;">კლასი, ამოცანის ტიპი და რაოდენობა (ან დრო). დაიწყე და დაითვალე.</p>
+              <p style="font-size:14px; color:color-mix(in srgb, var(--ink) 65%, transparent); margin:0;">სირთულე, ამოცანის ტიპი და რაოდენობა (ან დრო). დაიწყე და დაითვალე.</p>
             </div>
 
-            <div style="font-size:11px; letter-spacing:.16em; text-transform:uppercase; color:color-mix(in srgb, var(--ink) 55%, transparent); margin-bottom:10px;">კლასი</div>
+            <div style="font-size:11px; letter-spacing:.16em; text-transform:uppercase; color:color-mix(in srgb, var(--ink) 55%, transparent); margin-bottom:10px;">სირთულე</div>
             <div class="grades" style="margin-bottom:26px;">
               @for (g of gradeKeys; track g) {
                 <button type="button" class="grade" [class.on]="selectedGrade() === g" (click)="selectGrade(g)">
                   <div class="g-num">{{ g }}</div>
-                  <div class="g-sub">{{ grades[g].sub }}</div>
+                  <!-- <div class="g-sub">{{ grades[g].sub }}</div> -->
                 </button>
               }
             </div>
@@ -286,6 +292,8 @@ export class PracticeComponent implements OnDestroy {
   private readonly sessions = inject(PracticeSessionService);
   private readonly progress = inject(ProgressService);
   private readonly competition = inject(CompetitionService);
+  private readonly daily = inject(DailyChallengeService);
+  private readonly auth = inject(AuthService);
   private timer: ReturnType<typeof setInterval> | null = null;
 
   private questionStart = 0;
@@ -313,6 +321,7 @@ export class PracticeComponent implements OnDestroy {
   readonly fromLearn = signal(false);
   readonly mixMode = signal(false);
   readonly competitionId = signal<string | null>(null);
+  readonly dailyMode = signal(false);
 
   readonly currentQ = signal<Question>({ before: '', after: '', display: '', answer: 0, mode: 'num' });
   readonly index = signal(0);
@@ -336,7 +345,16 @@ export class PracticeComponent implements OnDestroy {
       add: 2, sub: 2, mul: 3, div: 3, cmp: 4, miss: 3, chain: 3
     };
 
-    if (trick && TRICKS[trick]) {
+    if (params.get('daily') != null) {
+      // Daily Challenge: a 60-second mixed drill for the user's own grade.
+      const grade = this.auth.user()?.grade ?? 4;
+      this.dailyMode.set(true);
+      this.mixMode.set(true);
+      this.selectedGrade.set(Math.min(12, Math.max(1, grade)));
+      this.mode.set('time');
+      this.timeLimit.set(60);
+      this.start();
+    } else if (trick && TRICKS[trick]) {
       this.trickKey.set(trick);
       this.fromLearn.set(true);
       this.mode.set('count');
@@ -373,12 +391,13 @@ export class PracticeComponent implements OnDestroy {
   );
   readonly q = computed(() => this.currentQ());
   readonly opName = computed(() => {
+    if (this.dailyMode()) return 'დღის ამოცანა';
     if (this.mixMode()) return 'შერეული';
     const t = this.trickKey();
     if (t && TRICKS[t]) return TRICKS[t].name;
     return OPS[this.selectedOp()].name;
   });
-  readonly levelLabel = computed(() => (this.trickKey() ? '' : `კლასი ${this.selectedGrade()} · `));
+  readonly levelLabel = computed(() => (this.trickKey() ? '' : `სირთულე ${this.selectedGrade()} · `));
   readonly exitTarget = computed(() =>
     this.competitionId() ? '/competition' : this.fromLearn() ? '/learn' : '/dashboard'
   );
@@ -422,6 +441,7 @@ export class PracticeComponent implements OnDestroy {
     }
   });
   readonly trick = computed(() => {
+    if (this.dailyMode()) return 'დღის ამოცანა — შერეული, 1 წუთი';
     if (this.mixMode()) return 'შეჯიბრი — ყველა ტიპი შერეულად';
     const t = this.trickKey();
     if (t && TRICKS[t]) return TRICKS[t].hint;
@@ -597,6 +617,37 @@ export class PracticeComponent implements OnDestroy {
     const title = base + (this.mode() === 'time' ? ` · ${this.timeLabel()}` : '');
     const accuracy = Math.round((correct / total) * 100);
     const avgSeconds = totalSeconds / total;
+
+    // Daily Challenge: submit to the daily leaderboard AND record a normal
+    // practice session (so it counts toward streaks/averages), then return to
+    // the dashboard with the ranking modal open.
+    if (this.dailyMode()) {
+      if (answeredCount > 0) {
+        this.daily.submit({
+          score: this.score(),
+          correctCount: correct,
+          totalQuestions: answeredCount,
+          accuracy,
+          durationSeconds: this.elapsed()
+        }).subscribe({ error: () => {} });
+
+        this.progress.saveSession({
+          title: 'დღის ამოცანა',
+          mode: 'time',
+          totalQuestions: answeredCount,
+          correctCount: correct,
+          wrongCount: answeredCount - correct,
+          score: this.score(),
+          longestStreak: this.maxStreak,
+          accuracy,
+          avgSeconds,
+          durationSeconds: this.elapsed(),
+          startedAtUtc: this.startedAt.toISOString()
+        }).subscribe({ error: () => {} });
+      }
+      this.router.navigate(['/dashboard'], { queryParams: { daily: 'done' } });
+      return;
+    }
 
     // Competition mode: submit the score and go to the competition leaderboard.
     const compId = this.competitionId();

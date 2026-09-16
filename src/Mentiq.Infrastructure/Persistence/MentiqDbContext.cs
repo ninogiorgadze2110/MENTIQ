@@ -25,6 +25,8 @@ public sealed class MentiqDbContext : DbContext, IApplicationDbContext
 
     public DbSet<SubscriptionHistory> SubscriptionHistory => Set<SubscriptionHistory>();
 
+    public DbSet<DailyChallengeEntry> DailyChallengeEntries => Set<DailyChallengeEntry>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);

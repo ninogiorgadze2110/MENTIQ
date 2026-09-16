@@ -9,9 +9,9 @@ import { RouterLink } from '@angular/router';
     <div style="max-width:1280px; margin:0 auto; background:#fff; border-left:1px solid var(--hair); border-right:1px solid var(--hair); min-height:100vh;">
       <!-- Nav -->
       <div style="display:flex; align-items:center; padding: 22px 56px; border-bottom:1px solid var(--hair); gap:32px; flex-wrap:wrap;">
-        <div style="font-family:var(--ge-serif); font-size:22px;">MENTIQ<span style="color:var(--gold); font-size:9px; letter-spacing:.24em; margin-left:8px; font-family:var(--ge); vertical-align:5px;">EST · 2026</span></div>
+        <div style="font-family:var(--ge-serif); font-size:22px;">MENTIQ<span style="color:var(--gold); font-size:9px; letter-spacing:.24em; margin-left:8px; font-family:var(--ge); vertical-align:5px;"> · 2026</span></div>
         <nav style="display:flex; gap:28px; margin-left:40px; font-size:13.5px;">
-          <span>პროდუქტი</span><span>ხრიკები</span><a routerLink="/pricing" style="color:inherit;">ფასი</a><span>სკოლებისთვის</span>
+          <a routerLink="/pricing" style="color:inherit;">ფასი</a>
         </nav>
         <div style="margin-left:auto; display:flex; gap:14px; align-items:center; font-size:13px;">
           <a routerLink="/login" style="color:color-mix(in srgb, var(--ink) 55%, transparent);">შესვლა</a>

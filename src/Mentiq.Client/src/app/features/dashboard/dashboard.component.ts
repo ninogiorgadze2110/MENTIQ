@@ -4,11 +4,12 @@ import { RouterLink } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
 import { ProgressResponse, ProgressService } from '../../core/services/progress.service';
 import { SubscriptionBannerComponent } from '../../shared/subscription-banner.component';
+import { DailyChallengeCardComponent } from './daily-challenge-card.component';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [RouterLink, SubscriptionBannerComponent],
+  imports: [RouterLink, SubscriptionBannerComponent, DailyChallengeCardComponent],
   template: `
     <div class="top">
       <div>
@@ -20,26 +21,30 @@ import { SubscriptionBannerComponent } from '../../shared/subscription-banner.co
 
     <app-subscription-banner />
 
-    <!-- Daily card -->
-    <div style="border:1px solid var(--hair); background:#fff; padding:32px; display:flex; gap:32px; align-items:center; flex-wrap:wrap;">
-      <div style="flex:1; min-width:220px;">
-        <!-- <div style="font-size:10px; letter-spacing:.22em; text-transform:uppercase; color:var(--gold);">— დღის ვარჯიში</div> -->
-        <!-- <h3 style="font-family:var(--ge-serif); font-size:32px; margin:10px 0 6px; font-weight:500; line-height:1.05;">შერეული, დროზე</h3> -->
-        <p style="font-size:13.5px; color:color-mix(in srgb, var(--ink) 65%, transparent); margin:0 0 20px; line-height:1.55;">დაასრულე დღევანდელი ვარჯიში და დაიცავი სერია.</p>
-        <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
-          <a routerLink="/practice" class="btn btn-primary" style="padding:12px 22px;">დაიწყე ვარჯიში →</a>
-          <!-- <span style="font-size:12.5px; color:color-mix(in srgb, var(--ink) 55%, transparent);">~ 7 წუთი</span> -->
-          <a routerLink="/achievements" style="font-size:12.5px; color:var(--gold); margin-left:8px;">★ ნახე მიღწევები →</a>
-        </div>
+    <div style="display:grid; grid-template-columns: 1.5fr 1fr; gap:20px; align-items:stretch;">
+      <!-- Daily challenge (self-contained) -->
+      <div style="border:1px solid var(--hair); background:#fff; padding:32px;">
+        <app-daily-challenge-card />
       </div>
-      <div style="width:170px; height:170px; position:relative; display:grid; place-items:center;">
-        <svg viewBox="0 0 100 100" style="width:100%; height:100%; transform:rotate(-90deg);">
-          <circle cx="50" cy="50" r="44" fill="none" stroke="var(--hair)" stroke-width="2"/>
-          <circle cx="50" cy="50" r="44" fill="none" stroke="var(--gold)" stroke-width="2" [attr.stroke-dasharray]="276" [attr.stroke-dashoffset]="ringOffset()" stroke-linecap="round"/>
-        </svg>
-        <div style="position:absolute; text-align:center;">
-          <div style="font-family:var(--ge-serif); font-size:46px; color:var(--gold); line-height:1;">{{ dayStreak() }}</div>
-          <div style="font-size:10px; letter-spacing:.18em; text-transform:uppercase; color:color-mix(in srgb, var(--ink) 60%, transparent); margin-top:6px;">დღიანი სერია</div>
+
+      <!-- Streak (separate card) -->
+      <div style="border:1px solid var(--hair); background:#fff; padding:28px 30px; display:flex; flex-direction:column;">
+        <div style="font-size:10px; letter-spacing:.22em; text-transform:uppercase; color:color-mix(in srgb, var(--ink) 55%, transparent);">— შენი სერია</div>
+        <div style="flex:1; display:grid; place-items:center; padding:12px 0;">
+          <div style="width:150px; height:150px; position:relative; display:grid; place-items:center;">
+            <svg viewBox="0 0 100 100" style="width:100%; height:100%; transform:rotate(-90deg);">
+              <circle cx="50" cy="50" r="44" fill="none" stroke="var(--hair)" stroke-width="2"/>
+              <circle cx="50" cy="50" r="44" fill="none" stroke="var(--gold)" stroke-width="2" [attr.stroke-dasharray]="276" [attr.stroke-dashoffset]="ringOffset()" stroke-linecap="round"/>
+            </svg>
+            <div style="position:absolute; text-align:center;">
+              <div style="font-family:var(--ge-serif); font-size:44px; color:var(--gold); line-height:1;">{{ dayStreak() }}</div>
+              <div style="font-size:10px; letter-spacing:.18em; text-transform:uppercase; color:color-mix(in srgb, var(--ink) 60%, transparent); margin-top:6px;">დღიანი სერია</div>
+            </div>
+          </div>
+        </div>
+        <div style="padding-top:14px; border-top:1px solid var(--hair); display:flex; justify-content:space-between; align-items:center; font-size:12.5px;">
+          <span style="color:color-mix(in srgb, var(--ink) 60%, transparent);">საუკეთესო: <strong style="color:var(--ink); font-feature-settings:'tnum';">×{{ bestStreak() }}</strong></span>
+          <a routerLink="/achievements" style="color:var(--gold);">★ მიღწევები →</a>
         </div>
       </div>
     </div>
@@ -70,31 +75,6 @@ import { SubscriptionBannerComponent } from '../../shared/subscription-banner.co
             <span style="flex:1; height:24px;" [style.background]="d ? 'var(--gold)' : 'var(--hair)'"></span>
           }
         </div>
-      </div>
-    </div>
-
-    <!-- Continue learning -->
-    <div style="margin-top:32px;">
-      <div style="display:flex; align-items:baseline; padding-bottom:12px; border-bottom:1px solid var(--hair);">
-        <h4 style="font-family:var(--ge-serif); font-size:18px; margin:0; font-weight:500;">გააგრძელე სწავლა</h4>
-        <a routerLink="/learn" style="margin-left:auto; font-size:12px; color:var(--gold);">ყველა ხრიკი →</a>
-      </div>
-      <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:0;">
-        <a routerLink="/practice" [queryParams]="{ trick: 'mul11' }" style="padding:18px 22px 18px 0; border-right:1px solid var(--hair); text-decoration:none; color:inherit;">
-          <div style="font-family:var(--ge-serif); font-size:12px; color:var(--gold); font-style:italic;">ხრიკი № 04</div>
-          <div style="font-family:var(--ge-serif); font-size:18px; margin:6px 0 4px;">გამრავლება 11-ზე</div>
-          <div style="font-size:12px; color:color-mix(in srgb, var(--ink) 60%, transparent);">10 კითხვა · 2 წუთი</div>
-        </a>
-        <a routerLink="/learn" style="padding:18px 22px; border-right:1px solid var(--hair); text-decoration:none; color:inherit;">
-          <div style="font-family:var(--ge-serif); font-size:12px; color:var(--gold); font-style:italic;">ხრიკი № 07</div>
-          <div style="font-family:var(--ge-serif); font-size:18px; margin:6px 0 4px;">15%-ის გამოთვლა თავში</div>
-          <div style="font-size:12px; color:color-mix(in srgb, var(--ink) 60%, transparent);">ახალი · 3 წუთი</div>
-        </a>
-        <a routerLink="/learn" style="padding:18px 0 18px 22px; text-decoration:none; color:inherit;">
-          <div style="font-family:var(--ge-serif); font-size:12px; color:var(--gold); font-style:italic;">ხრიკი № 11</div>
-          <div style="font-family:var(--ge-serif); font-size:18px; margin:6px 0 4px;">5-ით დამთავრებული კვადრატი</div>
-          <div style="font-size:12px; color:color-mix(in srgb, var(--ink) 60%, transparent);">კვადრატები</div>
-        </a>
       </div>
     </div>
   `

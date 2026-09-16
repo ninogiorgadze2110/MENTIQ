@@ -23,6 +23,8 @@ public interface IApplicationDbContext
 
     DbSet<SubscriptionHistory> SubscriptionHistory { get; }
 
+    DbSet<DailyChallengeEntry> DailyChallengeEntries { get; }
+
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 
     /// <summary>Returns whether the underlying database is reachable.</summary>
