@@ -335,20 +335,22 @@ public sealed class KidsExerciseService : IKidsExerciseService
 
     private ExerciseDto GenerateMemory(int level, string? world, string skill, string type)
     {
+        // Memory cards: show an ordered set, hide it, then the child rebuilds the
+        // same order. The correct answer is the ordered sequence; options are the
+        // same cards shuffled for recall.
         var pool = ObjectPool.OrderBy(_ => Random.Shared.Next()).ToList();
-        var k = level <= 1 ? 2 : level <= 3 ? 3 : 4;
+        var k = level <= 2 ? 3 : 4;
 
-        var shown = pool.Take(k).ToList();
-        var target = shown[Random.Shared.Next(shown.Count)];
-        var distractors = pool.Skip(k).Take(2).ToList();
-
-        var options = new[] { target }.Concat(distractors)
+        var sequence = pool.Take(k).ToList();
+        var options = sequence
             .OrderBy(_ => Random.Shared.Next())
             .Select(e => new ExerciseOption { Value = e, Label = e })
             .ToList();
 
-        return Build(type, skill, world, level, "რომელი დაინახე?", "memory.which",
-            new ExerciseVisual { Kind = "memory", Items = shown }, options, target);
+        var answer = string.Join(",", sequence);
+
+        return Build(type, skill, world, level, "დაალაგე იგივე თანმიმდევრობით", "memory.order",
+            new ExerciseVisual { Kind = "memory", Items = sequence }, options, answer);
     }
 
     // -----------------------------------------------------------------------
@@ -357,9 +359,17 @@ public sealed class KidsExerciseService : IKidsExerciseService
 
     private ExerciseDto GenerateSpeed(int level, string? world, string skill, string type)
     {
+        // Scatter the star among decoy objects — the child must find and tap the
+        // star specifically (more decoys at higher levels).
+        var distractorCount = level <= 1 ? 3 : level <= 3 ? 4 : 6;
+        var distractors = ObjectPool.Where(e => e != "⭐")
+            .OrderBy(_ => Random.Shared.Next())
+            .Take(distractorCount)
+            .ToList();
+
         var options = new List<ExerciseOption> { new() { Value = "go", Label = "⭐" } };
-        return Build(type, skill, world, level, "დააჭირე ვარსკვლავს!", "speed.tap",
-            new ExerciseVisual { Kind = "speed", Emoji = "⭐" }, options, "go");
+        return Build(type, skill, world, level, "იპოვე და დააჭირე ვარსკვლავს!", "speed.tap",
+            new ExerciseVisual { Kind = "speed", Emoji = "⭐", Items = distractors }, options, "go");
     }
 
     // -----------------------------------------------------------------------

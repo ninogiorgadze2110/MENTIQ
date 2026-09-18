@@ -63,6 +63,11 @@ export const routes: Routes = [
         path: 'world/:id/play',
         loadComponent: () =>
           import('./features/kids/kids-session.component').then((m) => m.KidsSessionComponent)
+      },
+      {
+        path: 'achievements',
+        loadComponent: () =>
+          import('./features/kids/kids-achievements.component').then((m) => m.KidsAchievementsComponent)
       }
     ]
   },

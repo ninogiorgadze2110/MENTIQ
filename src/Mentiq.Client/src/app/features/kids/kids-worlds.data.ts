@@ -82,12 +82,12 @@ export const KIDS_WORLDS: KidsWorld[] = [
   {
     id: 'sea',
     order: 6,
-    emoji: '🐠',
-    name: 'ზღვის სამყარო',
-    tagline: 'იპოვე',
+    emoji: '🔎',
+    name: 'ყურადღების ველი',
+    tagline: 'იპოვე და დათვალე',
     skill: 'attention',
     color: '#0ea5e9',
-    audioIntro: 'იპოვე დამალული!'
+    audioIntro: 'იპოვე და დათვალე!'
   },
   {
     id: 'memory',

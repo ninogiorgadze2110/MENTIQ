@@ -44,9 +44,6 @@ import { Exercise, SubmitExerciseResult } from './exercise/exercise.models';
             <div class="ex-feedback" [class.good]="f.isCorrect" [class.bad]="!f.isCorrect">
               <div style="font-size:56px;">{{ f.isCorrect ? '⭐' : '🙈' }}</div>
               <div class="ex-fb-text">{{ f.feedback }}</div>
-              @if (!f.isCorrect) {
-                <button type="button" class="kids-btn" style="margin-top:12px;" (click)="retry()">კიდევ სცადე 🔁</button>
-              }
             </div>
           }
         } @else {
@@ -112,32 +109,26 @@ export class KidsSessionComponent implements OnInit {
         next: (res) => {
           this.feedback.set(res);
           this.audio.cue(res.feedbackAudioKey);
-          if (res.isCorrect) {
-            this.earned.update((s) => s + res.starsAwarded);
-            setTimeout(() => this.afterCorrect(), 1300);
-          }
-          // On a wrong answer we wait for the child to tap "try again" (retry()).
+          if (res.isCorrect) this.earned.update((s) => s + res.starsAwarded);
+          setTimeout(() => this.advance(res.isCorrect), 1300);
         },
         error: () => this.locked.set(false)
       });
   }
 
-  private afterCorrect(): void {
+  /**
+   * The mission is a fixed number of rounds: every answered exercise advances it,
+   * so it always ends (right or wrong). Stars are earned only for correct ones.
+   */
+  private advance(_wasCorrect: boolean): void {
     const next = this.completed() + 1;
     this.completed.set(next);
     if (next >= this.target) {
       this.done.set(true);
       this.audio.cue('finished');
-    } else {
-      this.loadNext();
+      return;
     }
-  }
-
-  retry(): void {
-    this.attemptNumber++;
-    this.feedback.set(null);
-    this.locked.set(false);
-    this.shownAt = Date.now();
+    this.loadNext();
   }
 
   restart(): void {

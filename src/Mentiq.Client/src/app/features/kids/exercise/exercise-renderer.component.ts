@@ -4,6 +4,10 @@ import { CountingExerciseComponent } from './counting-exercise.component';
 import { GroupChoiceExerciseComponent } from './group-choice-exercise.component';
 import { PatternExerciseComponent } from './pattern-exercise.component';
 import { AdditionExerciseComponent } from './addition-exercise.component';
+import { ClassificationExerciseComponent } from './classification-exercise.component';
+import { AttentionExerciseComponent } from './attention-exercise.component';
+import { MemoryExerciseComponent } from './memory-exercise.component';
+import { SpeedExerciseComponent } from './speed-exercise.component';
 import { Exercise } from './exercise.models';
 
 /**
@@ -18,7 +22,11 @@ import { Exercise } from './exercise.models';
     CountingExerciseComponent,
     GroupChoiceExerciseComponent,
     PatternExerciseComponent,
-    AdditionExerciseComponent
+    AdditionExerciseComponent,
+    ClassificationExerciseComponent,
+    AttentionExerciseComponent,
+    MemoryExerciseComponent,
+    SpeedExerciseComponent
   ],
   template: `
     @switch (exercise.type) {
@@ -33,6 +41,18 @@ import { Exercise } from './exercise.models';
       }
       @case ('addition') {
         <app-addition-exercise [exercise]="exercise" [disabled]="disabled" (answered)="answered.emit($event)" />
+      }
+      @case ('classification') {
+        <app-classification-exercise [exercise]="exercise" [disabled]="disabled" (answered)="answered.emit($event)" />
+      }
+      @case ('attention') {
+        <app-attention-exercise [exercise]="exercise" [disabled]="disabled" (answered)="answered.emit($event)" />
+      }
+      @case ('memory') {
+        <app-memory-exercise [exercise]="exercise" [disabled]="disabled" (answered)="answered.emit($event)" />
+      }
+      @case ('speed') {
+        <app-speed-exercise [exercise]="exercise" [disabled]="disabled" (answered)="answered.emit($event)" />
       }
       @default {
         <div class="kids-sub">ეს სავარჯიშო მალე დაემატება.</div>
