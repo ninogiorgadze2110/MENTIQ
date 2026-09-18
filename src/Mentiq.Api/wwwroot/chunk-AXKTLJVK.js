@@ -1,0 +1,1 @@
+import{M as r,za as t}from"./chunk-UWUEOP3X.js";var s=class e{session=t(null);set(n){this.session.set(n)}static \u0275fac=function(o){return new(o||e)};static \u0275prov=r({token:e,factory:e.\u0275fac,providedIn:"root"})};export{s as a};
