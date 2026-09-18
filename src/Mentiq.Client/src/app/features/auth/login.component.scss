@@ -34,3 +34,32 @@
   text-align: center;
   font-size: 13px;
 }
+
+/* Education-level picker (registration) */
+.level-picker {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+.level-opt {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  padding: 12px 6px;
+  border: 1px solid var(--hair);
+  border-radius: var(--radius-md);
+  background: #fff;
+  cursor: pointer;
+  font-family: var(--ge);
+  font-size: 12.5px;
+  color: var(--ink);
+  transition: border-color 0.12s ease, background 0.12s ease;
+}
+.level-opt:hover { border-color: var(--gold); }
+.level-opt.on {
+  border-color: var(--gold);
+  background: color-mix(in srgb, var(--gold) 8%, transparent);
+}
+.level-opt .level-emoji { font-size: 26px; line-height: 1; }
+.level-opt small { color: color-mix(in srgb, var(--ink) 55%, transparent); font-size: 10.5px; }

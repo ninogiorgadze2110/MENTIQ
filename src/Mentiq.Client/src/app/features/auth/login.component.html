@@ -20,13 +20,41 @@
           }
         </div>
         <div class="field">
-          <label for="grade">კლასი</label>
-          <select id="grade" class="input" formControlName="grade">
-            @for (g of grades; track g) {
-              <option [value]="g">{{ g }} კლასი</option>
-            }
-          </select>
+          <label>ვისთვის ქმნით ანგარიშს?</label>
+          <div class="level-picker">
+            <button type="button" class="level-opt" [class.on]="level() === 'preschool'" (click)="setLevel('preschool')">
+              <span class="level-emoji">👶</span><span>0 კლასი</span><small>4–6 წელი</small>
+            </button>
+            <button type="button" class="level-opt" [class.on]="level() === 'school'" (click)="setLevel('school')">
+              <span class="level-emoji">📚</span><span>1–12 კლასი</span><small>სკოლა</small>
+            </button>
+            <button type="button" class="level-opt" [class.on]="level() === 'adult'" (click)="setLevel('adult')">
+              <span class="level-emoji">🧑</span><span>ზრდასრული</span><small>დიდები</small>
+            </button>
+          </div>
         </div>
+
+        @if (level() === 'school') {
+          <div class="field">
+            <label for="grade">კლასი</label>
+            <select id="grade" class="input" formControlName="grade">
+              @for (g of grades; track g) {
+                <option [value]="g">{{ g }} კლასი</option>
+              }
+            </select>
+          </div>
+        }
+
+        @if (level() === 'preschool') {
+          <div class="field">
+            <label for="age">რამდენი წლისაა ბავშვი?</label>
+            <select id="age" class="input" formControlName="age">
+              @for (a of ages; track a) {
+                <option [value]="a">{{ a }} წლის</option>
+              }
+            </select>
+          </div>
+        }
       }
 
       <div class="field">

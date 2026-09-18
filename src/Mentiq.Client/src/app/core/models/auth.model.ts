@@ -1,8 +1,12 @@
+export type EducationLevel = 'preschool' | 'school' | 'adult';
+
 export interface RegisterRequest {
   email: string;
   displayName: string;
   password: string;
+  educationLevel: EducationLevel;
   grade: number;
+  age?: number | null;
 }
 
 export interface LoginRequest {
@@ -15,6 +19,8 @@ export interface UserDto {
   email: string;
   displayName: string;
   grade: number;
+  educationLevel: EducationLevel;
+  age?: number | null;
   role: string;
 }
 

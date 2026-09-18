@@ -4,6 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 
 import { AuthService } from '../../core/services/auth.service';
 import { NotificationService } from '../../core/services/notification.service';
+import { EducationLevel } from '../../core/models/auth.model';
 
 @Component({
   selector: 'app-login',
@@ -22,14 +23,23 @@ export class LoginComponent {
   readonly mode = signal<'login' | 'register'>('login');
   readonly submitting = signal(false);
 
+  /** Chosen registration audience. Drives which experience the account gets. */
+  readonly level = signal<EducationLevel>('school');
+
   readonly grades = Array.from({ length: 12 }, (_, i) => i + 1);
+  readonly ages = [4, 5, 6];
 
   readonly form = this.fb.nonNullable.group({
     displayName: [''],
     email: ['', [Validators.required, Validators.email]],
     password: ['', [Validators.required, Validators.minLength(8)]],
-    grade: [1, [Validators.required, Validators.min(1), Validators.max(12)]]
+    grade: [1, [Validators.required, Validators.min(1), Validators.max(12)]],
+    age: [5]
   });
+
+  setLevel(level: EducationLevel): void {
+    this.level.set(level);
+  }
 
   constructor() {
     if (this.route.snapshot.queryParamMap.get('register') != null) {
@@ -59,17 +69,29 @@ export class LoginComponent {
     }
 
     this.submitting.set(true);
-    const { email, password, displayName, grade } = this.form.getRawValue();
+    const { email, password, displayName, grade, age } = this.form.getRawValue();
+
+    const level = this.level();
+    const gradeForLevel = level === 'school' ? Number(grade) : 0;
+    const ageForLevel = level === 'preschool' ? Number(age) : null;
 
     const request$ =
       this.mode() === 'login'
         ? this.auth.login({ email, password })
-        : this.auth.register({ email, displayName, password, grade: Number(grade) });
+        : this.auth.register({
+            email,
+            displayName,
+            password,
+            educationLevel: level,
+            grade: gradeForLevel,
+            age: ageForLevel
+          });
 
     request$.subscribe({
       next: () => {
         this.notifications.success('კეთილი იყოს შენი მობრძანება MENTIQ-ში!');
-        this.router.navigate(['/dashboard']);
+        // Preschool accounts go straight to the Kids experience.
+        this.router.navigateByUrl(this.auth.homeRoute());
       },
       error: () => this.submitting.set(false)
     });

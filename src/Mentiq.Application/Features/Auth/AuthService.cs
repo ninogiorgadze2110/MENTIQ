@@ -42,12 +42,16 @@ public sealed class AuthService : IAuthService
         var now = DateTime.UtcNow;
         var trialDays = _subscriptionSettings.TrialDays > 0 ? _subscriptionSettings.TrialDays : 7;
 
+        var (educationLevel, grade, age) = ResolveEducation(request);
+
         var user = new User
         {
             Email = email,
             DisplayName = request.DisplayName.Trim(),
             PasswordHash = _passwordHasher.Hash(request.Password),
-            Grade = Math.Clamp(request.Grade, 1, 12),
+            EducationLevel = educationLevel,
+            Grade = grade,
+            Age = age,
             Role = UserRoles.Student,
             TrialStartUtc = now,
             TrialEndUtc = now.AddDays(trialDays)
@@ -105,8 +109,29 @@ public sealed class AuthService : IAuthService
                 Email = user.Email,
                 DisplayName = user.DisplayName,
                 Grade = user.Grade,
+                EducationLevel = user.EducationLevel,
+                Age = user.Age,
                 Role = user.Role
             }
+        };
+    }
+
+    /// <summary>
+    /// Normalizes the requested education level, grade and age into a consistent
+    /// triple. The level is the source of truth; when it is missing it is inferred
+    /// from the grade so older clients keep working.
+    /// </summary>
+    private static (string EducationLevel, int Grade, int? Age) ResolveEducation(RegisterRequest request)
+    {
+        var level = EducationLevels.IsValid(request.EducationLevel)
+            ? request.EducationLevel!
+            : request.Grade <= 0 ? EducationLevels.Preschool : EducationLevels.School;
+
+        return level switch
+        {
+            EducationLevels.Preschool => (level, 0, request.Age is >= 3 and <= 7 ? request.Age : 5),
+            EducationLevels.Adult => (level, 0, request.Age),
+            _ => (EducationLevels.School, Math.Clamp(request.Grade, 1, 12), null)
         };
     }
 }

@@ -21,6 +21,15 @@ export class AuthService {
   readonly isAuthenticated = computed(() => this._user() !== null);
   readonly isAdmin = computed(() => this._user()?.role === 'Administrator');
 
+  /** MENTIQ experience segment of the signed-in user. */
+  readonly educationLevel = computed(() => this._user()?.educationLevel ?? 'school');
+  readonly isKid = computed(() => this.educationLevel() === 'preschool');
+
+  /** Where a user should land after authenticating, based on their segment. */
+  homeRoute(): string {
+    return this.isKid() ? '/kids' : '/dashboard';
+  }
+
   register(request: RegisterRequest): Observable<AuthResponse> {
     return this.http
       .post<AuthResponse>(`${this.baseUrl}/register`, request)

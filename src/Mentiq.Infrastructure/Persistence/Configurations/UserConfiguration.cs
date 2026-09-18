@@ -30,5 +30,10 @@ public sealed class UserConfiguration : IEntityTypeConfiguration<User>
             .IsRequired()
             .HasMaxLength(32)
             .HasDefaultValue(Domain.Entities.UserRoles.Student);
+
+        builder.Property(u => u.EducationLevel)
+            .IsRequired()
+            .HasMaxLength(32)
+            .HasDefaultValue(Domain.Entities.EducationLevels.School);
     }
 }

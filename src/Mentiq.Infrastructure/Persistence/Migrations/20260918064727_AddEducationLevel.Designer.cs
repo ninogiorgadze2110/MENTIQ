@@ -4,6 +4,7 @@ using Mentiq.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Mentiq.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(MentiqDbContext))]
-    partial class MentiqDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260918064727_AddEducationLevel")]
+    partial class AddEducationLevel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -212,66 +215,6 @@ namespace Mentiq.Infrastructure.Persistence.Migrations
                     b.ToTable("DailyChallengeEntries", (string)null);
                 });
 
-            modelBuilder.Entity("Mentiq.Domain.Entities.ExerciseAttempt", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("AttemptNumber")
-                        .HasColumnType("int");
-
-                    b.Property<string>("CorrectAnswer")
-                        .IsRequired()
-                        .HasMaxLength(64)
-                        .HasColumnType("nvarchar(64)");
-
-                    b.Property<DateTime>("CreatedAtUtc")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("Difficulty")
-                        .HasColumnType("int");
-
-                    b.Property<string>("ExerciseType")
-                        .IsRequired()
-                        .HasMaxLength(32)
-                        .HasColumnType("nvarchar(32)");
-
-                    b.Property<string>("GivenAnswer")
-                        .IsRequired()
-                        .HasMaxLength(64)
-                        .HasColumnType("nvarchar(64)");
-
-                    b.Property<bool>("IsCorrect")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("ResponseTimeMs")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Skill")
-                        .IsRequired()
-                        .HasMaxLength(32)
-                        .HasColumnType("nvarchar(32)");
-
-                    b.Property<DateTime?>("UpdatedAtUtc")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("World")
-                        .HasMaxLength(32)
-                        .HasColumnType("nvarchar(32)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId", "CreatedAtUtc");
-
-                    b.HasIndex("UserId", "Skill");
-
-                    b.ToTable("ExerciseAttempts", (string)null);
-                });
-
             modelBuilder.Entity("Mentiq.Domain.Entities.PracticeSession", b =>
                 {
                     b.Property<Guid>("Id")
@@ -332,52 +275,6 @@ namespace Mentiq.Infrastructure.Persistence.Migrations
                     b.HasIndex("UserId", "CompletedAtUtc");
 
                     b.ToTable("PracticeSessions", (string)null);
-                });
-
-            modelBuilder.Entity("Mentiq.Domain.Entities.SkillProgress", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<double>("AverageResponseTimeMs")
-                        .HasColumnType("float");
-
-                    b.Property<int>("CorrectAttempts")
-                        .HasColumnType("int");
-
-                    b.Property<int>("CorrectStreak")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("CreatedAtUtc")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("Level")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Score")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Skill")
-                        .IsRequired()
-                        .HasMaxLength(32)
-                        .HasColumnType("nvarchar(32)");
-
-                    b.Property<int>("TotalAttempts")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("UpdatedAtUtc")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId", "Skill")
-                        .IsUnique();
-
-                    b.ToTable("SkillProgress", (string)null);
                 });
 
             modelBuilder.Entity("Mentiq.Domain.Entities.Subscription", b =>

@@ -42,6 +42,31 @@ export const routes: Routes = [
       import('./features/results/results.component').then((m) => m.ResultsComponent)
   },
 
+  // ---- MENTIQ Kids (0 კლასი) — separate full-screen experience ----
+  {
+    path: 'kids',
+    canActivate: [authGuard, subscriptionGuard],
+    loadComponent: () =>
+      import('./features/kids/kids-layout.component').then((m) => m.KidsLayoutComponent),
+    children: [
+      {
+        path: '',
+        loadComponent: () =>
+          import('./features/kids/kids-home.component').then((m) => m.KidsHomeComponent)
+      },
+      {
+        path: 'world/:id',
+        loadComponent: () =>
+          import('./features/kids/kids-world.component').then((m) => m.KidsWorldComponent)
+      },
+      {
+        path: 'world/:id/play',
+        loadComponent: () =>
+          import('./features/kids/kids-session.component').then((m) => m.KidsSessionComponent)
+      }
+    ]
+  },
+
   // ---- Authenticated app shell (sidebar) ----
   {
     path: '',

@@ -27,6 +27,10 @@ public interface IApplicationDbContext
 
     DbSet<ContactMessage> ContactMessages { get; }
 
+    DbSet<ExerciseAttempt> ExerciseAttempts { get; }
+
+    DbSet<SkillProgress> SkillProgress { get; }
+
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 
     /// <summary>Returns whether the underlying database is reachable.</summary>

@@ -29,6 +29,10 @@ public sealed class MentiqDbContext : DbContext, IApplicationDbContext
 
     public DbSet<ContactMessage> ContactMessages => Set<ContactMessage>();
 
+    public DbSet<ExerciseAttempt> ExerciseAttempts => Set<ExerciseAttempt>();
+
+    public DbSet<SkillProgress> SkillProgress => Set<SkillProgress>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);

@@ -13,9 +13,17 @@ public sealed record RegisterRequest
     [Required, MinLength(8), MaxLength(128)]
     public string Password { get; init; } = string.Empty;
 
-    /// <summary>School grade / class, 1–12.</summary>
-    [Range(1, 12)]
+    /// <summary>Experience segment: "preschool", "school" or "adult".</summary>
+    [MaxLength(32)]
+    public string? EducationLevel { get; init; }
+
+    /// <summary>School grade / class: 0 for preschool/adult, 1–12 for school.</summary>
+    [Range(0, 12)]
     public int Grade { get; init; } = 1;
+
+    /// <summary>Optional age in years (preschool: 4–6).</summary>
+    [Range(3, 120)]
+    public int? Age { get; init; }
 }
 
 public sealed record LoginRequest
@@ -33,6 +41,11 @@ public sealed record UserDto
     public string Email { get; init; } = string.Empty;
     public string DisplayName { get; init; } = string.Empty;
     public int Grade { get; init; }
+
+    /// <summary>Experience segment: "preschool", "school" or "adult".</summary>
+    public string EducationLevel { get; init; } = "school";
+
+    public int? Age { get; init; }
 
     /// <summary>Authorization role: "Student" or "Administrator".</summary>
     public string Role { get; init; } = "Student";
