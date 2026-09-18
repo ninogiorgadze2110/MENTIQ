@@ -34,6 +34,7 @@ export interface Plan {
   period: string;
   durationDays: number;
   description: string | null;
+  audiences: string[];
 }
 
 export interface PlansResponse {

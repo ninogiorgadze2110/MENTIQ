@@ -44,4 +44,11 @@ public sealed class SubscriptionPlanOption
     public int DurationDays { get; set; } = 30;
 
     public string? Description { get; set; }
+
+    /// <summary>
+    /// Which audiences this plan is offered to: "kids", "school", "adult".
+    /// Empty (or containing "all") means everyone. Lets kids and adults have
+    /// their own plans while sharing the same subscription machinery.
+    /// </summary>
+    public List<string> Audiences { get; set; } = new();
 }

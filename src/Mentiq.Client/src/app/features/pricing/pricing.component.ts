@@ -114,7 +114,23 @@ export class PricingComponent {
 
   private readonly data = signal<PlansResponse | null>(null);
 
-  readonly plans = computed(() => this.data()?.plans ?? []);
+  /** The signed-in user's audience segment ("kids"/"school"/"adult"), or null when anonymous. */
+  private readonly audience = computed(() => {
+    if (!this.auth.isAuthenticated()) return null;
+    return this.auth.educationLevel() === 'preschool' ? 'kids' : this.auth.educationLevel();
+  });
+
+  /** Plans offered to this user's segment. Anonymous visitors see every plan. */
+  readonly plans = computed(() => {
+    const seg = this.audience();
+    const all = this.data()?.plans ?? [];
+    if (seg == null) return all;
+    return all.filter((p) => {
+      const aud = p.audiences ?? [];
+      return aud.length === 0 || aud.includes('all') || aud.includes(seg);
+    });
+  });
+
   readonly instructions = computed(() => this.data()?.paymentInstructions ?? '');
   readonly contactEmail = computed(() => this.data()?.contactEmail ?? '');
   readonly contactPhone = computed(() => this.data()?.contactPhone ?? '');

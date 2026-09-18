@@ -55,6 +55,9 @@ public sealed record PlanDto
     public string Period { get; init; } = "month";
     public int DurationDays { get; init; }
     public string? Description { get; init; }
+
+    /// <summary>Audiences this plan targets ("kids"/"school"/"adult"); empty = everyone.</summary>
+    public IReadOnlyList<string> Audiences { get; init; } = Array.Empty<string>();
 }
 
 /// <summary>Plans + manual-payment instructions for the pricing page.</summary>

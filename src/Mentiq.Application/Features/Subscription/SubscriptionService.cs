@@ -83,7 +83,8 @@ public sealed class SubscriptionService : ISubscriptionService
                 Currency = p.Currency,
                 Period = p.Period,
                 DurationDays = p.DurationDays,
-                Description = p.Description
+                Description = p.Description,
+                Audiences = p.Audiences
             }).ToList(),
             PaymentInstructions = _settings.PaymentInstructions,
             ContactEmail = _settings.ContactEmail,
