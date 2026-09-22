@@ -64,6 +64,18 @@ import { isMastered, masteryPct } from './kids-mastery';
           }
         </div>
       }
+
+      <!-- Next volume: the long-horizon Star Sky -->
+      <div class="jt-stop tome2">
+        <div class="jt-rail"><span class="jt-node t2">🌌</span></div>
+        <button type="button" class="jt-card t2card" (click)="openSky()">
+          <div class="kids-kicker" style="margin:0 0 2px;">— ტომი II</div>
+          <div class="jt-name" style="color:#fff;">ვარსკვლავებით სავსე ცა</div>
+          <div class="jt-sub" style="color:rgba(255,255,255,.72);">
+            {{ allMastered() ? '🌈 ტომი I დასრულდა — ცა გელოდება!' : 'გრძელვადიანი მიზანი · ანთე ვარსკვლავები →' }}
+          </div>
+        </button>
+      </div>
     </div>
   `
 })
@@ -75,6 +87,7 @@ export class KidsJourneyComponent implements OnInit {
   readonly progress = signal<SkillProgress[]>([]);
 
   readonly masteredCount = computed(() => this.worlds.filter((_, i) => this.mastered(i)).length);
+  readonly allMastered = computed(() => this.masteredCount() >= this.worlds.length);
   /** The first reachable, not-yet-mastered tour. */
   readonly currentIndex = computed(() => {
     for (let i = 0; i < this.worlds.length; i++) {
@@ -117,6 +130,10 @@ export class KidsJourneyComponent implements OnInit {
 
   open(w: KidsWorld): void {
     this.router.navigate(['/kids/world', w.id]);
+  }
+
+  openSky(): void {
+    this.router.navigate(['/kids/sky']);
   }
 
   back(): void {

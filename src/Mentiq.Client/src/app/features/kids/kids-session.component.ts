@@ -115,6 +115,14 @@ export class KidsSessionComponent implements OnInit {
 
   readonly target = 5;
   private readonly world = this.route.snapshot.paramMap.get('id');
+  /** Optional theme + range for a Star Sky mission (?t=counting&max=20 →
+   *  "sky:counting:20"). */
+  private readonly theme = this.route.snapshot.queryParamMap.get('t');
+  private readonly cap = this.route.snapshot.queryParamMap.get('max');
+  private readonly apiWorld =
+    this.world === 'sky' && this.theme
+      ? `sky:${this.theme}${this.cap ? ':' + this.cap : ''}`
+      : this.world;
 
   readonly exercise = signal<Exercise | null>(null);
   readonly feedback = signal<SubmitExerciseResult | null>(null);
@@ -152,6 +160,7 @@ export class KidsSessionComponent implements OnInit {
   }
 
   worldName(): string {
+    if (this.world === 'sky') return 'ვარსკვლავების ცა';
     return KIDS_WORLDS.find((w) => w.id === this.world)?.name ?? 'მისია';
   }
 
@@ -180,7 +189,7 @@ export class KidsSessionComponent implements OnInit {
     this.feedback.set(null);
     this.locked.set(false);
     this.exercise.set(null);
-    this.api.next(this.world).subscribe({
+    this.api.next(this.apiWorld).subscribe({
       next: (ex) => {
         this.exercise.set(ex);
         this.shownAt = Date.now();

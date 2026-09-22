@@ -54,11 +54,14 @@ import { Exercise } from './exercise.models';
 
     <div class="ex-options">
       @for (o of exercise.options; track o.value) {
-        <button type="button" class="kids-opt with-dots" [disabled]="disabled" (click)="answered.emit(o.value)">
+        <button type="button" class="kids-opt" [class.with-dots]="showDots(o.value)"
+                [disabled]="disabled" (click)="answered.emit(o.value)">
           <span class="opt-num">{{ o.label }}</span>
-          <span class="opt-dots">
-            @for (d of dots(o.value); track d) { <span class="opt-obj">{{ exercise.visual.emoji }}</span> }
-          </span>
+          @if (showDots(o.value)) {
+            <span class="opt-dots">
+              @for (d of dots(o.value); track d) { <span class="opt-obj">{{ exercise.visual.emoji }}</span> }
+            </span>
+          }
         </button>
       }
     </div>
@@ -96,6 +99,10 @@ export class AdditionExerciseComponent implements OnChanges {
   dots(value: string): number[] {
     const n = Math.min(12, Math.max(0, parseInt(value, 10) || 0));
     return Array.from({ length: n }, (_, i) => i);
+  }
+
+  showDots(value: string): boolean {
+    return (parseInt(value, 10) || 0) <= 10;
   }
 
   replay(): void {

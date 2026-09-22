@@ -47,6 +47,7 @@ import { KidsProfileService } from './kids-profile.service';
               <button type="button" class="kids-menu-item" (click)="go('/kids/map')">🗺️ რუკა</button>
               <button type="button" class="kids-menu-item" (click)="go('/kids/my-world')">🏰 ჩემი სამყარო</button>
               <button type="button" class="kids-menu-item" (click)="go('/kids/achievements')">🌈 ჯილდოები</button>
+              <button type="button" class="kids-menu-item" (click)="go('/kids/sky')">🌌 ვარსკვლავებით სავსე ცა</button>
               <button type="button" class="kids-menu-item" (click)="go('/kids/friend')">🐰 მეგობარი</button>
               <button type="button" class="kids-menu-item" (click)="go('/kids/parent')">👪 მშობლის ხედი</button>
               <button type="button" class="kids-menu-item danger" (click)="logout()">🚪 გასვლა</button>

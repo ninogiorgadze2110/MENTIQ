@@ -14,14 +14,15 @@ import { Exercise, ExerciseOption } from './exercise.models';
   template: `
     <button type="button" class="ex-instruction" (click)="replay()">🔊 {{ exercise.instruction }}</button>
 
-    <div class="ex-groups">
+    <div class="cmp-list" [class.sky]="isSky()">
       @for (o of exercise.options; track o.value) {
-        <button type="button" class="ex-group" [disabled]="disabled" (click)="answered.emit(o.value)">
-          <span class="ex-group-objs">
+        <button type="button" class="cmp-card" [disabled]="disabled" (click)="answered.emit(o.value)">
+          <span class="cmp-objs">
             @for (i of groupItems(o); track i) {
-              <span class="ex-obj sm">{{ o.emoji }}</span>
+              <span class="cmp-obj">{{ o.emoji }}</span>
             }
           </span>
+          <span class="cmp-count">{{ o.count }}</span>
         </button>
       }
     </div>
@@ -45,6 +46,11 @@ export class GroupChoiceExerciseComponent implements OnChanges {
 
   groupItems(o: ExerciseOption): number[] {
     return Array.from({ length: o.count ?? 0 }, (_, i) => i);
+  }
+
+  /** The sky theme renders as dark night-sky cards (design). */
+  isSky(): boolean {
+    return this.exercise.world === 'sky';
   }
 
   replay(): void {

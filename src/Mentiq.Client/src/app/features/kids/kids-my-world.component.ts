@@ -6,7 +6,7 @@ import { KidsExerciseService } from './exercise/kids-exercise.service';
 import { KidsProfileService } from './kids-profile.service';
 import { SkillProgress } from './exercise/exercise.models';
 import { KIDS_WORLDS } from './kids-worlds.data';
-import { isMastered, MASTERY_CORRECT, MASTERY_DAYS } from './kids-mastery';
+import { isMastered, MASTERY_CORRECT } from './kids-mastery';
 
 interface Collectible {
   emoji: string;
@@ -99,7 +99,7 @@ export class KidsMyWorldComponent implements OnInit {
     const total = KIDS_WORLDS.length; // always 8 tours
     const allMastered = mastered >= total;
     // Each source is concrete and spelled out so it's clear how a piece is earned.
-    const tour = `ტურის დასრულება · ${MASTERY_CORRECT} სწორი + ${MASTERY_DAYS} დღე`;
+    const tour = `ტურის დასრულება · ${MASTERY_CORRECT} სწორი პასუხი`;
     return [
       { emoji: '🧱', name: 'აგური', source: 'ყოველ ⭐-ზე', count: stars },
       { emoji: '🌳', name: 'ხე', source: 'ყოველ 5 სწორ პასუხზე', count: Math.floor(correct / 5) },

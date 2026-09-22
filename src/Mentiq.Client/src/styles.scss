@@ -398,6 +398,11 @@ html, body { max-width: 100%; overflow-x: hidden; }
   background: var(--k-brand-50); border-radius: 22px; padding: 24px 20px;
 }
 .kids-scope .ex-obj { font-size: clamp(40px, 11vw, 60px); line-height: 1; animation: exPop .28s ease both; }
+/* Grouped ten-frames for larger counts (count to 20 / 100). Fixed small size so
+   a full row of ten always fits inside the panel. */
+.kids-scope .ex-objects.grouped { flex-direction: column; gap: 6px; max-width: 100%; }
+.kids-scope .ex-orow { display: flex; gap: 4px; justify-content: center; flex-wrap: nowrap; }
+.kids-scope .ex-obj.tiny { font-size: 22px; animation: none; }
 @keyframes exPop { from { transform: scale(0); } to { transform: scale(1); } }
 
 /* Design 04: answer options as a 2-column grid of bordered cards. */
@@ -443,6 +448,25 @@ html, body { max-width: 100%; overflow-x: hidden; }
 .kids-scope .ex-obj.gone { opacity: .32; position: relative; }
 .kids-scope .ex-obj.gone::after { content: ''; position: absolute; left: 8%; right: 8%; top: 48%; height: 3px; background: var(--k-coral); border-radius: 3px; transform: rotate(-12deg); }
 
+/* Comparison as full-width cards with a subtle count (design). */
+.kids-scope .cmp-list { display: flex; flex-direction: column; gap: 14px; max-width: 380px; margin: 0 auto; }
+.kids-scope .cmp-card {
+  position: relative; width: 100%; min-height: 88px; padding: 20px 44px 20px 20px; cursor: pointer;
+  display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: center;
+  background: #fff; border: 2px solid var(--k-hair); border-radius: 22px;
+  transition: transform .1s ease, border-color .12s ease, box-shadow .12s ease;
+}
+.kids-scope .cmp-card:hover:not(:disabled) { transform: translateY(-2px); border-color: color-mix(in srgb, var(--k-accent) 55%, transparent); box-shadow: var(--k-shadow); }
+.kids-scope .cmp-card:active:not(:disabled) { transform: scale(0.98); border-color: var(--k-accent); background: var(--k-brand-50); }
+.kids-scope .cmp-card:disabled { opacity: .6; cursor: default; }
+.kids-scope .cmp-objs { display: inline-flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+.kids-scope .cmp-obj { font-size: clamp(26px, 7vw, 34px); line-height: 1; }
+.kids-scope .cmp-count { position: absolute; bottom: 8px; right: 14px; font-family: var(--ge-serif); font-size: 14px; color: var(--k-muted); font-feature-settings: 'tnum'; }
+/* Night-sky variant for the Star Sky comparison mission. */
+.kids-scope .cmp-list.sky .cmp-card { background: radial-gradient(120% 120% at 80% -20%, #3b3170, #241d4d 60%, #1a1533); border-color: transparent; }
+.kids-scope .cmp-list.sky .cmp-card:active:not(:disabled) { border-color: var(--k-sun); background: radial-gradient(120% 120% at 80% -20%, #453a80, #2a2258 60%, #1f1940); }
+.kids-scope .cmp-list.sky .cmp-count { color: rgba(255,255,255,.6); }
+
 .kids-scope .ex-groups { display: flex; gap: 18px; justify-content: center; flex-wrap: wrap; }
 .kids-scope .ex-group {
   border: 3px solid transparent; border-radius: 24px; cursor: pointer; background: #f6f8ff;
@@ -459,6 +483,17 @@ html, body { max-width: 100%; overflow-x: hidden; }
 .kids-scope .ex-seq.q { opacity: .5; }
 
 .kids-scope .kids-opt.emoji { font-size: 40px; }
+
+/* Colour identification: four coloured stars in a 2×2 grid. */
+.kids-scope .color-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; max-width: 320px; margin: 4px auto 0; }
+.kids-scope .color-cell {
+  display: grid; place-items: center; padding: 16px; background: #fff; border: 1.5px solid var(--k-hair);
+  border-radius: 20px; cursor: pointer; transition: transform .1s ease, border-color .12s ease, box-shadow .12s ease;
+}
+.kids-scope .color-cell:hover:not(:disabled) { transform: translateY(-2px); border-color: color-mix(in srgb, var(--k-accent) 50%, transparent); box-shadow: var(--k-shadow); }
+.kids-scope .color-cell:active:not(:disabled) { transform: scale(0.96); border-color: var(--k-accent); background: var(--k-brand-50); }
+.kids-scope .color-cell:disabled { opacity: .6; cursor: default; }
+.kids-scope .color-cell svg { filter: drop-shadow(0 3px 5px rgba(26,25,48,.14)); }
 
 .kids-scope .ex-addition { display: flex; gap: 12px; justify-content: center; align-items: center; flex-wrap: wrap; margin: 4px 0 22px; background: var(--k-brand-50); border-radius: 22px; padding: 22px 18px; }
 .kids-scope .ex-addend { display: inline-flex; flex-wrap: wrap; gap: 4px; justify-content: center; max-width: 180px; }
@@ -536,7 +571,7 @@ html, body { max-width: 100%; overflow-x: hidden; }
 .kids-scope .presch .ex-eq,
 .kids-scope .presch .ex-sequence { padding: 28px 20px; border-radius: 28px; }
 .kids-scope .presch .ex-eq .eq-obj { font-size: clamp(30px, 9vw, 42px); }
-.kids-scope .presch .ex-obj { font-size: clamp(56px, 16vw, 80px); }
+.kids-scope .presch .ex-obj { font-size: clamp(56px, 16vw, 50px); }
 .kids-scope .presch .ex-options { max-width: 320px; gap: 12px; }
 .kids-scope .presch .kids-opt { min-height: 104px; font-size: 44px; border-width: 2.5px; border-radius: 22px; }
 .kids-scope .presch .kids-opt.with-dots { min-height: 108px; }
@@ -812,6 +847,48 @@ html, body { max-width: 100%; overflow-x: hidden; }
 .kids-scope .ktrial .ktrial-t { font-family: var(--ge-serif); font-size: 14.5px; }
 .kids-scope .ktrial .ktrial-s { font-size: 11.5px; color: var(--k-muted); margin-top: 2px; }
 
+/* ── Star Sky (ტომი II) — long-horizon constellation ──────────────────── */
+.kids-scope .sky-badges { display: flex; gap: 10px; flex-wrap: wrap; margin: 12px 0 12px; }
+.kids-scope .sky-badge {
+  display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px; border-radius: 999px;
+  background: #fff; border: 1px solid var(--k-hair); font-size: 12.5px; font-weight: 600;
+}
+.kids-scope .sky-badge.streak { background: color-mix(in srgb, var(--k-sun) 14%, #fff); border-color: color-mix(in srgb, var(--k-sun) 40%, transparent); }
+.kids-scope .sky-panel {
+  position: relative; border-radius: 22px; overflow: hidden; padding: 8px;
+  background: radial-gradient(120% 90% at 80% -10%, #3b3170, #241d4d 55%, #1a1533 100%);
+}
+.kids-scope .sky-panel svg { width: 100%; height: auto; display: block; position: relative; z-index: 1; }
+.kids-scope .sky-edge { stroke: rgba(255,255,255,.14); stroke-width: 1.2; }
+.kids-scope .sky-edge.lit { stroke: color-mix(in srgb, var(--k-sun) 70%, #fff); stroke-width: 1.6; }
+.kids-scope .sky-star { fill: rgba(255,255,255,.28); transition: fill .3s ease; }
+.kids-scope .sky-panel g.done .sky-star { fill: var(--k-sun); filter: drop-shadow(0 0 5px color-mix(in srgb, var(--k-sun) 80%, transparent)); }
+.kids-scope .sky-panel g.next .sky-star { fill: #fff; }
+.kids-scope .sky-pulse { fill: none; stroke: #fff; stroke-width: 1.2; opacity: .5; animation: skyPulse 1.8s ease-in-out infinite; }
+@keyframes skyPulse { 0%,100% { r: 9px; opacity: .5; } 50% { r: 13px; opacity: .12; } }
+.kids-scope .sky-moon { position: absolute; top: 16px; right: 20px; width: 46px; height: 46px; border-radius: 50%; background: #f4ecc9; box-shadow: 0 0 24px 6px rgba(244,236,201,.4); z-index: 0; }
+.kids-scope .sky-comp { position: absolute; bottom: 12px; left: 16px; z-index: 2; transform: scale(.7); transform-origin: bottom left; opacity: .95; }
+.kids-scope .sky-next { position: absolute; bottom: 12px; right: 16px; z-index: 2; font-size: 11.5px; color: color-mix(in srgb, var(--k-sun) 80%, #fff); }
+
+.kids-scope .sky-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 14px; }
+.kids-scope .sky-tile {
+  padding: 14px 8px 12px; background: #fff; border: 1px solid var(--k-hair); border-radius: 16px;
+  text-align: center; cursor: pointer; transition: transform .1s ease, box-shadow .12s ease;
+}
+.kids-scope .sky-tile:not(.on) { background: #faf9fd; }
+.kids-scope .sky-tile:hover { transform: translateY(-2px); box-shadow: var(--k-shadow); }
+.kids-scope .sky-tile:active { transform: scale(0.97); }
+.kids-scope .sky-tile.on { border-color: color-mix(in srgb, var(--k-sun) 45%, transparent); background: color-mix(in srgb, var(--k-sun) 8%, #fff); }
+.kids-scope .sky-tile .sky-tile-ic { font-size: 24px; line-height: 1; color: color-mix(in srgb, var(--k-accent) 55%, transparent); }
+.kids-scope .sky-tile.on .sky-tile-ic { color: inherit; filter: drop-shadow(0 2px 4px color-mix(in srgb, var(--k-sun) 40%, transparent)); }
+.kids-scope .sky-tile .sky-tile-nm { font-family: var(--ge-serif); font-size: 12px; margin-top: 5px; line-height: 1.2; color: var(--k-ink); }
+.kids-scope .sky-tile .sky-tile-hint { font-size: 9.5px; color: var(--k-muted); margin-top: 3px; line-height: 1.25; }
+.kids-scope .sky-tile.on .sky-tile-hint { color: var(--k-accent); font-weight: 600; }
+.kids-scope .sky-tile .sky-tile-bar { height: 5px; background: #ece9f7; border-radius: 999px; overflow: hidden; margin: 7px 6px 0; }
+.kids-scope .sky-tile .sky-tile-bar span { display: block; height: 100%; background: var(--k-accent); border-radius: 999px; transition: width .4s ease; }
+.kids-scope .sky-tile .sky-tile-go { font-size: 10px; font-weight: 700; color: var(--k-accent); margin-top: 5px; }
+.kids-scope .sky-tile.on .sky-tile-go { color: color-mix(in srgb, var(--k-sun) 75%, var(--k-ink)); }
+
 /* Journey map — a clean vertical trail (design 03) */
 .kids-scope .jtrail { position: relative; display: flex; flex-direction: column; gap: 4px; padding: 6px 0 30px; }
 .kids-scope .jt-stop { display: flex; gap: 14px; align-items: stretch; position: relative; }
@@ -856,6 +933,13 @@ html, body { max-width: 100%; overflow-x: hidden; }
 .kids-scope .jt-track span { display: block; height: 100%; border-radius: 999px; transition: width .5s cubic-bezier(.4,0,.2,1); }
 .kids-scope .jt-pct { font-family: var(--ge-serif); font-size: 12px; color: var(--k-muted); font-feature-settings: 'tnum'; }
 .kids-scope .jt-go { display: inline-block; font-family: var(--ge); font-weight: 700; color: var(--k-accent); font-size: 14px; }
+/* Tome II — Star Sky entry on the map */
+.kids-scope .jt-stop.tome2 { margin-top: 6px; }
+.kids-scope .jt-node.t2 { background: radial-gradient(circle at 30% 30%, #3b3170, #1a1533) !important; color: #fff; }
+.kids-scope .jt-card.t2card {
+  background: radial-gradient(120% 120% at 85% -10%, #3b3170, #241d4d 60%, #1a1533);
+  border: none; box-shadow: var(--k-shadow-lg);
+}
 
 /* Kids companion — bunny / fox / panda / koala, built from shapes */
 .kids-scope .kc { position: relative; width: 92px; height: 76px; --kc-fur: var(--k-peach); }

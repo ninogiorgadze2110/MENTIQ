@@ -21,7 +21,8 @@ public sealed class KidsExerciseService : IKidsExerciseService
         ["space"] = "⭐",
         ["sea"] = "🐠",
         ["toys"] = "🧸",
-        ["rabbits"] = "🥕"
+        ["rabbits"] = "🥕",
+        ["sky"] = "⭐"
     };
 
     // Georgian noun for each world's object, used to make instructions narrative
@@ -32,7 +33,8 @@ public sealed class KidsExerciseService : IKidsExerciseService
         ["rabbits"] = ("სტაფილო", "ბაღში"),
         ["space"] = ("ვარსკვლავი", "ცაზე"),
         ["toys"] = ("სათამაშო", "ოთახში"),
-        ["sea"] = ("თევზი", "ზღვაში")
+        ["sea"] = ("თევზი", "ზღვაში"),
+        ["sky"] = ("ვარსკვლავი", "ცაზე")
     };
 
     // The identity skill each world develops (all its exercise types credit it).
@@ -59,10 +61,24 @@ public sealed class KidsExerciseService : IKidsExerciseService
         ["toys"] = new[] { "classification", "comparison" },
         ["sea"] = new[] { "attention", "counting" },
         ["memory"] = new[] { "memory" },
-        ["speed"] = new[] { "speed" }
+        ["speed"] = new[] { "speed" },
+        // The Star Sky mission (ტომი II) is a themed mixed review of every skill.
+        ["sky"] = new[] { "counting", "comparison", "addition", "classification", "patterns", "memory", "attention" }
     };
 
     private static readonly string[] PatternPalette = { "🔴", "🔵", "🟢", "🟡", "🟣", "🟠" };
+
+    // Georgian colour names + hex, for the "which is <colour>?" identification task.
+    private static readonly (string Id, string Name, string Hex)[] ColorPalette =
+    {
+        ("red", "წითელი", "#e5484d"),
+        ("green", "მწვანე", "#30a46c"),
+        ("blue", "ლურჯი", "#3e63dd"),
+        ("yellow", "ყვითელი", "#f5a524"),
+        ("orange", "ნარინჯისფერი", "#f76b15"),
+        ("purple", "იისფერი", "#8e4ec6"),
+        ("pink", "ვარდისფერი", "#e93d82")
+    };
 
     // Distinct countable objects reused by mixed-object exercises.
     private static readonly string[] ObjectPool =
@@ -76,10 +92,32 @@ public sealed class KidsExerciseService : IKidsExerciseService
 
     public async Task<ExerciseDto> NextAsync(Guid userId, string? world, CancellationToken cancellationToken = default)
     {
-        var skill = world is not null && WorldSkills.TryGetValue(world, out var sk) ? sk : "counting";
+        // A Star Sky mission can be pinned to one theme via "sky:<type>"; without a
+        // theme it is the mixed final review. Normal star missions stay thematic.
+        string? forcedType = null;
+        int? forcedMax = null;
+        if (world is not null && world.StartsWith("sky:", StringComparison.Ordinal))
+        {
+            forcedType = world["sky:".Length..];
+            world = "sky";
+            // Optional target range for "count to N" practice: "sky:counting:20".
+            var colon = forcedType.IndexOf(':');
+            if (colon >= 0)
+            {
+                if (int.TryParse(forcedType[(colon + 1)..], out var m)) forcedMax = m;
+                forcedType = forcedType[..colon];
+            }
+        }
+
         var types = world is not null && WorldTypes.TryGetValue(world, out var ts) ? ts : new[] { "counting" };
-        // Rotate the world's task types for variety — but always credit its skill.
-        var type = types[Random.Shared.Next(types.Length)];
+        var type = forcedType is not null && types.Contains(forcedType)
+            ? forcedType
+            : types[Random.Shared.Next(types.Length)];
+        // Normal tours credit their own skill; a Star Sky mission credits the skill
+        // of whichever task it drew (so it advances the constellation).
+        var skill = world == "sky"
+            ? type
+            : (world is not null && WorldSkills.TryGetValue(world, out var sk) ? sk : "counting");
 
         var progress = await _db.SkillProgress.AsNoTracking()
             .FirstOrDefaultAsync(p => p.UserId == userId && p.Skill == skill, cancellationToken);
@@ -94,7 +132,7 @@ public sealed class KidsExerciseService : IKidsExerciseService
             "attention" => GenerateAttention(level, world, skill, type),
             "memory" => GenerateMemory(level, world, skill, type),
             "speed" => GenerateSpeed(level, world, skill, type),
-            _ => GenerateCounting(level, world, skill, type)
+            _ => GenerateCounting(level, world, skill, type, forcedMax)
         };
     }
 
@@ -180,14 +218,22 @@ public sealed class KidsExerciseService : IKidsExerciseService
             .Where(p => p.UserId == userId)
             .ToListAsync(cancellationToken);
 
-        // Distinct practice days (Tbilisi = UTC+4) per skill, from stored attempts.
-        var stamps = await _db.ExerciseAttempts.AsNoTracking()
+        // Per-skill facts derived from stored attempts: distinct practice days
+        // (Tbilisi = UTC+4) and the largest numeric answer answered correctly.
+        var attempts = await _db.ExerciseAttempts.AsNoTracking()
             .Where(a => a.UserId == userId)
-            .Select(a => new { a.Skill, a.CreatedAtUtc })
+            .Select(a => new { a.Skill, a.ExerciseType, a.CreatedAtUtc, a.CorrectAnswer, a.IsCorrect })
             .ToListAsync(cancellationToken);
-        var daysBySkill = stamps
+        var daysBySkill = attempts
             .GroupBy(a => a.Skill)
             .ToDictionary(g => g.Key, g => g.Select(a => a.CreatedAtUtc.AddHours(4).Date).Distinct().Count());
+        // The "count to N" stars must reflect genuine counting only — not addition
+        // or make-N answers that happen to share the counting skill.
+        var maxCountingValue = attempts
+            .Where(a => a.IsCorrect && a.ExerciseType == "counting")
+            .Select(a => int.TryParse(a.CorrectAnswer, out var v) ? v : 0)
+            .DefaultIfEmpty(0)
+            .Max();
 
         return rows.Select(p => new SkillProgressDto
         {
@@ -198,7 +244,8 @@ public sealed class KidsExerciseService : IKidsExerciseService
             CorrectAttempts = p.CorrectAttempts,
             Accuracy = p.TotalAttempts > 0 ? (int)Math.Round(100.0 * p.CorrectAttempts / p.TotalAttempts) : 0,
             AverageResponseTimeMs = (int)Math.Round(p.AverageResponseTimeMs),
-            DaysPracticed = daysBySkill.GetValueOrDefault(p.Skill, 0)
+            DaysPracticed = daysBySkill.GetValueOrDefault(p.Skill, 0),
+            MaxCorrectValue = p.Skill == "counting" ? maxCountingValue : 0
         }).ToList();
     }
 
@@ -206,10 +253,15 @@ public sealed class KidsExerciseService : IKidsExerciseService
     // Counting generation
     // -----------------------------------------------------------------------
 
-    private ExerciseDto GenerateCounting(int level, string? world, string skill, string type)
+    private ExerciseDto GenerateCounting(int level, string? world, string skill, string type, int? forcedMax = null)
     {
-        var max = MaxCountForLevel(level);
-        var n = Random.Shared.Next(1, max + 1);
+        // A "count to N" star mission caps the range at N; otherwise it follows
+        // the child's counting level.
+        var max = forcedMax ?? MaxCountForCounting(level);
+        // Bias toward the top of the range so the child regularly reaches the
+        // target number (e.g. actually counts 20 in the "count to 20" mission).
+        var min = Math.Max(1, max - 4);
+        var n = Random.Shared.Next(min, max + 1);
 
         var emoji = world is not null && WorldEmoji.TryGetValue(world, out var e) ? e : "🍎";
 
@@ -268,7 +320,9 @@ public sealed class KidsExerciseService : IKidsExerciseService
         }.OrderBy(_ => Random.Shared.Next()).ToList();
 
         var noun = world is not null && WorldNoun.TryGetValue(world, out var w) ? w.One : null;
-        var prompt = noun is not null ? $"სად არის მეტი {noun}?" : "სად არის მეტი?";
+        var prompt = world == "sky"
+            ? "რომელ ცას აქვს მეტი ვარსკვლავი?"
+            : (noun is not null ? $"სად არის მეტი {noun}?" : "სად არის მეტი?");
         return Build(type, skill, world, level, prompt, "comparison.more",
             new ExerciseVisual { Kind = "none" }, options, bigger);
     }
@@ -279,6 +333,10 @@ public sealed class KidsExerciseService : IKidsExerciseService
 
     private ExerciseDto GeneratePatterns(int level, string? world, string skill, string type)
     {
+        // Half the time, a colour-identification task ("which star is green?"),
+        // half a "what comes next?" sequence — both build the colours skill.
+        if (Random.Shared.Next(2) == 0) return GenerateColorId(world, skill, type);
+
         var palette = PatternPalette.OrderBy(_ => Random.Shared.Next()).ToList();
         var unit = level >= 3 ? new[] { palette[0], palette[1], palette[2] } : new[] { palette[0], palette[1] };
 
@@ -295,6 +353,26 @@ public sealed class KidsExerciseService : IKidsExerciseService
 
         return Build(type, skill, world, level, "რა მოდის შემდეგ?", "patterns.next",
             new ExerciseVisual { Kind = "sequence", Items = seq }, options, answer);
+    }
+
+    /// <summary>"Which star is &lt;colour&gt;?" — four coloured stars, pick the named
+    /// colour. Each option carries its hex in Label so the client can paint it.</summary>
+    private ExerciseDto GenerateColorId(string? world, string skill, string type)
+    {
+        var chosen = ColorPalette.OrderBy(_ => Random.Shared.Next()).Take(4).ToList();
+        var target = chosen[Random.Shared.Next(chosen.Count)];
+
+        var options = chosen
+            .OrderBy(_ => Random.Shared.Next())
+            .Select(c => new ExerciseOption { Value = c.Id, Label = c.Hex })
+            .ToList();
+
+        var prompt = world == "sky"
+            ? $"რომელი ვარსკვლავია {target.Name}?"
+            : $"რომელია {target.Name}?";
+
+        return Build(type, skill, world, 1, prompt, "colors.which",
+            new ExerciseVisual { Kind = "colors" }, options, target.Id);
     }
 
     // -----------------------------------------------------------------------
@@ -514,6 +592,24 @@ public sealed class KidsExerciseService : IKidsExerciseService
         3 => 6,
         4 => 8,
         _ => 10
+    };
+
+    /// <summary>Counting ramps far higher than other skills — up to 100 — so the
+    /// "count to 10 / 20 / 100" milestones are reachable (level 5 / 8 / 12).</summary>
+    private static int MaxCountForCounting(int level) => level switch
+    {
+        <= 1 => 10,
+        2 => 12,
+        3 => 14,
+        4 => 16,
+        5 => 20,
+        6 => 25,
+        7 => 35,
+        8 => 50,
+        9 => 65,
+        10 => 80,
+        11 => 90,
+        _ => 100
     };
 
     /// <summary>Correct value plus two nearby, plausible distractors — shuffled.</summary>

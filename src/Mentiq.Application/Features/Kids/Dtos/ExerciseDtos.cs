@@ -104,4 +104,8 @@ public sealed record SkillProgressDto
     /// <summary>Distinct calendar days (Tbilisi) the child practised this skill.
     /// Used to pace mastery so a tour can't be completed in one sitting.</summary>
     public int DaysPracticed { get; init; }
+
+    /// <summary>Largest numeric answer the child has answered correctly for this
+    /// skill (e.g. the highest count reached) — drives the "count to N" stars.</summary>
+    public int MaxCorrectValue { get; init; }
 }

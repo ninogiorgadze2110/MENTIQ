@@ -100,6 +100,11 @@ export const routes: Routes = [
         path: 'parent',
         loadComponent: () =>
           import('./features/kids/kids-parent.component').then((m) => m.KidsParentComponent)
+      },
+      {
+        path: 'sky',
+        loadComponent: () =>
+          import('./features/kids/kids-starsky.component').then((m) => m.KidsStarskyComponent)
       }
     ]
   },
