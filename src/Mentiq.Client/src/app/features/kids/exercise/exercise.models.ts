@@ -53,4 +53,5 @@ export interface SkillProgress {
   correctAttempts: number;
   accuracy: number;
   averageResponseTimeMs: number;
+  daysPracticed: number;
 }

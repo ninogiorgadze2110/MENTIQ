@@ -1,9 +1,10 @@
-import { Component, OnDestroy, inject, signal } from '@angular/core';
+import { Component, OnDestroy, computed, inject, signal } from '@angular/core';
 import { NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { Subscription, filter } from 'rxjs';
 
 import { AudioService } from '../../core/services/audio.service';
 import { AuthService } from '../../core/services/auth.service';
+import { SubscriptionService } from '../../core/services/subscription.service';
 import { KidsExerciseService } from './exercise/kids-exercise.service';
 import { KidsProfileService } from './kids-profile.service';
 
@@ -29,6 +30,16 @@ import { KidsProfileService } from './kids-profile.service';
           <div class="kids-stars">⭐ {{ stars() }}</div>
           <button type="button" class="kids-round" aria-label="მენიუ" (click)="menu.set(!menu())">☰</button>
         </div>
+
+        @if (showNav() && trial()) {
+          <a class="ktrial" routerLink="/pricing">
+            <span class="ktrial-ic">🌈</span>
+            <div class="ktrial-tx">
+              <div class="ktrial-t">უფასო მოგზაურობა — დარჩა {{ trialDays() }} დღე</div>
+              <div class="ktrial-s">გააგრძელე, რომ {{ companionName() }}-მა და შენ ცისარტყელა დაასრულოთ →</div>
+            </div>
+          </a>
+        }
 
         @if (menu()) {
           <div class="kids-menu" (click)="menu.set(false)">
@@ -62,6 +73,7 @@ export class KidsLayoutComponent implements OnDestroy {
   private readonly api = inject(KidsExerciseService);
   private readonly auth = inject(AuthService);
   private readonly profile = inject(KidsProfileService);
+  private readonly subs = inject(SubscriptionService);
   private readonly router = inject(Router);
 
   readonly stars = signal(0);
@@ -69,9 +81,17 @@ export class KidsLayoutComponent implements OnDestroy {
   /** The bottom nav is hidden inside a mission (its own chrome). */
   readonly showNav = signal(true);
 
+  /** Warm, journey-framed trial reminder (only while on the free trial). */
+  readonly trial = computed(() => this.subs.isTrial());
+  readonly trialDays = computed(() => Math.max(0, this.subs.daysRemaining()));
+  companionName(): string {
+    return this.profile.companionName();
+  }
+
   private readonly sub: Subscription;
 
   constructor() {
+    if (!this.subs.status()) this.subs.loadStatus().subscribe({ error: () => {} });
     this.refreshStars();
     this.updateNav(this.router.url);
     // Refresh stars on each Kids screen, and send first-run children to pick a

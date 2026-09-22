@@ -5,6 +5,8 @@ import { AuthService } from '../../core/services/auth.service';
 import { KidsExerciseService } from './exercise/kids-exercise.service';
 import { KidsProfileService } from './kids-profile.service';
 import { SkillProgress } from './exercise/exercise.models';
+import { KIDS_WORLDS } from './kids-worlds.data';
+import { isMastered, MASTERY_CORRECT, MASTERY_DAYS } from './kids-mastery';
 
 interface Collectible {
   emoji: string;
@@ -33,15 +35,26 @@ interface Collectible {
       <span class="mw-day">დღე {{ day() }}</span>
     </div>
 
-    <!-- Living illustration: grows as pieces are earned -->
+    <!-- How it works — so it's clear from the very first visit -->
+    <div class="mw-explain">
+      <span class="mw-ex-ic">🌱</span>
+      <div>
+        <div class="mw-ex-t">როგორ იზრდება შენი სამყარო?</div>
+        <div class="mw-ex-s">ითამაშე მისიები → დააგროვე ⭐ და ნივთები → ააშენე ველი. ქვემოთ ყოველი ბარათი გიჩვენებს <b>საიდან</b> მოდის ის.</div>
+      </div>
+    </div>
+
+    <!-- Living illustration: assembles piece by piece as items are earned -->
     <div class="mw-scene">
-      <span class="mw-sun"></span>
+      @if (owns('☀️')) { <span class="mw-sun"></span> }
       <span class="mw-cloud"></span>
+      @if (owns('🌈')) { <span class="mw-rainbow">🌈</span> }
       <span class="mw-hills"></span>
-      @if (owns('🏠')) { <span class="mw-house"></span> }
-      @if (owns('🌳')) { <span class="mw-tree a"></span><span class="mw-tree b"></span> }
-      @if (owns('🌸')) { <span class="mw-flower a"></span><span class="mw-flower b"></span> }
-      <span class="mw-next">{{ nextPiece() }}</span>
+      @for (it of sceneItems(); track it.key) {
+        <span class="mw-piece" [style.left.%]="it.x" [style.font-size.px]="it.size"
+              [style.animation-delay.ms]="it.delay">{{ it.emoji }}</span>
+      }
+      <span class="mw-slot" [style.font-size.px]="22">{{ nextPiece() }}</span>
     </div>
 
     <!-- Inventory: each tile shows the count AND how it's earned -->
@@ -70,14 +83,11 @@ export class KidsMyWorldComponent implements OnInit {
   private readonly profile = inject(KidsProfileService);
   private readonly router = inject(Router);
 
-  /** A skill counts as "mastered" once it reaches this level (of 12). */
-  private readonly masteryLevel = 6;
-
   readonly progress = signal<SkillProgress[]>([]);
 
   readonly stars = computed(() => this.progress().reduce((s, p) => s + (p.score ?? 0), 0));
   readonly totalCorrect = computed(() => this.progress().reduce((s, p) => s + (p.correctAttempts ?? 0), 0));
-  readonly mastered = computed(() => this.progress().filter((p) => p.level >= this.masteryLevel).length);
+  readonly mastered = computed(() => this.progress().filter((p) => isMastered(p)).length);
   readonly day = computed(() => Math.max(1, this.profile.streak()));
 
   /** The economy: every collectible is earned by a concrete action. */
@@ -86,16 +96,19 @@ export class KidsMyWorldComponent implements OnInit {
     const correct = this.totalCorrect();
     const days = this.profile.streak();
     const mastered = this.mastered();
-    const allMastered = mastered >= this.progress().length && this.progress().length > 0;
+    const total = KIDS_WORLDS.length; // always 8 tours
+    const allMastered = mastered >= total;
+    // Each source is concrete and spelled out so it's clear how a piece is earned.
+    const tour = `ტურის დასრულება · ${MASTERY_CORRECT} სწორი + ${MASTERY_DAYS} დღე`;
     return [
-      { emoji: '🧱', name: 'აგური', source: 'ყოველი ⭐', count: stars },
-      { emoji: '🌳', name: 'ხე', source: '5 სწორ პასუხზე', count: Math.floor(correct / 5) },
-      { emoji: '🌸', name: 'ყვავილი', source: 'აქტიური დღე', count: days },
-      { emoji: '🏠', name: 'სახლი', source: 'უნარის დაუფლება', count: mastered },
-      { emoji: '🌉', name: 'ხიდი', source: '2 უნარი', count: Math.floor(mastered / 2) },
-      { emoji: '⛲', name: 'შადრევანი', source: '60 ⭐', count: stars >= 60 ? 1 : 0 },
-      { emoji: '☀️', name: 'მზე', source: '100 ⭐', count: stars >= 100 ? 1 : 0 },
-      { emoji: '🌈', name: 'ცისარტყელა', source: 'ყველა უნარი', count: allMastered ? 1 : 0 }
+      { emoji: '🧱', name: 'აგური', source: 'ყოველ ⭐-ზე', count: stars },
+      { emoji: '🌳', name: 'ხე', source: 'ყოველ 5 სწორ პასუხზე', count: Math.floor(correct / 5) },
+      { emoji: '🌸', name: 'ყვავილი', source: 'ყოველ აქტიურ დღეს', count: days },
+      { emoji: '🏠', name: 'სახლი', source: `${tour} (${mastered}/${total})`, count: mastered },
+      { emoji: '🌉', name: 'ხიდი', source: `2 ტურის დასრულება (${mastered}/2)`, count: Math.floor(mastered / 2) },
+      { emoji: '⛲', name: 'შადრევანი', source: `60 ⭐ (${Math.min(stars, 60)}/60)`, count: stars >= 60 ? 1 : 0 },
+      { emoji: '☀️', name: 'მზე', source: `100 ⭐ (${Math.min(stars, 100)}/100)`, count: stars >= 100 ? 1 : 0 },
+      { emoji: '🌈', name: 'ცისარტყელა', source: `8 ტურის დასრულება (${mastered}/${total})`, count: allMastered ? 1 : 0 }
     ];
   });
 
@@ -106,6 +119,26 @@ export class KidsMyWorldComponent implements OnInit {
   owns(emoji: string): boolean {
     return (this.items().find((it) => it.emoji === emoji)?.count ?? 0) > 0;
   }
+
+  /** The earned pieces laid out along the ground — more items appear as the
+   *  child collects more, so the village literally assembles over time. */
+  readonly sceneItems = computed(() => {
+    const caps: Record<string, number> = { '🏠': 2, '🌳': 5, '🌸': 6 };
+    const sizes: Record<string, number> = { '🏠': 38, '🌳': 32, '🌸': 20 };
+    const built: { emoji: string; size: number }[] = [];
+    for (const emoji of ['🏠', '🌳', '🌸']) {
+      const n = Math.min(this.items().find((it) => it.emoji === emoji)?.count ?? 0, caps[emoji]);
+      for (let k = 0; k < n; k++) built.push({ emoji, size: sizes[emoji] });
+    }
+    const n = built.length;
+    return built.map((b, i) => ({
+      key: b.emoji + i,
+      emoji: b.emoji,
+      size: b.size,
+      x: n <= 1 ? 20 : 8 + (i * 70) / (n - 1),
+      delay: i * 70
+    }));
+  });
 
   /** The next piece not yet earned — shown as a dashed placeholder in the scene. */
   nextPiece(): string {

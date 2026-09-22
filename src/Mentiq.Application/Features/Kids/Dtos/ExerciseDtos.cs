@@ -100,4 +100,8 @@ public sealed record SkillProgressDto
     public int CorrectAttempts { get; init; }
     public int Accuracy { get; init; }
     public int AverageResponseTimeMs { get; init; }
+
+    /// <summary>Distinct calendar days (Tbilisi) the child practised this skill.
+    /// Used to pace mastery so a tour can't be completed in one sitting.</summary>
+    public int DaysPracticed { get; init; }
 }

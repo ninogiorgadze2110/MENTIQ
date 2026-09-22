@@ -11,7 +11,7 @@ import { Plan, PlansResponse } from '../../core/models/subscription.model';
   imports: [RouterLink],
   template: `
     <div style="padding:32px 56px 0; max-width:1280px; margin:0 auto;">
-      <a [routerLink]="isAuthed() ? '/dashboard' : '/'" style="font-family:var(--ge-serif); font-size:20px; color:var(--ink); text-decoration:none;">← MENTIQ</a>
+      <a [routerLink]="homeLink()" style="font-family:var(--ge-serif); font-size:20px; color:var(--ink); text-decoration:none;">← MENTIQ</a>
     </div>
     <div style="padding:40px 72px 72px; background:var(--paper); max-width:1280px; margin:0 auto;">
       <div style="text-align:center; max-width:640px; margin:0 auto 40px;">
@@ -27,7 +27,7 @@ import { Plan, PlansResponse } from '../../core/models/subscription.model';
         </div>
       }
 
-      <div style="display:grid; grid-template-columns:repeat(2, 1fr); gap:0; border:1px solid var(--hair); background:#fff;">
+      <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:0; border:1px solid var(--hair); background:#fff;">
         <!-- Free / Trial -->
         <div style="padding:36px 30px; border-right:1px solid var(--hair);">
           <div style="font-family:var(--ge-serif); font-size:14px; color:var(--gold); font-style:italic;">— Trial</div>
@@ -137,6 +137,12 @@ export class PricingComponent {
   readonly chosen = signal<Plan | null>(null);
 
   readonly isAuthed = computed(() => this.auth.isAuthenticated());
+
+  /** Back link: return kids users to the Kids area, others to their dashboard. */
+  readonly homeLink = computed(() => {
+    if (!this.auth.isAuthenticated()) return '/';
+    return this.auth.educationLevel() === 'preschool' ? '/kids' : '/dashboard';
+  });
 
   readonly statusLine = computed(() => {
     const s = this.subs.status();

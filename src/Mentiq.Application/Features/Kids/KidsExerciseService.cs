@@ -35,18 +35,31 @@ public sealed class KidsExerciseService : IKidsExerciseService
         ["sea"] = ("თევზი", "ზღვაში")
     };
 
-    // Which (skill, exercise type) each world runs. Worlds without an implemented
-    // type fall back to counting; more are enabled as types are added.
-    private static readonly Dictionary<string, (string Skill, string Type)> WorldSkill = new()
+    // The identity skill each world develops (all its exercise types credit it).
+    private static readonly Dictionary<string, string> WorldSkills = new()
     {
-        ["apples"] = ("counting", "counting"),
-        ["rabbits"] = ("comparison", "comparison"),
-        ["colors"] = ("patterns", "patterns"),
-        ["space"] = ("addition", "addition"),
-        ["toys"] = ("classification", "classification"),
-        ["sea"] = ("attention", "attention"),
-        ["memory"] = ("memory", "memory"),
-        ["speed"] = ("speed", "speed")
+        ["apples"] = "counting",
+        ["rabbits"] = "comparison",
+        ["colors"] = "patterns",
+        ["space"] = "addition",
+        ["toys"] = "classification",
+        ["sea"] = "attention",
+        ["memory"] = "memory",
+        ["speed"] = "speed"
+    };
+
+    // Each world rotates through several exercise TYPES for variety, so a tour is
+    // never the same task repeated. Every type still credits the world's skill.
+    private static readonly Dictionary<string, string[]> WorldTypes = new()
+    {
+        ["apples"] = new[] { "counting", "addition" },
+        ["rabbits"] = new[] { "comparison", "counting" },
+        ["colors"] = new[] { "patterns", "classification" },
+        ["space"] = new[] { "addition", "counting" },
+        ["toys"] = new[] { "classification", "comparison" },
+        ["sea"] = new[] { "attention", "counting" },
+        ["memory"] = new[] { "memory" },
+        ["speed"] = new[] { "speed" }
     };
 
     private static readonly string[] PatternPalette = { "🔴", "🔵", "🟢", "🟡", "🟣", "🟠" };
@@ -63,9 +76,10 @@ public sealed class KidsExerciseService : IKidsExerciseService
 
     public async Task<ExerciseDto> NextAsync(Guid userId, string? world, CancellationToken cancellationToken = default)
     {
-        var (skill, type) = world is not null && WorldSkill.TryGetValue(world, out var ws)
-            ? ws
-            : ("counting", "counting");
+        var skill = world is not null && WorldSkills.TryGetValue(world, out var sk) ? sk : "counting";
+        var types = world is not null && WorldTypes.TryGetValue(world, out var ts) ? ts : new[] { "counting" };
+        // Rotate the world's task types for variety — but always credit its skill.
+        var type = types[Random.Shared.Next(types.Length)];
 
         var progress = await _db.SkillProgress.AsNoTracking()
             .FirstOrDefaultAsync(p => p.UserId == userId && p.Skill == skill, cancellationToken);
@@ -166,6 +180,15 @@ public sealed class KidsExerciseService : IKidsExerciseService
             .Where(p => p.UserId == userId)
             .ToListAsync(cancellationToken);
 
+        // Distinct practice days (Tbilisi = UTC+4) per skill, from stored attempts.
+        var stamps = await _db.ExerciseAttempts.AsNoTracking()
+            .Where(a => a.UserId == userId)
+            .Select(a => new { a.Skill, a.CreatedAtUtc })
+            .ToListAsync(cancellationToken);
+        var daysBySkill = stamps
+            .GroupBy(a => a.Skill)
+            .ToDictionary(g => g.Key, g => g.Select(a => a.CreatedAtUtc.AddHours(4).Date).Distinct().Count());
+
         return rows.Select(p => new SkillProgressDto
         {
             Skill = p.Skill,
@@ -174,7 +197,8 @@ public sealed class KidsExerciseService : IKidsExerciseService
             TotalAttempts = p.TotalAttempts,
             CorrectAttempts = p.CorrectAttempts,
             Accuracy = p.TotalAttempts > 0 ? (int)Math.Round(100.0 * p.CorrectAttempts / p.TotalAttempts) : 0,
-            AverageResponseTimeMs = (int)Math.Round(p.AverageResponseTimeMs)
+            AverageResponseTimeMs = (int)Math.Round(p.AverageResponseTimeMs),
+            DaysPracticed = daysBySkill.GetValueOrDefault(p.Skill, 0)
         }).ToList();
     }
 
@@ -277,11 +301,57 @@ public sealed class KidsExerciseService : IKidsExerciseService
     // Simple addition (visual)
     // -----------------------------------------------------------------------
 
+    /// <summary>The "addition" type is really a small arithmetic mix — plain
+    /// addition, subtraction, and complete-to-N — so a tour keeps varying.</summary>
     private ExerciseDto GenerateAddition(int level, string? world, string skill, string type)
     {
-        // Design 04 hero task — "complete to N": show `have` solid objects and
-        // `target - have` dashed slots, ask how many MORE are needed to reach the
-        // target. Concrete, story-framed, and the answer is the missing count.
+        var kinds = level <= 1 ? new[] { "addition", "makeN" } : new[] { "addition", "subtraction", "makeN" };
+        return kinds[Random.Shared.Next(kinds.Length)] switch
+        {
+            "subtraction" => GenerateSubtraction(level, world, skill, type),
+            "makeN" => GenerateMakeN(level, world, skill, type),
+            _ => GeneratePlainAddition(level, world, skill, type)
+        };
+    }
+
+    private ExerciseDto GeneratePlainAddition(int level, string? world, string skill, string type)
+    {
+        var sumMax = level switch { <= 1 => 5, 2 => 7, 3 => 9, _ => 10 };
+        var x = Random.Shared.Next(1, sumMax);
+        var y = Random.Shared.Next(1, sumMax - x + 1);
+        var sum = x + y;
+
+        var emoji = EmojiFor(world, "🍎");
+        var options = BuildNumberOptions(sum, sumMax)
+            .Select(v => new ExerciseOption { Value = v.ToString(), Label = v.ToString() })
+            .ToList();
+
+        return Build(type, skill, world, level, "რამდენი იქნება ჯამში?", "addition.howMany",
+            new ExerciseVisual { Kind = "addition", Emoji = emoji, Addends = new[] { x, y } },
+            options, sum.ToString());
+    }
+
+    private ExerciseDto GenerateSubtraction(int level, string? world, string skill, string type)
+    {
+        var max = Math.Max(3, MaxCountForLevel(level));
+        var a = Random.Shared.Next(2, max + 1);
+        var b = Random.Shared.Next(1, a);      // 1..a-1 so something remains
+        var diff = a - b;
+
+        var emoji = EmojiFor(world, "🍎");
+        var options = BuildNumberOptions(diff, a)
+            .Select(v => new ExerciseOption { Value = v.ToString(), Label = v.ToString() })
+            .ToList();
+
+        return Build(type, skill, world, level, $"იყო {a}, წაიღეს {b} — რამდენი დარჩა?", "subtraction.left",
+            new ExerciseVisual { Kind = "subtraction", Emoji = emoji, Addends = new[] { a, b } },
+            options, diff.ToString());
+    }
+
+    private ExerciseDto GenerateMakeN(int level, string? world, string skill, string type)
+    {
+        // "Complete to N": show `have` solid objects and `target - have` dashed
+        // slots, ask how many MORE are needed to reach the target.
         var target = level switch { <= 1 => 5, 2 => 6, 3 => 8, _ => 10 };
         var have = Random.Shared.Next(1, target); // 1..target-1
         var missing = target - have;

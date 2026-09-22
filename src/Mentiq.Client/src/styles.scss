@@ -439,6 +439,9 @@ html, body { max-width: 100%; overflow-x: hidden; }
 
 /* Kids exercise variants: group choice (more/less), patterns, addition */
 .kids-scope .ex-obj.sm { font-size: clamp(26px, 6vw, 40px); }
+/* Subtraction: objects taken away are faded and struck through. */
+.kids-scope .ex-obj.gone { opacity: .32; position: relative; }
+.kids-scope .ex-obj.gone::after { content: ''; position: absolute; left: 8%; right: 8%; top: 48%; height: 3px; background: var(--k-coral); border-radius: 3px; transform: rotate(-12deg); }
 
 .kids-scope .ex-groups { display: flex; gap: 18px; justify-content: center; flex-wrap: wrap; }
 .kids-scope .ex-group {
@@ -461,6 +464,20 @@ html, body { max-width: 100%; overflow-x: hidden; }
 .kids-scope .ex-addend { display: inline-flex; flex-wrap: wrap; gap: 4px; justify-content: center; max-width: 180px; }
 .kids-scope .ex-plus { font-family: var(--ge-serif); font-size: clamp(30px, 7vw, 44px); color: var(--k-muted); font-weight: 700; }
 .kids-scope .ex-qmark { font-size: clamp(30px, 7vw, 44px); opacity: .6; }
+
+/* Clear arithmetic equation: fruit groups, operators, one blank box to fill. */
+.kids-scope .ex-eq {
+  display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 10px;
+  margin: 4px 0 22px; background: var(--k-brand-50); border-radius: 22px; padding: 22px 18px;
+}
+.kids-scope .ex-eq .eq-grp { display: inline-flex; flex-wrap: wrap; gap: 4px; justify-content: center; max-width: 148px; }
+.kids-scope .ex-eq .eq-obj { font-size: clamp(24px, 7vw, 34px); line-height: 1; }
+.kids-scope .ex-eq .eq-op { font-family: var(--ge-serif); font-weight: 700; font-size: clamp(26px, 7vw, 38px); color: var(--k-muted); }
+.kids-scope .ex-eq .eq-blank {
+  width: clamp(46px, 13vw, 60px); height: clamp(52px, 15vw, 66px); display: grid; place-items: center;
+  border: 2px dashed var(--k-accent); border-radius: 16px; background: #fff;
+  font-family: var(--ge-serif); font-size: 28px; color: var(--k-accent);
+}
 
 /* Design 04 "complete to N": solid objects + dashed slots to fill. */
 .kids-scope .ex-maken {
@@ -516,7 +533,9 @@ html, body { max-width: 100%; overflow-x: hidden; }
 /* Bigger stage + bigger objects + bigger answer targets. */
 .kids-scope .presch .ex-objects,
 .kids-scope .presch .ex-addition,
+.kids-scope .presch .ex-eq,
 .kids-scope .presch .ex-sequence { padding: 28px 20px; border-radius: 28px; }
+.kids-scope .presch .ex-eq .eq-obj { font-size: clamp(30px, 9vw, 42px); }
 .kids-scope .presch .ex-obj { font-size: clamp(56px, 16vw, 80px); }
 .kids-scope .presch .ex-options { max-width: 320px; gap: 12px; }
 .kids-scope .presch .kids-opt { min-height: 104px; font-size: 44px; border-width: 2.5px; border-radius: 22px; }
@@ -658,32 +677,34 @@ html, body { max-width: 100%; overflow-x: hidden; }
 
 /* ── Design 07.a: my world ────────────────────────────────────────────── */
 .kids-scope .mw-day { margin-left: auto; font-family: var(--ge-serif); color: var(--k-accent); font-size: 14px; }
+.kids-scope .mw-explain { display: flex; gap: 12px; align-items: flex-start; background: var(--k-brand-50); border-radius: 16px; padding: 14px 16px; margin-top: 14px; }
+.kids-scope .mw-explain .mw-ex-ic { font-size: 24px; flex: none; }
+.kids-scope .mw-explain .mw-ex-t { font-family: var(--ge-serif); font-size: 15px; }
+.kids-scope .mw-explain .mw-ex-s { font-size: 12px; color: var(--k-muted); margin-top: 3px; line-height: 1.5; }
 .kids-scope .mw-scene {
-  position: relative; height: 240px; margin: 16px 0 6px; overflow: hidden;
-  border-radius: 22px; background: linear-gradient(180deg, #d8e6ff 0%, #eef4ea 58%, #f7ecd8 100%);
+  position: relative; height: 230px; margin: 14px 0 6px; overflow: hidden;
+  border-radius: 22px; background: linear-gradient(180deg, #cfe2ff 0%, #e8f1ea 52%, #f7ecd8 100%);
 }
-.kids-scope .mw-scene .mw-sun { position: absolute; top: 16px; right: 22px; width: 42px; height: 42px; border-radius: 50%; background: var(--k-sun); }
-.kids-scope .mw-scene .mw-cloud { position: absolute; top: 22px; left: 20px; width: 62px; height: 20px; border-radius: 20px; background: #fff; opacity: .75; }
+.kids-scope .mw-scene .mw-sun { position: absolute; top: 18px; right: 24px; width: 44px; height: 44px; border-radius: 50%; background: var(--k-sun); box-shadow: 0 0 0 10px color-mix(in srgb, var(--k-sun) 22%, transparent); }
+.kids-scope .mw-scene .mw-cloud { position: absolute; top: 26px; left: 22px; width: 64px; height: 20px; border-radius: 20px; background: #fff; opacity: .8; }
+.kids-scope .mw-scene .mw-rainbow { position: absolute; top: 20px; left: 50%; transform: translateX(-50%); font-size: 46px; opacity: .9; }
+/* A soft green meadow band along the bottom (no heavy blur). */
 .kids-scope .mw-scene .mw-hills {
-  position: absolute; bottom: 0; left: -20px; right: -20px; height: 120px;
-  background: radial-gradient(120px 60px at 30% 0, var(--k-mint), transparent 100%),
-              radial-gradient(150px 72px at 76% 8%, var(--k-mint), transparent 100%);
+  position: absolute; bottom: 0; left: 0; right: 0; height: 92px;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--k-mint) 55%, transparent), color-mix(in srgb, var(--k-mint) 24%, transparent));
 }
-.kids-scope .mw-scene .mw-house {
-  position: absolute; bottom: 40px; left: 64px; width: 54px; height: 42px; background: #fff; border: 2px solid var(--k-ink);
+/* Earned emoji pieces standing on the ground, each popping into place. */
+.kids-scope .mw-scene .mw-piece {
+  position: absolute; bottom: 30px; transform: translateX(-50%); line-height: 1;
+  filter: drop-shadow(0 4px 4px rgba(26,25,48,.12)); transform-origin: bottom center;
+  animation: mwGrow .42s cubic-bezier(.34,1.56,.64,1) both;
 }
-.kids-scope .mw-scene .mw-house::before { content: ''; position: absolute; top: -15px; left: -8px; right: -8px; height: 15px; background: var(--k-coral); clip-path: polygon(0 100%, 50% 0, 100% 100%); }
-.kids-scope .mw-scene .mw-house::after { content: ''; position: absolute; bottom: 0; left: 21px; width: 13px; height: 19px; background: var(--k-accent); }
-.kids-scope .mw-scene .mw-tree { position: absolute; bottom: 32px; width: 34px; height: 34px; border-radius: 50%; background: var(--k-mint); box-shadow: 0 14px 0 -8px #7b4a2a; }
-.kids-scope .mw-scene .mw-tree.a { left: 168px; }
-.kids-scope .mw-scene .mw-tree.b { left: 214px; width: 26px; height: 26px; }
-.kids-scope .mw-scene .mw-flower { position: absolute; bottom: 24px; width: 11px; height: 11px; border-radius: 50%; }
-.kids-scope .mw-scene .mw-flower.a { left: 30px; background: var(--k-sun); }
-.kids-scope .mw-scene .mw-flower.b { left: 148px; background: var(--k-accent-2); }
-.kids-scope .mw-scene .mw-next {
-  position: absolute; bottom: 42px; right: 54px; width: 46px; height: 58px; display: grid; place-items: center;
-  border: 2px dashed var(--k-accent); border-radius: 10px; font-size: 20px;
-  background: color-mix(in srgb, var(--k-accent) 8%, transparent);
+@keyframes mwGrow { from { transform: translateX(-50%) scale(0) translateY(8px); opacity: 0; } to { transform: translateX(-50%) scale(1) translateY(0); opacity: 1; } }
+/* Dashed placeholder previewing the next piece to build. */
+.kids-scope .mw-scene .mw-slot {
+  position: absolute; bottom: 34px; right: 20px; width: 50px; height: 60px; display: grid; place-items: center;
+  border: 2px dashed var(--k-accent); border-radius: 12px; opacity: .5;
+  background: color-mix(in srgb, var(--k-accent) 7%, transparent);
 }
 
 .kids-scope .mw-inv-head { display: flex; align-items: baseline; margin: 16px 2px 12px; }
@@ -780,50 +801,61 @@ html, body { max-width: 100%; overflow-x: hidden; }
 .kids-scope .kids-journey-head { display: flex; align-items: flex-end; gap: 14px; margin: 12px 0 20px; }
 .kids-scope .kids-journey-head .kids-chip { margin-left: auto; }
 
-.kids-scope .kids-trail {
-  position: relative; display: flex; flex-direction: column; gap: 26px; padding: 8px 0 40px;
+/* Kids trial banner — journey-framed continuation (design 10) */
+.kids-scope .ktrial {
+  display: flex; align-items: center; gap: 12px; text-decoration: none; color: var(--k-ink);
+  background: linear-gradient(135deg, var(--k-brand-50), color-mix(in srgb, var(--k-accent-2) 14%, #fff));
+  border: 1px solid color-mix(in srgb, var(--k-accent) 30%, transparent);
+  border-radius: 16px; padding: 12px 16px; margin: 4px 0 14px;
 }
-.kids-scope .kids-trail::before {
-  content: ''; position: absolute; left: 50%; top: 14px; bottom: 14px; width: 0;
-  border-left: 3px dashed var(--k-hair); transform: translateX(-50%);
-}
-.kids-scope .kt-row { display: flex; position: relative; z-index: 1; }
-.kids-scope .kt-row.right { justify-content: flex-end; }
+.kids-scope .ktrial .ktrial-ic { font-size: 24px; flex: none; }
+.kids-scope .ktrial .ktrial-t { font-family: var(--ge-serif); font-size: 14.5px; }
+.kids-scope .ktrial .ktrial-s { font-size: 11.5px; color: var(--k-muted); margin-top: 2px; }
 
-.kids-scope .kt-node {
-  width: 60px; height: 60px; border-radius: 20px; display: grid; place-items: center;
-  font-size: 30px; flex: none; box-shadow: var(--k-shadow);
+/* Journey map — a clean vertical trail (design 03) */
+.kids-scope .jtrail { position: relative; display: flex; flex-direction: column; gap: 4px; padding: 6px 0 30px; }
+.kids-scope .jt-stop { display: flex; gap: 14px; align-items: stretch; position: relative; }
+/* the connecting line runs through the node column */
+.kids-scope .jt-rail { position: relative; width: 52px; flex: none; display: flex; justify-content: center; }
+.kids-scope .jt-rail::before {
+  content: ''; position: absolute; top: 0; bottom: 0; left: 50%; width: 3px; transform: translateX(-50%);
+  background: var(--k-hair);
 }
-.kids-scope .kt-node.sm { width: 52px; height: 52px; border-radius: 16px; font-size: 24px; box-shadow: none; }
-
-.kids-scope .kt-name { font-family: var(--ge-serif); font-size: 16px; }
-.kids-scope .kt-sub { font-size: 11.5px; color: var(--k-muted); margin-top: 2px; }
-
-/* compact stop */
-.kids-scope .kt-stop {
-  display: inline-flex; align-items: center; gap: 12px; border: 1px solid var(--k-hair);
-  background: #fff; border-radius: 18px; padding: 10px 16px 10px 10px; cursor: pointer;
-  box-shadow: var(--k-shadow); max-width: 260px; transition: transform .1s ease;
+.kids-scope .jt-stop:first-child .jt-rail::before { top: 26px; }
+.kids-scope .jt-stop:last-child .jt-rail::before { bottom: calc(100% - 26px); }
+/* completed segment above a done/current node reads as "travelled" */
+.kids-scope .jt-stop.done .jt-rail::before,
+.kids-scope .jt-stop.current .jt-rail::before { background: color-mix(in srgb, var(--k-accent) 30%, var(--k-hair)); }
+.kids-scope .jt-node {
+  position: relative; z-index: 1; width: 52px; height: 52px; border-radius: 16px;
+  display: grid; place-items: center; font-size: 26px; margin: 4px 0;
+  box-shadow: var(--k-shadow);
 }
-.kids-scope .kt-stop:active:not(:disabled) { transform: scale(0.97); }
-.kids-scope .kt-stop.locked { opacity: .6; cursor: default; box-shadow: none; }
+.kids-scope .jt-stop.locked .jt-node { box-shadow: none; font-size: 20px; }
+.kids-scope .jt-stop.current .jt-node { box-shadow: 0 0 0 4px color-mix(in srgb, var(--k-accent) 22%, transparent), var(--k-shadow); }
+.kids-scope .jt-check { color: var(--k-mint); font-weight: 800; font-size: 26px; }
 
-/* current territory card */
-.kids-scope .kt-card {
-  position: relative; width: 270px; max-width: 78%; background: #fff;
-  border: 2px solid var(--k-accent); border-radius: 22px; padding: 16px;
-  box-shadow: var(--k-shadow-lg);
+.kids-scope .jt-card {
+  flex: 1; min-width: 0; text-align: left; background: #fff; border: 1px solid var(--k-hair);
+  border-radius: 16px; padding: 14px 16px; margin: 2px 0; cursor: pointer; box-shadow: var(--k-shadow);
+  transition: transform .1s ease;
 }
-.kids-scope .kt-card .kt-card-top { display: flex; align-items: center; gap: 12px; }
-.kids-scope .kt-badge {
-  position: absolute; top: -12px; right: 16px; background: var(--k-sun); color: #fff;
+.kids-scope .jt-card:active { transform: scale(0.985); }
+.kids-scope .jt-card.cur { position: relative; border: 2px solid var(--k-accent); box-shadow: var(--k-shadow-lg); padding-top: 18px; }
+.kids-scope .jt-card.locked { background: transparent; box-shadow: none; cursor: default; opacity: .7; }
+.kids-scope .jt-here {
+  position: absolute; top: -11px; left: 16px; background: var(--k-sun); color: #fff;
   font-size: 10px; letter-spacing: .1em; text-transform: uppercase; font-weight: 700;
-  padding: 5px 12px; border-radius: 999px;
+  padding: 4px 11px; border-radius: 999px;
 }
-.kids-scope .kt-progress { display: flex; align-items: center; gap: 10px; margin-top: 12px; }
-.kids-scope .kt-track { flex: 1; height: 6px; background: var(--k-hair); border-radius: 999px; overflow: hidden; }
-.kids-scope .kt-track span { display: block; height: 100%; border-radius: 999px; }
-.kids-scope .kt-pct { font-family: var(--ge-serif); font-size: 12px; color: var(--k-muted); font-feature-settings: 'tnum'; }
+.kids-scope .jt-name { font-family: var(--ge-serif); font-size: 16px; }
+.kids-scope .jt-sub { font-size: 11.5px; color: var(--k-muted); margin-top: 3px; }
+.kids-scope .jt-sub.done { color: var(--k-mint); font-weight: 600; }
+.kids-scope .jt-progress { display: flex; align-items: center; gap: 10px; margin: 12px 0 12px; }
+.kids-scope .jt-track { flex: 1; height: 7px; background: var(--k-hair); border-radius: 999px; overflow: hidden; }
+.kids-scope .jt-track span { display: block; height: 100%; border-radius: 999px; transition: width .5s cubic-bezier(.4,0,.2,1); }
+.kids-scope .jt-pct { font-family: var(--ge-serif); font-size: 12px; color: var(--k-muted); font-feature-settings: 'tnum'; }
+.kids-scope .jt-go { display: inline-block; font-family: var(--ge); font-weight: 700; color: var(--k-accent); font-size: 14px; }
 
 /* Kids companion — bunny / fox / panda / koala, built from shapes */
 .kids-scope .kc { position: relative; width: 92px; height: 76px; --kc-fur: var(--k-peach); }
@@ -939,6 +971,15 @@ html, body { max-width: 100%; overflow-x: hidden; }
 .kids-scope .kh-track { flex: 1; height: 6px; background: var(--k-hair); border-radius: 999px; overflow: hidden; }
 .kids-scope .kh-track span { display: block; height: 100%; border-radius: 999px; }
 .kids-scope .kh-pct { font-family: var(--ge-serif); font-size: 13px; color: var(--k-muted); }
+
+/* Journey strip: a row of territory cards (design 02) */
+.kids-scope .kh-terrs { display: flex; gap: 10px; margin-top: 14px; }
+.kids-scope .kh-terr-card { flex: 1; min-width: 0; text-align: center; padding: 14px 6px; border: 1px solid var(--k-hair); border-radius: 14px; }
+.kids-scope .kh-terr-card.locked { opacity: .55; }
+.kids-scope .kh-terr-ic { font-size: 26px; line-height: 1; }
+.kids-scope .kh-terr-nm { font-family: var(--ge-serif); font-size: 12.5px; margin-top: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.kids-scope .kh-terr-pc { font-family: var(--ge-serif); font-size: 11px; color: var(--k-accent); font-weight: 700; margin-top: 2px; }
+.kids-scope .kh-terr-lk { font-size: 11px; color: var(--k-muted); margin-top: 2px; }
 
 .kids-scope .kh-skills { margin-top: 16px; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
 .kids-scope .kh-skill { background: #fff; border: 1px solid var(--k-hair); border-radius: 16px; padding: 14px 10px; text-align: center; cursor: pointer; transition: transform .1s ease; }

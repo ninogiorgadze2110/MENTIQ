@@ -13,29 +13,44 @@ import { Exercise } from './exercise.models';
   template: `
     <button type="button" class="ex-instruction" (click)="replay()">🔊 {{ exercise.instruction }}</button>
 
-    @if (exercise.visual.kind === 'makeN') {
-      <!-- Design 04 hero: N solid objects + the missing ones as dashed slots. -->
-      <div class="ex-maken">
-        @for (i of range(exercise.visual.count); track i) {
-          <span class="mk-obj">{{ exercise.visual.emoji }}</span>
-        }
-        <span class="mk-sep"></span>
-        @for (i of range(missing()); track i) {
-          <span class="mk-slot"></span>
-        }
-      </div>
-    } @else {
-      <div class="ex-addition">
-        @for (a of exercise.visual.addends ?? []; track $index; let last = $last) {
-          <span class="ex-addend">
-            @for (i of range(a); track i) { <span class="ex-obj sm">{{ exercise.visual.emoji }}</span> }
+    <!-- A clear equation with fruit groups and one blank box to fill. -->
+    <div class="ex-eq">
+      @switch (exercise.visual.kind) {
+        @case ('makeN') {
+          <span class="eq-grp">
+            @for (i of range(exercise.visual.count); track i) { <span class="eq-obj">{{ exercise.visual.emoji }}</span> }
           </span>
-          @if (!last) { <span class="ex-plus">+</span> }
+          <span class="eq-op">+</span>
+          <span class="eq-blank">?</span>
+          <span class="eq-op">=</span>
+          <span class="eq-grp">
+            @for (i of range(exercise.visual.target ?? 0); track i) { <span class="eq-obj">{{ exercise.visual.emoji }}</span> }
+          </span>
         }
-        <span class="ex-plus">=</span>
-        <span class="ex-qmark">❓</span>
-      </div>
-    }
+        @case ('subtraction') {
+          <span class="eq-grp">
+            @for (i of range(addA()); track i) { <span class="eq-obj">{{ exercise.visual.emoji }}</span> }
+          </span>
+          <span class="eq-op">−</span>
+          <span class="eq-grp">
+            @for (i of range(addB()); track i) { <span class="eq-obj">{{ exercise.visual.emoji }}</span> }
+          </span>
+          <span class="eq-op">=</span>
+          <span class="eq-blank">?</span>
+        }
+        @default {
+          <span class="eq-grp">
+            @for (i of range(addA()); track i) { <span class="eq-obj">{{ exercise.visual.emoji }}</span> }
+          </span>
+          <span class="eq-op">+</span>
+          <span class="eq-grp">
+            @for (i of range(addB()); track i) { <span class="eq-obj">{{ exercise.visual.emoji }}</span> }
+          </span>
+          <span class="eq-op">=</span>
+          <span class="eq-blank">?</span>
+        }
+      }
+    </div>
 
     <div class="ex-options">
       @for (o of exercise.options; track o.value) {
@@ -69,9 +84,12 @@ export class AdditionExerciseComponent implements OnChanges {
     return Array.from({ length: n }, (_, i) => i);
   }
 
-  /** How many objects are missing to reach the target (dashed slots to fill). */
-  missing(): number {
-    return Math.max(0, (this.exercise.visual.target ?? 0) - this.exercise.visual.count);
+  /** First / second operand for the addition & subtraction equations. */
+  addA(): number {
+    return this.exercise.visual.addends?.[0] ?? 0;
+  }
+  addB(): number {
+    return this.exercise.visual.addends?.[1] ?? 0;
   }
 
   /** One dot per unit of the option's number, so pre-readers can count too. */

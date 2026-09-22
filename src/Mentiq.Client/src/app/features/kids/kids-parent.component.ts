@@ -6,6 +6,7 @@ import { KidsExerciseService } from './exercise/kids-exercise.service';
 import { KidsProfileService } from './kids-profile.service';
 import { SkillProgress } from './exercise/exercise.models';
 import { KIDS_WORLDS } from './kids-worlds.data';
+import { isMastered, masteryPct } from './kids-mastery';
 
 interface SkillRow {
   topic: string;
@@ -91,7 +92,6 @@ export class KidsParentComponent implements OnInit {
   private readonly router = inject(Router);
 
   private readonly worlds = [...KIDS_WORLDS].sort((a, b) => a.order - b.order);
-  private readonly unlockAt = [0, 5, 13, 22, 32, 44, 58, 74];
   readonly worldsCount = this.worlds.length;
 
   private readonly topics: Record<string, string> = {
@@ -116,7 +116,7 @@ export class KidsParentComponent implements OnInit {
   readonly skills = computed<SkillRow[]>(() =>
     this.worlds.map((w) => {
       const p = this.progress().find((x) => x.skill === w.skill);
-      const pct = p ? (p.totalAttempts > 0 ? p.accuracy : Math.round((p.level / 12) * 100)) : 0;
+      const pct = masteryPct(p);
       return {
         topic: this.topics[w.skill] ?? w.tagline,
         color: w.color,
@@ -130,13 +130,8 @@ export class KidsParentComponent implements OnInit {
   /** Skills the child has actually practised, most recent effort surfaced. */
   readonly recent = computed(() => this.skills().filter((s) => s.total > 0).slice(0, 5));
 
-  readonly collected = computed(() => {
-    let idx = 0;
-    for (let i = 0; i < this.worlds.length; i++) {
-      if (this.stars() >= (this.unlockAt[i] ?? Infinity)) idx = i;
-    }
-    return idx + 1;
-  });
+  /** Rainbow colours are earned by mastering a tour (volume + several days). */
+  readonly collected = computed(() => this.progress().filter((p) => isMastered(p)).length);
   readonly remainingColors = computed(() => Math.max(0, this.worldsCount - this.collected()));
 
   ngOnInit(): void {

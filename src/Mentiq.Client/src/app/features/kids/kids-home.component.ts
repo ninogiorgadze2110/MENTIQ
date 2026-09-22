@@ -7,6 +7,7 @@ import { KidsProfileService } from './kids-profile.service';
 import { KidsCompanionComponent } from './kids-companion.component';
 import { SkillProgress } from './exercise/exercise.models';
 import { KIDS_WORLDS, KidsWorld } from './kids-worlds.data';
+import { masteryPct } from './kids-mastery';
 
 /**
  * Child Home (design 02): one clear action — "start today's mission" — over a
@@ -45,15 +46,21 @@ import { KIDS_WORLDS, KidsWorld } from './kids-worlds.data';
         </div>
       </div>
 
-      <!-- journey summary -->
+      <!-- journey summary: a strip of territories (design 02) -->
       <div class="kh-journey">
-        <div class="kh-row-head"><span class="kids-kicker" style="margin:0;">— შენი მოგზაურობა</span><a routerLink="/kids/map" class="kh-link">რუკა →</a></div>
-        <div class="kh-journey-row">
-          <span class="kh-terr" [style.background]="tint(w.color)">{{ w.emoji }}</span>
-          <div style="flex:1; min-width:0;">
-            <div class="kh-terr-name">{{ w.name }}</div>
-            <div class="kh-terr-bar"><div class="kh-track"><span [style.width.%]="mastery(w)" [style.background]="w.color"></span></div><span class="kh-pct">{{ mastery(w) }}%</span></div>
-          </div>
+        <div class="kh-row-head"><span class="kids-kicker" style="margin:0;">— შენი მოგზაურობა</span><a routerLink="/kids/map" class="kh-link">სრული რუკა →</a></div>
+        <div class="kh-terrs">
+          @for (t of strip(); track t.world.id) {
+            <div class="kh-terr-card" [class.locked]="!t.unlocked">
+              <div class="kh-terr-ic">{{ t.world.emoji }}</div>
+              <div class="kh-terr-nm">{{ shortName(t.world) }}</div>
+              @if (t.unlocked) {
+                <div class="kh-terr-pc">{{ t.pct }}%</div>
+              } @else {
+                <div class="kh-terr-lk">🔒</div>
+              }
+            </div>
+          }
         </div>
       </div>
     }
@@ -64,7 +71,7 @@ import { KIDS_WORLDS, KidsWorld } from './kids-worlds.data';
         <button type="button" class="kh-skill" (click)="start(s.world)">
           <span class="kh-skill-ic" [style.background]="s.world.color">{{ s.world.emoji }}</span>
           <div class="kh-skill-name">{{ shortName(s.world) }}</div>
-          <div class="kh-skill-stat">{{ s.progress ? s.progress.accuracy + '% ★' : 'ახალი' }}</div>
+          <div class="kh-skill-stat">{{ s.progress ? skillPct(s.progress) + '% ★' : 'ახალი' }}</div>
         </button>
       }
     </div>
@@ -86,6 +93,16 @@ export class KidsHomeComponent implements OnInit {
   readonly current = computed(() => {
     const unlocked = this.worlds.filter((_, i) => this.total() >= (this.unlockAt[i] ?? Infinity));
     return unlocked[unlocked.length - 1] ?? this.worlds[0];
+  });
+
+  /** A 4-territory window starting at the current world (design 02 strip). */
+  readonly strip = computed(() => {
+    const idx = this.worlds.indexOf(this.current());
+    return this.worlds.slice(idx, idx + 4).map((world, k) => ({
+      world,
+      unlocked: this.total() >= (this.unlockAt[idx + k] ?? Infinity),
+      pct: this.mastery(world)
+    }));
   });
 
   /** Three skills to surface — the current world and the two around it. */
@@ -120,9 +137,13 @@ export class KidsHomeComponent implements OnInit {
     return 'საღამო მშვიდობისა';
   }
 
+  /** Skill-card growth %, consistent with the mastery bars. */
+  skillPct(p: SkillProgress): number {
+    return masteryPct(p);
+  }
+
   mastery(w: KidsWorld): number {
-    const p = this.progress().find((x) => x.skill === w.skill);
-    return p ? Math.min(100, Math.round((p.level / 12) * 100)) : 0;
+    return masteryPct(this.progress().find((x) => x.skill === w.skill));
   }
 
   shortName(w: KidsWorld): string {

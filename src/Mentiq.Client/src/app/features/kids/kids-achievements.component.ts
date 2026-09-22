@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { KidsExerciseService } from './exercise/kids-exercise.service';
 import { SkillProgress } from './exercise/exercise.models';
 import { KIDS_WORLDS } from './kids-worlds.data';
+import { isMastered, masteryPct } from './kids-mastery';
 
 interface RainbowBand {
   id: string;
@@ -90,7 +91,6 @@ export class KidsAchievementsComponent implements OnInit {
 
   private readonly worlds = [...KIDS_WORLDS].sort((a, b) => a.order - b.order);
   /** Same star gates as the journey map, so the three screens agree. */
-  private readonly unlockAt = [0, 5, 13, 22, 32, 44, 58, 74];
 
   // Short topic label shown after the colour name ("წითელი · რიცხვები").
   private readonly topics: Record<string, string> = {
@@ -107,13 +107,14 @@ export class KidsAchievementsComponent implements OnInit {
   readonly progress = signal<SkillProgress[]>([]);
   readonly total = computed(() => this.progress().reduce((s, p) => s + (p.score ?? 0), 0));
 
-  /** Index of the current (last unlocked) world. */
+  private mastered(skill: string): boolean {
+    return isMastered(this.progress().find((p) => p.skill === skill));
+  }
+
+  /** The first tour not yet mastered — the one currently in progress. */
   private readonly currentIndex = computed(() => {
-    let idx = 0;
-    for (let i = 0; i < this.worlds.length; i++) {
-      if (this.total() >= (this.unlockAt[i] ?? Infinity)) idx = i;
-    }
-    return idx;
+    const idx = this.worlds.findIndex((w) => !this.mastered(w.skill));
+    return idx === -1 ? this.worlds.length : idx;
   });
 
   readonly bands = computed<RainbowBand[]>(() =>
@@ -123,20 +124,17 @@ export class KidsAchievementsComponent implements OnInit {
       topic: this.topics[w.skill] ?? w.tagline,
       color: w.color,
       skill: w.skill,
-      status: i < this.currentIndex() ? 'done' : i === this.currentIndex() ? 'current' : 'locked'
+      status: this.mastered(w.skill) ? 'done' : i === this.currentIndex() ? 'current' : 'locked'
     }))
   );
 
-  /** Collected = every unlocked colour (including the one in progress). */
-  readonly collected = computed(() => this.currentIndex() + 1);
+  /** Collected = tours actually mastered. */
+  readonly collected = computed(() => this.worlds.filter((w) => this.mastered(w.skill)).length);
 
   readonly growth = computed<GrowBar[]>(() =>
     this.worlds.map((w) => {
       const p = this.progress().find((x) => x.skill === w.skill);
-      const pct = p
-        ? p.totalAttempts > 0 ? p.accuracy : Math.round((p.level / 12) * 100)
-        : 0;
-      return { name: w.name, topic: this.topics[w.skill] ?? w.tagline, color: w.color, pct };
+      return { name: w.name, topic: this.topics[w.skill] ?? w.tagline, color: w.color, pct: masteryPct(p) };
     })
   );
 

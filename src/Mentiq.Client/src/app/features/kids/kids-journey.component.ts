@@ -4,11 +4,13 @@ import { Router } from '@angular/router';
 import { KidsExerciseService } from './exercise/kids-exercise.service';
 import { SkillProgress } from './exercise/exercise.models';
 import { KIDS_WORLDS, KidsWorld } from './kids-worlds.data';
+import { isMastered, masteryPct } from './kids-mastery';
 
 /**
- * Journey map (design 03): the worlds laid out as territories along a winding
- * trail. Territories unlock gradually with total stars; the newest unlocked one
- * is the child's current spot ("აქ ხარ"). A calm path, not a list.
+ * Journey map (design 03) — a clean vertical trail of territories. Progress is
+ * mastery-based and sequential: the next tour opens only when the current one is
+ * mastered (volume + several days). So the map always shows exactly where the
+ * child is, what's done, and what's still ahead — no "8/8 in one sitting".
  */
 @Component({
   selector: 'app-kids-journey',
@@ -21,36 +23,44 @@ import { KIDS_WORLDS, KidsWorld } from './kids-worlds.data';
         <div class="kids-kicker" style="margin:0;">— ტომი I</div>
         <div class="kids-h1" style="font-size:26px; margin:4px 0 0;">მოგზაურობის რუკა</div>
       </div>
-      <span class="kids-chip">{{ unlockedCount() }} / {{ worlds.length }} ტერიტორია</span>
+      <span class="kids-chip">{{ masteredCount() }} / {{ worlds.length }} დასრულებული</span>
     </div>
 
-    <div class="kids-trail">
+    <div class="jtrail">
       @for (w of worlds; track w.id; let i = $index) {
-        <div class="kt-row" [class.right]="i % 2 === 1">
-          @if (i === currentIndex()) {
-            <div class="kt-card">
-              <span class="kt-badge">აქ ხარ</span>
-              <div class="kt-card-top">
-                <span class="kt-node" [style.background]="tint(w.color)">{{ w.emoji }}</span>
-                <div>
-                  <div class="kt-name">{{ w.name }}</div>
-                  <div class="kt-sub">{{ w.tagline }}</div>
-                </div>
+        <div class="jt-stop" [class.done]="stateOf(i) === 'done'"
+             [class.current]="stateOf(i) === 'current'" [class.locked]="stateOf(i) === 'locked'">
+          <div class="jt-rail">
+            <span class="jt-node" [style.background]="stateOf(i) === 'locked' ? '#ece9f5' : tint(w.color)">
+              @switch (stateOf(i)) {
+                @case ('done') { <span class="jt-check">✓</span> }
+                @case ('locked') { 🔒 }
+                @default { {{ w.emoji }} }
+              }
+            </span>
+          </div>
+
+          @if (stateOf(i) === 'current') {
+            <button type="button" class="jt-card cur" (click)="open(w)">
+              <span class="jt-here">აქ ხარ</span>
+              <div class="jt-name">{{ w.name }}</div>
+              <div class="jt-sub">{{ w.tagline }}</div>
+              <div class="jt-progress">
+                <div class="jt-track"><span [style.width.%]="mastery(w)" [style.background]="w.color"></span></div>
+                <span class="jt-pct">{{ mastery(w) }}%</span>
               </div>
-              <div class="kt-progress">
-                <div class="kt-track"><span [style.width.%]="mastery(w)" [style.background]="w.color"></span></div>
-                <span class="kt-pct">{{ mastery(w) }}%</span>
-              </div>
-              <button type="button" class="kids-btn" style="width:100%; margin-top:12px; padding:12px; font-size:15px;" (click)="open(w)">გააგრძელე →</button>
-            </div>
-          } @else {
-            <button type="button" class="kt-stop" [class.locked]="!unlocked(i)" [disabled]="!unlocked(i)" (click)="open(w)">
-              <span class="kt-node sm" [style.background]="unlocked(i) ? tint(w.color) : '#ece9f5'">{{ unlocked(i) ? w.emoji : '🔒' }}</span>
-              <div style="text-align:left;">
-                <div class="kt-name" style="font-size:15px;">{{ w.name }}</div>
-                <div class="kt-sub">{{ unlocked(i) ? w.tagline : lockHint(i) }}</div>
-              </div>
+              <span class="jt-go">გააგრძელე →</span>
             </button>
+          } @else if (stateOf(i) === 'done') {
+            <button type="button" class="jt-card" (click)="open(w)">
+              <div class="jt-name">{{ w.name }}</div>
+              <div class="jt-sub done">✓ დასრულებულია · კიდევ ითამაშე</div>
+            </button>
+          } @else {
+            <div class="jt-card locked">
+              <div class="jt-name">{{ w.name }}</div>
+              <div class="jt-sub">🔒 {{ lockHint(i) }}</div>
+            </div>
           }
         </div>
       }
@@ -64,29 +74,41 @@ export class KidsJourneyComponent implements OnInit {
   readonly worlds = [...KIDS_WORLDS].sort((a, b) => a.order - b.order);
   readonly progress = signal<SkillProgress[]>([]);
 
-  /** Total stars needed to unlock each territory (gentle ramp). */
-  private readonly unlockAt = [0, 5, 13, 22, 32, 44, 58, 74];
-
-  readonly total = computed(() => this.progress().reduce((s, p) => s + (p.score ?? 0), 0));
-  readonly unlockedCount = computed(() => this.worlds.filter((_, i) => this.unlocked(i)).length);
-  readonly currentIndex = computed(() => Math.max(0, this.unlockedCount() - 1));
+  readonly masteredCount = computed(() => this.worlds.filter((_, i) => this.mastered(i)).length);
+  /** The first reachable, not-yet-mastered tour. */
+  readonly currentIndex = computed(() => {
+    for (let i = 0; i < this.worlds.length; i++) {
+      if (this.unlocked(i) && !this.mastered(i)) return i;
+    }
+    return this.worlds.length; // everything mastered
+  });
 
   ngOnInit(): void {
     this.api.progress().subscribe({ next: (r) => this.progress.set(r), error: () => {} });
   }
 
+  private mastered(i: number): boolean {
+    return isMastered(this.progress().find((p) => p.skill === this.worlds[i].skill));
+  }
+
+  /** Sequential: a tour opens once the previous one is mastered. */
   unlocked(i: number): boolean {
-    return this.total() >= (this.unlockAt[i] ?? Infinity);
+    return i === 0 || this.mastered(i - 1);
+  }
+
+  stateOf(i: number): 'done' | 'current' | 'locked' {
+    if (this.mastered(i)) return 'done';
+    if (i === this.currentIndex()) return 'current';
+    return 'locked';
   }
 
   lockHint(i: number): string {
-    const need = (this.unlockAt[i] ?? 0) - this.total();
-    return need > 0 ? `🔒 კიდევ ${need} ⭐` : '🔒';
+    const prev = this.worlds[i - 1];
+    return prev ? `ჯერ დაასრულე „${prev.name}"` : 'ჯერ ჩაკეტილია';
   }
 
   mastery(w: KidsWorld): number {
-    const p = this.progress().find((x) => x.skill === w.skill);
-    return p ? Math.min(100, Math.round((p.level / 12) * 100)) : 0;
+    return masteryPct(this.progress().find((x) => x.skill === w.skill));
   }
 
   tint(color: string): string {
