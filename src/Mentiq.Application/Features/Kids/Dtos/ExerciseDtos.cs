@@ -34,10 +34,14 @@ public sealed record ExerciseDto
 /// <summary>Generic visual description. `Kind` tells the renderer how to draw it.</summary>
 public sealed record ExerciseVisual
 {
-    /// <summary>"objects" | "addition" | "sequence" | "none".</summary>
+    /// <summary>"objects" | "addition" | "makeN" | "sequence" | "none".</summary>
     public string Kind { get; init; } = "objects";
     public string? Emoji { get; init; }
     public int Count { get; init; }
+
+    /// <summary>Target total for the "makeN" (complete-to-N) kind: `Count` solid +
+    /// `Target - Count` dashed slots, and the child answers how many are missing.</summary>
+    public int Target { get; init; }
 
     /// <summary>Addends for the "addition" kind, e.g. [2, 1] → 🍎🍎 + 🍎.</summary>
     public IReadOnlyList<int>? Addends { get; init; }

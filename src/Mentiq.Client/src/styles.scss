@@ -271,22 +271,31 @@ html, body { max-width: 100%; overflow-x: hidden; }
    Bright, rounded, large touch targets. Kept isolated from the adult theme.
    ========================================================================= */
 .kids-scope {
-  --k-accent: #3e63dd;
-  --k-ink: #21243d;
-  --k-muted: #6b7089;
+  /* MENTIQ Kids — indigo/serif/warm-paper "journey" system (design v0.1). */
+  --k-accent: #5b4de0;        /* brand indigo */
+  --k-accent-2: #7c5cff;
+  --k-brand-50: #efedff;
+  --k-ink: #1a1930;
+  --k-muted: #3a3856;
   --k-card: #ffffff;
-  --k-radius: 26px;
-  --k-radius-sm: 18px;
-  --k-shadow: 0 10px 30px rgba(40, 44, 90, 0.12);
-  --k-shadow-lg: 0 18px 44px rgba(40, 44, 90, 0.18);
+  --k-paper: #f4f2ec;
+  --k-kid: #f0eef8;
+  --k-hair: #e2dcef;
+  --k-radius: 24px;
+  --k-radius-sm: 16px;
+  --k-shadow: 0 1px 0 rgba(26, 25, 48, 0.04), 0 12px 40px -18px rgba(91, 77, 224, 0.22);
+  --k-shadow-lg: 0 20px 48px -20px rgba(91, 77, 224, 0.34);
+
+  /* per-skill accents */
+  --k-sun: #f4a83a; --k-coral: #e97862; --k-mint: #7cc79a;
+  --k-sky: #78b1e8; --k-lilac: #b892f3; --k-peach: #f4c088;
 
   min-height: 100vh;
   color: var(--k-ink);
   font-family: var(--ge);
   background:
-    radial-gradient(900px 500px at 10% -10%, #dfe8ff, transparent 60%),
-    radial-gradient(800px 500px at 100% 0%, #ffe6f3, transparent 55%),
-    linear-gradient(180deg, #fbfcff, #f3f6ff);
+    radial-gradient(1100px 600px at 12% -8%, color-mix(in srgb, var(--k-brand-50) 90%, transparent), transparent 55%),
+    var(--k-kid);
   -webkit-tap-highlight-color: transparent;
 }
 
@@ -314,8 +323,18 @@ html, body { max-width: 100%; overflow-x: hidden; }
 .kids-round:active { transform: scale(0.92); }
 
 /* Headings */
-.kids-h1 { font-family: var(--ge-serif); font-size: clamp(28px, 6vw, 40px); font-weight: 700; margin: 4px 0 6px; }
-.kids-sub { color: var(--k-muted); font-size: clamp(14px, 3.6vw, 17px); margin: 0 0 22px; }
+.kids-h1 { font-family: var(--ge-serif); font-size: clamp(26px, 5.6vw, 38px); font-weight: 500; margin: 4px 0 6px; letter-spacing: -.01em; }
+.kids-sub { color: var(--k-muted); font-size: clamp(14px, 3.6vw, 16px); margin: 0 0 22px; }
+.kids-kicker { font-size: 10px; letter-spacing: .22em; text-transform: uppercase; color: var(--k-accent); margin: 6px 2px 14px; }
+
+/* Home greeting */
+.kids-greet { display: flex; align-items: center; gap: 14px; margin: 4px 0 24px; }
+.kids-avatar {
+  width: 48px; height: 48px; border-radius: 50%; background: var(--k-accent); color: #fff;
+  display: grid; place-items: center; font-family: var(--ge-serif); font-size: 22px; flex: none;
+}
+.kids-greet-k { font-size: 12px; color: var(--k-muted); }
+.kids-greet-name { font-family: var(--ge-serif); font-size: 20px; margin-top: 1px; }
 
 /* World cards grid */
 .kids-grid {
@@ -337,8 +356,8 @@ html, body { max-width: 100%; overflow-x: hidden; }
   width: 84px; height: 84px; border-radius: 24px; display: grid; place-items: center;
   font-size: 46px; margin-bottom: 4px;
 }
-.kids-card .k-name { font-weight: 800; font-size: 15px; line-height: 1.2; }
-.kids-card .k-tag { color: var(--k-muted); font-size: 12.5px; }
+.kids-card .k-name { font-family: var(--ge-serif); font-weight: 500; font-size: 16px; line-height: 1.2; }
+.kids-card .k-tag { color: var(--k-muted); font-size: 12px; }
 .kids-card .k-lock {
   position: absolute; top: 12px; right: 12px; width: 26px; height: 26px; border-radius: 50%;
   background: #eef0f7; display: grid; place-items: center; font-size: 13px;
@@ -364,28 +383,43 @@ html, body { max-width: 100%; overflow-x: hidden; }
 }
 
 /* Kids exercise + session UI (within .kids-scope) */
+/* Design 04: the question reads as a warm serif heading; the 🔊 is a quiet
+   affordance to replay it, not a heavy filled button. */
 .kids-scope .ex-instruction {
-  display: inline-flex; align-items: center; gap: 8px; border: none; cursor: pointer;
-  background: color-mix(in srgb, var(--k-accent) 10%, #fff); color: var(--k-ink);
-  border-radius: 999px; padding: 12px 22px; font-family: var(--ge); font-weight: 700;
-  font-size: clamp(17px, 4.4vw, 22px); margin: 0 auto 20px; box-shadow: var(--k-shadow);
+  display: inline-flex; align-items: flex-start; gap: 10px; border: none; cursor: pointer;
+  background: transparent; color: var(--k-ink); text-align: left;
+  border-radius: 16px; padding: 4px 6px; font-family: var(--ge-serif); font-weight: 600;
+  line-height: 1.25; font-size: clamp(19px, 4.6vw, 23px); margin: 2px auto 18px;
 }
+/* Design 04: objects sit inside a soft tinted "stage" panel. */
 .kids-scope .ex-objects {
-  display: flex; flex-wrap: wrap; justify-content: center; gap: 10px;
-  min-height: 120px; align-items: center; margin-bottom: 24px;
+  display: flex; flex-wrap: wrap; justify-content: center; gap: 14px;
+  min-height: 116px; align-items: center; margin: 4px 0 22px;
+  background: var(--k-brand-50); border-radius: 22px; padding: 24px 20px;
 }
-.kids-scope .ex-obj { font-size: clamp(40px, 11vw, 64px); line-height: 1; animation: exPop .28s ease both; }
+.kids-scope .ex-obj { font-size: clamp(40px, 11vw, 60px); line-height: 1; animation: exPop .28s ease both; }
 @keyframes exPop { from { transform: scale(0); } to { transform: scale(1); } }
 
-.kids-scope .ex-options { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
-.kids-scope .kids-opt {
-  width: 88px; height: 88px; border: none; border-radius: 24px; cursor: pointer;
-  background: #fff; box-shadow: var(--k-shadow); font-family: var(--ge-serif);
-  font-weight: 700; font-size: 40px; color: var(--k-ink);
-  transition: transform .1s ease, box-shadow .12s ease;
+/* Design 04: answer options as a 2-column grid of bordered cards. */
+.kids-scope .ex-options {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+  max-width: 340px; margin: 0 auto;
 }
-.kids-scope .kids-opt:hover:not(:disabled) { transform: translateY(-3px); box-shadow: var(--k-shadow-lg); }
-.kids-scope .kids-opt:active:not(:disabled) { transform: scale(0.94); }
+.kids-scope .kids-opt {
+  width: 100%; min-height: 84px; padding: 16px; border: 1.5px solid var(--k-hair);
+  border-radius: 20px; cursor: pointer; background: #fff; box-shadow: none;
+  font-family: var(--ge-serif); font-weight: 700; font-size: 34px; color: var(--k-ink);
+  display: grid; place-items: center;
+  transition: transform .1s ease, box-shadow .12s ease, border-color .12s ease;
+}
+.kids-scope .kids-opt:hover:not(:disabled) {
+  transform: translateY(-2px); border-color: color-mix(in srgb, var(--k-accent) 55%, transparent);
+  box-shadow: var(--k-shadow);
+}
+.kids-scope .kids-opt:active:not(:disabled) {
+  transform: scale(0.96); border-color: var(--k-accent);
+  background: var(--k-brand-50); color: var(--k-accent);
+}
 .kids-scope .kids-opt:disabled { opacity: .55; cursor: default; }
 
 .kids-scope .ex-progress { display: flex; gap: 8px; justify-content: center; margin: 10px 0 0; }
@@ -417,16 +451,29 @@ html, body { max-width: 100%; overflow-x: hidden; }
 .kids-scope .ex-group:disabled { opacity: .6; cursor: default; }
 .kids-scope .ex-group-objs { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; max-width: 200px; }
 
-.kids-scope .ex-sequence { display: flex; gap: 10px; justify-content: center; align-items: center; flex-wrap: wrap; margin-bottom: 24px; }
+.kids-scope .ex-sequence { display: flex; gap: 12px; justify-content: center; align-items: center; flex-wrap: wrap; margin: 4px 0 22px; background: var(--k-brand-50); border-radius: 22px; padding: 22px 18px; }
 .kids-scope .ex-seq { font-size: clamp(34px, 9vw, 52px); line-height: 1; }
 .kids-scope .ex-seq.q { opacity: .5; }
 
 .kids-scope .kids-opt.emoji { font-size: 40px; }
 
-.kids-scope .ex-addition { display: flex; gap: 10px; justify-content: center; align-items: center; flex-wrap: wrap; margin-bottom: 24px; }
+.kids-scope .ex-addition { display: flex; gap: 12px; justify-content: center; align-items: center; flex-wrap: wrap; margin: 4px 0 22px; background: var(--k-brand-50); border-radius: 22px; padding: 22px 18px; }
 .kids-scope .ex-addend { display: inline-flex; flex-wrap: wrap; gap: 4px; justify-content: center; max-width: 180px; }
 .kids-scope .ex-plus { font-family: var(--ge-serif); font-size: clamp(30px, 7vw, 44px); color: var(--k-muted); font-weight: 700; }
 .kids-scope .ex-qmark { font-size: clamp(30px, 7vw, 44px); opacity: .6; }
+
+/* Design 04 "complete to N": solid objects + dashed slots to fill. */
+.kids-scope .ex-maken {
+  display: flex; gap: 12px; justify-content: center; align-items: center; flex-wrap: wrap;
+  margin: 4px 0 22px; background: var(--k-brand-50); border-radius: 22px; padding: 24px 18px;
+}
+.kids-scope .ex-maken .mk-obj { font-size: clamp(36px, 10vw, 52px); line-height: 1; animation: exPop .28s ease both; }
+.kids-scope .ex-maken .mk-sep { width: 22px; height: 3px; border-radius: 3px; background: color-mix(in srgb, var(--k-accent) 55%, transparent); }
+.kids-scope .ex-maken .mk-slot {
+  width: clamp(34px, 9vw, 46px); height: clamp(42px, 11vw, 56px);
+  border: 2px dashed var(--k-accent); border-radius: 50% 50% 42% 42%;
+  background: #fff;
+}
 
 /* Number option with a counted-dots hint below (helps pre-readers) */
 .kids-scope .kids-opt.with-dots {
@@ -435,9 +482,47 @@ html, body { max-width: 100%; overflow-x: hidden; }
 }
 .kids-scope .kids-opt .opt-num { font-family: var(--ge-serif); font-weight: 700; font-size: 36px; line-height: 1; }
 .kids-scope .kids-opt .opt-dots {
-  display: flex; flex-wrap: wrap; gap: 2px; justify-content: center; max-width: 78px;
+  display: flex; flex-wrap: wrap; gap: 3px; justify-content: center; max-width: 96px;
 }
-.kids-scope .kids-opt .opt-obj { font-size: 15px; line-height: 1; }
+.kids-scope .kids-opt .opt-obj { font-size: 18px; line-height: 1; }
+/* Speed challenge: after a tap, draw whether the pick was right (✓ / ✗). */
+.kids-scope .kids-opt { position: relative; }
+.kids-scope .kids-opt.good { border-color: var(--k-mint); background: color-mix(in srgb, var(--k-mint) 16%, #fff); }
+.kids-scope .kids-opt.bad { border-color: var(--k-coral); background: color-mix(in srgb, var(--k-coral) 14%, #fff); }
+.kids-scope .kids-opt .opt-mark {
+  position: absolute; top: 6px; right: 8px; width: 22px; height: 22px; border-radius: 50%;
+  display: grid; place-items: center; font-size: 13px; color: #fff; font-family: var(--ge);
+}
+.kids-scope .kids-opt .opt-mark.good { background: var(--k-mint); }
+.kids-scope .kids-opt .opt-mark.bad { background: var(--k-coral); }
+
+/* ── Preschool 4–5 (design 05): audio-first, no hearts, extra-large targets ── */
+.kids-scope .presch .ex-hearts { display: none; }        /* no "lives" for the youngest */
+.kids-scope .presch .ex-bar { height: 12px; }
+.kids-scope .presch .ex-kicker { justify-content: center; }
+.kids-scope .presch .ex-qn { display: none; }
+/* The written question is replaced by the big play button + spoken audio. */
+.kids-scope .presch .ex-instruction { display: none; }
+.kids-scope .presch-listen { display: flex; flex-direction: column; align-items: center; gap: 8px; margin: 4px 0 18px; }
+.kids-scope .presch-play {
+  width: 92px; height: 92px; border-radius: 50%; border: none; cursor: pointer;
+  background: var(--k-accent); color: #fff; display: grid; place-items: center;
+  box-shadow: 0 20px 40px -12px color-mix(in srgb, var(--k-accent) 60%, transparent);
+  transition: transform .12s ease;
+}
+.kids-scope .presch-play:hover { transform: scale(1.05); }
+.kids-scope .presch-play:active { transform: scale(0.95); }
+.kids-scope .presch-cap { font-size: 12px; letter-spacing: .06em; color: var(--k-muted); }
+/* Bigger stage + bigger objects + bigger answer targets. */
+.kids-scope .presch .ex-objects,
+.kids-scope .presch .ex-addition,
+.kids-scope .presch .ex-sequence { padding: 28px 20px; border-radius: 28px; }
+.kids-scope .presch .ex-obj { font-size: clamp(56px, 16vw, 80px); }
+.kids-scope .presch .ex-options { max-width: 320px; gap: 12px; }
+.kids-scope .presch .kids-opt { min-height: 104px; font-size: 44px; border-width: 2.5px; border-radius: 22px; }
+.kids-scope .presch .kids-opt.with-dots { min-height: 108px; }
+.kids-scope .presch .kids-opt .opt-num { font-size: 44px; }
+.kids-scope .presch .ex-tiles .ex-tile { width: 104px; height: 104px; font-size: 54px; }
 
 /* Kids: classification / attention / memory / speed */
 .kids-scope .ex-instruction.static { background: color-mix(in srgb, var(--k-accent) 10%, #fff); cursor: default; }
@@ -527,3 +612,352 @@ html, body { max-width: 100%; overflow-x: hidden; }
 .kids-scope .kids-skill .ks-bar { height: 10px; background: #eef1fb; border-radius: 999px; margin-top: 6px; overflow: hidden; }
 .kids-scope .kids-skill .ks-bar span { display: block; height: 100%; background: var(--k-accent); border-radius: 999px; }
 .kids-scope .kids-skill .ks-level { font-weight: 800; font-size: 13px; color: var(--k-accent); white-space: nowrap; }
+
+/* ── Design 06: Rainbow Path · My Skills ──────────────────────────────── */
+.kids-scope .kids-top-row { display: flex; align-items: center; gap: 12px; margin: 6px 0 2px; }
+.kids-scope .rain-count { text-align: center; margin: 16px 0 6px; }
+.kids-scope .rain-count .rc-big { font-family: var(--ge-serif); font-size: 46px; line-height: 1; color: var(--k-accent); }
+.kids-scope .rain-count .rc-sub { font-family: var(--ge-serif); font-size: 24px; color: var(--k-muted); }
+.kids-scope .rain-count .rc-label { font-size: 12px; color: var(--k-muted); margin-top: 2px; }
+.kids-scope .rain-wrap { padding: 6px 6px 4px; }
+.kids-scope .rain-wrap svg { width: 100%; height: auto; display: block; }
+
+.kids-scope .rain-rows { display: flex; flex-direction: column; gap: 8px; margin-top: 8px; }
+.kids-scope .rain-row {
+  display: flex; align-items: center; gap: 12px; padding: 11px 14px;
+  background: #fff; border: 1px solid var(--k-hair); border-radius: 14px;
+}
+.kids-scope .rain-row.current { background: var(--k-brand-50); border: 2px solid var(--k-accent); }
+.kids-scope .rain-row.locked { opacity: .5; }
+.kids-scope .rain-row .rr-dot { width: 20px; height: 20px; border-radius: 50%; flex: none; }
+.kids-scope .rain-row .rr-name { flex: 1; min-width: 0; font-family: var(--ge-serif); font-size: 14px; }
+.kids-scope .rain-row .rr-name span { color: var(--k-muted); }
+.kids-scope .rain-row .rr-status { font-size: 11px; font-weight: 600; color: var(--k-muted); white-space: nowrap; }
+.kids-scope .rain-row .rr-status.done { color: var(--k-mint); }
+.kids-scope .rain-row .rr-status.cur { color: var(--k-accent); }
+
+.kids-scope .grow-bars { display: flex; flex-direction: column; }
+.kids-scope .gbar { display: flex; align-items: center; gap: 12px; padding: 13px 0; border-bottom: 1px solid var(--k-hair); }
+.kids-scope .gbar:last-child { border-bottom: none; }
+.kids-scope .gbar .gb-lbl { width: 130px; flex: none; display: flex; align-items: center; gap: 9px; font-family: var(--ge-serif); font-size: 13.5px; }
+.kids-scope .gbar .gb-dot { width: 11px; height: 11px; border-radius: 50%; flex: none; }
+.kids-scope .gbar .gb-track { flex: 1; height: 9px; background: #eef1fb; border-radius: 999px; overflow: hidden; }
+.kids-scope .gbar .gb-track span { display: block; height: 100%; border-radius: 999px; transition: width .5s cubic-bezier(.4,0,.2,1); }
+.kids-scope .gbar .gb-num { width: 30px; text-align: right; font-family: var(--ge-serif); font-size: 14px; font-feature-settings: 'tnum'; }
+
+/* ── Design 07.b: companion profile ───────────────────────────────────── */
+.kids-scope .friend-halo {
+  width: 168px; height: 168px; margin: 0 auto; border-radius: 50%;
+  background: var(--k-brand-50); display: grid; place-items: center;
+}
+.kids-scope .friend-halo app-kids-companion { transform: scale(1.5); }
+.kids-scope .friend-stats { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 22px; }
+.kids-scope .fstat { padding: 15px 10px; background: #fff; border: 1px solid var(--k-hair); border-radius: 16px; text-align: center; }
+.kids-scope .fstat .fs-num { font-family: var(--ge-serif); font-size: 24px; color: var(--k-accent); }
+.kids-scope .fstat .fs-lbl { font-size: 11px; color: var(--k-muted); margin-top: 2px; }
+
+/* ── Design 07.a: my world ────────────────────────────────────────────── */
+.kids-scope .mw-day { margin-left: auto; font-family: var(--ge-serif); color: var(--k-accent); font-size: 14px; }
+.kids-scope .mw-scene {
+  position: relative; height: 240px; margin: 16px 0 6px; overflow: hidden;
+  border-radius: 22px; background: linear-gradient(180deg, #d8e6ff 0%, #eef4ea 58%, #f7ecd8 100%);
+}
+.kids-scope .mw-scene .mw-sun { position: absolute; top: 16px; right: 22px; width: 42px; height: 42px; border-radius: 50%; background: var(--k-sun); }
+.kids-scope .mw-scene .mw-cloud { position: absolute; top: 22px; left: 20px; width: 62px; height: 20px; border-radius: 20px; background: #fff; opacity: .75; }
+.kids-scope .mw-scene .mw-hills {
+  position: absolute; bottom: 0; left: -20px; right: -20px; height: 120px;
+  background: radial-gradient(120px 60px at 30% 0, var(--k-mint), transparent 100%),
+              radial-gradient(150px 72px at 76% 8%, var(--k-mint), transparent 100%);
+}
+.kids-scope .mw-scene .mw-house {
+  position: absolute; bottom: 40px; left: 64px; width: 54px; height: 42px; background: #fff; border: 2px solid var(--k-ink);
+}
+.kids-scope .mw-scene .mw-house::before { content: ''; position: absolute; top: -15px; left: -8px; right: -8px; height: 15px; background: var(--k-coral); clip-path: polygon(0 100%, 50% 0, 100% 100%); }
+.kids-scope .mw-scene .mw-house::after { content: ''; position: absolute; bottom: 0; left: 21px; width: 13px; height: 19px; background: var(--k-accent); }
+.kids-scope .mw-scene .mw-tree { position: absolute; bottom: 32px; width: 34px; height: 34px; border-radius: 50%; background: var(--k-mint); box-shadow: 0 14px 0 -8px #7b4a2a; }
+.kids-scope .mw-scene .mw-tree.a { left: 168px; }
+.kids-scope .mw-scene .mw-tree.b { left: 214px; width: 26px; height: 26px; }
+.kids-scope .mw-scene .mw-flower { position: absolute; bottom: 24px; width: 11px; height: 11px; border-radius: 50%; }
+.kids-scope .mw-scene .mw-flower.a { left: 30px; background: var(--k-sun); }
+.kids-scope .mw-scene .mw-flower.b { left: 148px; background: var(--k-accent-2); }
+.kids-scope .mw-scene .mw-next {
+  position: absolute; bottom: 42px; right: 54px; width: 46px; height: 58px; display: grid; place-items: center;
+  border: 2px dashed var(--k-accent); border-radius: 10px; font-size: 20px;
+  background: color-mix(in srgb, var(--k-accent) 8%, transparent);
+}
+
+.kids-scope .mw-inv-head { display: flex; align-items: baseline; margin: 16px 2px 12px; }
+.kids-scope .mw-inv-count { margin-left: auto; font-size: 12px; color: var(--k-muted); }
+.kids-scope .mw-inv { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+.kids-scope .mw-item { padding: 12px 6px; background: #fff; border: 1px solid var(--k-hair); border-radius: 14px; text-align: center; }
+.kids-scope .mw-item.locked { opacity: .5; }
+.kids-scope .mw-item .mw-emoji { font-size: 24px; }
+.kids-scope .mw-item .mw-qty { font-size: 12px; font-weight: 700; color: var(--k-ink); margin-top: 2px; }
+.kids-scope .mw-item.locked .mw-qty { color: var(--k-muted); }
+.kids-scope .mw-item .mw-src { font-size: 9.5px; line-height: 1.2; color: var(--k-muted); margin-top: 3px; }
+
+/* ── Design 08: Speed Challenge ───────────────────────────────────────── */
+.kids-scope .sc-top { display: flex; align-items: center; gap: 12px; margin: 4px 0 6px; }
+.kids-scope .sc-badge { margin-left: auto; padding: 6px 14px; background: #fff; border: 1px solid var(--k-hair); border-radius: 999px; font-size: 11.5px; font-weight: 600; }
+.kids-scope .sc-hero {
+  width: 118px; height: 118px; margin: 8px auto 18px; border-radius: 30px; display: grid; place-items: center;
+  font-size: 58px; background: color-mix(in srgb, var(--k-accent-2) 22%, #fff);
+  box-shadow: 0 24px 48px -20px color-mix(in srgb, var(--k-accent-2) 60%, transparent);
+}
+.kids-scope .sc-recs { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.kids-scope .sc-rec { padding: 16px; background: #fff; border: 1px solid var(--k-hair); border-radius: 16px; }
+.kids-scope .sc-rec .sc-rec-n { font-family: var(--ge-serif); font-size: 30px; margin-top: 4px; }
+.kids-scope .sc-rec .sc-rec-n.brand { color: var(--k-accent); }
+.kids-scope .sc-rec .sc-rec-l { font-size: 11px; color: var(--k-muted); }
+
+/* live */
+.kids-scope .sc-timer { position: relative; width: 46px; height: 46px; }
+.kids-scope .sc-timer svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+.kids-scope .sc-timer circle { fill: none; stroke-width: 3; }
+.kids-scope .sc-timer circle.track { stroke: var(--k-hair); }
+.kids-scope .sc-timer circle.prog { stroke: var(--k-accent-2); stroke-linecap: round; stroke-dasharray: 100; transition: stroke-dashoffset 1s linear; }
+.kids-scope .sc-timer span { position: absolute; inset: 0; display: grid; place-items: center; font-family: var(--ge-serif); font-size: 14px; font-feature-settings: 'tnum'; }
+.kids-scope .sc-scoreline { display: flex; justify-content: space-between; margin: 6px 2px 4px; }
+.kids-scope .sc-live-n { font-family: var(--ge-serif); font-size: 22px; font-feature-settings: 'tnum'; }
+.kids-scope .sc-live-n.mint { color: var(--k-mint); }
+.kids-scope .sc-live-n.brand { color: var(--k-accent); }
+.kids-scope .sc-eq { text-align: center; padding: 22px 0 20px; }
+.kids-scope .sc-eq .sc-eq-q { font-family: var(--ge-serif); font-size: clamp(56px, 18vw, 88px); line-height: 1; font-feature-settings: 'tnum'; }
+.kids-scope .sc-eq .sc-eq-a { font-family: var(--ge-serif); font-size: clamp(28px, 8vw, 38px); color: var(--k-muted); margin-top: 10px; }
+.kids-scope .sc-eq .sc-typed { border-bottom: 3px solid var(--k-accent); padding: 0 26px; color: var(--k-ink); }
+.kids-scope .sc-pad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.kids-scope .sc-key {
+  padding: 15px; text-align: center; background: #fff; border: 1.5px solid var(--k-hair);
+  border-radius: 16px; font-family: var(--ge-serif); font-size: 26px; color: var(--k-ink); cursor: pointer;
+  transition: transform .08s ease, background .1s ease;
+}
+.kids-scope .sc-key:active { transform: scale(0.94); background: var(--k-brand-50); }
+.kids-scope .sc-key.enter { background: var(--k-ink); color: #fff; border-color: var(--k-ink); }
+.kids-scope .sc-key.del { color: var(--k-muted); }
+
+/* result */
+.kids-scope .sc-result-n { font-family: var(--ge-serif); font-size: 62px; line-height: 1; color: var(--k-accent); margin: 12px 0 2px; font-feature-settings: 'tnum'; }
+.kids-scope .sc-record-card { padding: 18px; border-radius: 20px; background: linear-gradient(135deg, var(--k-brand-50), color-mix(in srgb, var(--k-accent-2) 15%, #fff)); }
+.kids-scope .sc-record-card.calm { background: #fff; border: 1px solid var(--k-hair); text-align: center; }
+.kids-scope .sc-stats { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 16px; }
+.kids-scope .sc-stat { padding: 14px 8px; background: #fff; border: 1px solid var(--k-hair); border-radius: 14px; text-align: center; }
+.kids-scope .sc-stat .sc-stat-n { font-family: var(--ge-serif); font-size: 22px; margin-top: 4px; font-feature-settings: 'tnum'; }
+
+/* ── Design 09: Parent view (mobile, editorial & calm) ────────────────── */
+.kids-scope .pv-child { margin-left: auto; display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px 5px 5px; background: #fff; border: 1px solid var(--k-hair); border-radius: 999px; font-size: 12px; white-space: nowrap; }
+.kids-scope .pv-child .pv-ava { width: 22px; height: 22px; border-radius: 50%; background: var(--k-brand-50); color: var(--k-accent); display: grid; place-items: center; font-family: var(--ge-serif); font-size: 11px; }
+.kids-scope .pv-grid { display: grid; grid-template-columns: 1fr 1fr; border-top: 1px solid var(--k-hair); border-bottom: 1px solid var(--k-hair); margin: 16px 0 18px; }
+.kids-scope .pv-cell { padding: 16px 14px; }
+.kids-scope .pv-cell.br { border-right: 1px solid var(--k-hair); }
+.kids-scope .pv-cell.bb { border-bottom: 1px solid var(--k-hair); }
+.kids-scope .pv-cell .pv-num { font-family: var(--ge-serif); font-size: 32px; margin-top: 4px; font-feature-settings: 'tnum'; }
+.kids-scope .pv-cell .pv-num span { font-size: 18px; color: var(--k-muted); }
+
+.kids-scope .pv-card { background: #fff; border: 1px solid var(--k-hair); border-radius: 16px; padding: 16px 18px; margin-bottom: 14px; }
+.kids-scope .pv-sbar { display: flex; align-items: center; gap: 10px; padding: 8px 0; }
+.kids-scope .pv-sbar .pv-lbl { width: 96px; flex: none; font-family: var(--ge-serif); font-size: 12.5px; }
+.kids-scope .pv-sbar .pv-track { flex: 1; height: 8px; background: #eef1fb; border-radius: 999px; overflow: hidden; }
+.kids-scope .pv-sbar .pv-track span { display: block; height: 100%; border-radius: 999px; transition: width .5s cubic-bezier(.4,0,.2,1); }
+.kids-scope .pv-sbar .pv-val { width: 26px; text-align: right; font-family: var(--ge-serif); font-size: 12.5px; font-feature-settings: 'tnum'; color: var(--k-muted); }
+
+.kids-scope .pv-note { background: var(--k-brand-50); border-radius: 16px; padding: 16px 18px; margin-bottom: 14px; }
+.kids-scope .pv-note .pv-note-t { font-family: var(--ge-serif); font-size: 16px; margin-top: 5px; line-height: 1.4; }
+
+.kids-scope .pv-recent { display: flex; justify-content: space-between; align-items: center; padding: 9px 0; border-bottom: 1px solid var(--k-hair); font-size: 13px; }
+.kids-scope .pv-recent:last-child { border-bottom: none; }
+.kids-scope .pv-recent .pv-score { font-family: var(--ge-serif); }
+.kids-scope .pv-recent .pv-score.good { color: var(--k-mint); }
+
+.kids-scope .pv-rainbow { display: flex; align-items: center; gap: 14px; padding: 16px 18px; background: #fff; border: 1px solid var(--k-hair); border-radius: 16px; }
+.kids-scope .pv-rainbow .pv-rb-ic { width: 44px; height: 44px; border-radius: 12px; display: grid; place-items: center; font-size: 20px; background: linear-gradient(135deg, var(--k-coral), var(--k-sun), var(--k-mint), var(--k-accent-2)); }
+.kids-scope .pv-rainbow .pv-rb-sub { font-size: 11.5px; color: var(--k-muted); margin-top: 2px; }
+
+/* Kids: journey map / trail */
+.kids-scope .kids-chip {
+  display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; border-radius: 999px;
+  background: #fff; border: 1px solid var(--k-hair); font-size: 12.5px; font-weight: 600;
+}
+.kids-scope .kids-journey-head { display: flex; align-items: flex-end; gap: 14px; margin: 12px 0 20px; }
+.kids-scope .kids-journey-head .kids-chip { margin-left: auto; }
+
+.kids-scope .kids-trail {
+  position: relative; display: flex; flex-direction: column; gap: 26px; padding: 8px 0 40px;
+}
+.kids-scope .kids-trail::before {
+  content: ''; position: absolute; left: 50%; top: 14px; bottom: 14px; width: 0;
+  border-left: 3px dashed var(--k-hair); transform: translateX(-50%);
+}
+.kids-scope .kt-row { display: flex; position: relative; z-index: 1; }
+.kids-scope .kt-row.right { justify-content: flex-end; }
+
+.kids-scope .kt-node {
+  width: 60px; height: 60px; border-radius: 20px; display: grid; place-items: center;
+  font-size: 30px; flex: none; box-shadow: var(--k-shadow);
+}
+.kids-scope .kt-node.sm { width: 52px; height: 52px; border-radius: 16px; font-size: 24px; box-shadow: none; }
+
+.kids-scope .kt-name { font-family: var(--ge-serif); font-size: 16px; }
+.kids-scope .kt-sub { font-size: 11.5px; color: var(--k-muted); margin-top: 2px; }
+
+/* compact stop */
+.kids-scope .kt-stop {
+  display: inline-flex; align-items: center; gap: 12px; border: 1px solid var(--k-hair);
+  background: #fff; border-radius: 18px; padding: 10px 16px 10px 10px; cursor: pointer;
+  box-shadow: var(--k-shadow); max-width: 260px; transition: transform .1s ease;
+}
+.kids-scope .kt-stop:active:not(:disabled) { transform: scale(0.97); }
+.kids-scope .kt-stop.locked { opacity: .6; cursor: default; box-shadow: none; }
+
+/* current territory card */
+.kids-scope .kt-card {
+  position: relative; width: 270px; max-width: 78%; background: #fff;
+  border: 2px solid var(--k-accent); border-radius: 22px; padding: 16px;
+  box-shadow: var(--k-shadow-lg);
+}
+.kids-scope .kt-card .kt-card-top { display: flex; align-items: center; gap: 12px; }
+.kids-scope .kt-badge {
+  position: absolute; top: -12px; right: 16px; background: var(--k-sun); color: #fff;
+  font-size: 10px; letter-spacing: .1em; text-transform: uppercase; font-weight: 700;
+  padding: 5px 12px; border-radius: 999px;
+}
+.kids-scope .kt-progress { display: flex; align-items: center; gap: 10px; margin-top: 12px; }
+.kids-scope .kt-track { flex: 1; height: 6px; background: var(--k-hair); border-radius: 999px; overflow: hidden; }
+.kids-scope .kt-track span { display: block; height: 100%; border-radius: 999px; }
+.kids-scope .kt-pct { font-family: var(--ge-serif); font-size: 12px; color: var(--k-muted); font-feature-settings: 'tnum'; }
+
+/* Kids companion — bunny / fox / panda / koala, built from shapes */
+.kids-scope .kc { position: relative; width: 92px; height: 76px; --kc-fur: var(--k-peach); }
+.kids-scope .kc-head { position: absolute; bottom: 0; left: 8px; width: 76px; height: 60px; background: var(--kc-fur); border-radius: 50% 50% 40% 40%; }
+.kids-scope .kc-eye { position: absolute; top: 24px; width: 8px; height: 8px; background: var(--k-ink); border-radius: 50%; }
+.kids-scope .kc-eye.l { left: 20px; } .kids-scope .kc-eye.r { right: 20px; }
+.kids-scope .kc-mouth { position: absolute; top: 40px; left: 32px; width: 12px; height: 6px; border-bottom: 2px solid var(--k-ink); border-radius: 0 0 12px 12px; }
+.kids-scope .kc.sad .kc-mouth { top: 42px; left: 33px; width: 10px; height: 2px; border-bottom: none; background: var(--k-ink); border-radius: 2px; }
+.kids-scope .kc.happy { animation: kc-lift .7s ease-out both; }
+.kids-scope .kc.sad { animation: kc-shake .45s ease-out both; }
+@keyframes kc-lift { 0%{transform:translateY(0);} 40%{transform:translateY(-9px);} 100%{transform:translateY(0);} }
+@keyframes kc-shake { 0%,100%{transform:translateX(0);} 25%{transform:translateX(-7px);} 50%{transform:translateX(7px);} 75%{transform:translateX(-3px);} }
+
+/* ears — base (bunny: tall rounded) */
+.kids-scope .kc-ear { position: absolute; top: 0; width: 16px; height: 30px; background: var(--kc-fur); border-radius: 8px 8px 4px 4px; }
+.kids-scope .kc-ear.l { left: 24px; transform: rotate(-16deg); }
+.kids-scope .kc-ear.r { right: 24px; transform: rotate(16deg); }
+
+/* fox — coral, triangle ears */
+.kids-scope .kc-fox { --kc-fur: var(--k-coral); }
+.kids-scope .kc-ear.tri { top: 6px; width: 20px; height: 22px; border-radius: 2px; background: var(--kc-fur); clip-path: polygon(50% 0, 100% 100%, 0 100%); }
+.kids-scope .kc-ear.tri.l { left: 14px; transform: rotate(-10deg); }
+.kids-scope .kc-ear.tri.r { right: 14px; transform: rotate(10deg); }
+
+/* panda — light fur, black ear discs + eye patches */
+.kids-scope .kc-panda { --kc-fur: #eef0f4; }
+.kids-scope .kc-ear.circ { top: 4px; width: 24px; height: 24px; border-radius: 50%; background: var(--k-ink); }
+.kids-scope .kc-ear.circ.l { left: 12px; } .kids-scope .kc-ear.circ.r { right: 12px; }
+.kids-scope .kc-panda .kc-eye { width: 16px; height: 18px; border-radius: 50%; top: 22px; }
+.kids-scope .kc-panda .kc-eye.l { left: 16px; } .kids-scope .kc-panda .kc-eye.r { right: 16px; }
+
+/* koala — mint, big round side ears */
+.kids-scope .kc-koala { --kc-fur: var(--k-mint); }
+.kids-scope .kc-ear.round { top: 12px; width: 26px; height: 22px; border-radius: 50%; background: var(--kc-fur); }
+.kids-scope .kc-ear.round.l { left: 6px; } .kids-scope .kc-ear.round.r { right: 6px; }
+.kids-scope .kc-koala .kc-mouth { top: 42px; left: 30px; width: 16px; height: 12px; border: none; background: var(--k-ink); border-radius: 50%; }
+
+/* Exercise top bar */
+.kids-scope .ex-top { display: flex; align-items: center; gap: 14px; padding: 4px 2px 6px; }
+.kids-scope .ex-quit {
+  width: 38px; height: 38px; border: none; border-radius: 50%; background: #fff; cursor: pointer;
+  box-shadow: var(--k-shadow); font-size: 15px; color: var(--k-muted); flex: none;
+}
+.kids-scope .ex-bar { flex: 1; height: 9px; background: var(--k-brand-50); border-radius: 999px; overflow: hidden; }
+.kids-scope .ex-bar span { display: block; height: 100%; background: var(--k-accent); border-radius: 999px; transition: width .4s cubic-bezier(.4,0,.2,1); }
+.kids-scope .ex-hearts { display: flex; gap: 3px; font-size: 16px; flex: none; }
+
+.kids-scope .ex-kicker { display: flex; align-items: baseline; gap: 12px; margin-top: 10px; padding: 0 2px; }
+.kids-scope .ex-qn { margin-left: auto; font-size: 11.5px; color: var(--k-muted); font-feature-settings: 'tnum'; }
+
+/* Feedback full states */
+.kids-scope .ex-state { display: flex; flex-direction: column; align-items: center; text-align: center; padding: 20px 10px 8px; animation: exFade .3s ease both; }
+.kids-scope .ex-comp-ring { width: 130px; height: 130px; border-radius: 50%; background: var(--k-brand-50); display: grid; place-items: center; margin-bottom: 16px; }
+.kids-scope .ex-comp-sad { width: 130px; height: 130px; border-radius: 50%; background: color-mix(in srgb, var(--k-coral) 12%, transparent); display: grid; place-items: center; margin-bottom: 16px; }
+.kids-scope .ex-good-title { font-family: var(--ge-serif); font-size: 28px; color: var(--k-mint); font-weight: 500; }
+.kids-scope .ex-bad-title { font-family: var(--ge-serif); font-size: 24px; font-weight: 500; }
+.kids-scope .ex-bad-title em { font-style: italic; color: var(--k-accent); }
+.kids-scope .ex-chips { display: flex; gap: 10px; justify-content: center; margin: 14px 0 18px; }
+.kids-scope .ex-chip { padding: 7px 14px; border-radius: 999px; background: #fff; border: 1px solid var(--k-hair); font-size: 12.5px; font-weight: 600; }
+.kids-scope .ex-chip.brand { background: var(--k-brand-50); border-color: var(--k-accent); color: var(--k-accent); }
+
+/* Confetti */
+.kids-scope .ex-conf { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+.kids-scope .ex-conf span { position: absolute; top: -12px; width: 8px; height: 8px; border-radius: 2px; animation: exConf 1.1s ease-out both; }
+@keyframes exConf { 0%{transform:translateY(0) rotate(0); opacity:1;} 100%{transform:translateY(300px) rotate(320deg); opacity:0;} }
+
+/* Kids companion picker */
+.kids-scope .kids-comp-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; max-width: 460px; }
+@media (max-width: 420px) { .kids-scope .kids-comp-grid { grid-template-columns: 1fr; } }
+.kids-scope .kids-comp-card {
+  border: 2px solid var(--k-hair); background: #fff; border-radius: 22px; padding: 18px 14px 16px;
+  text-align: center; cursor: pointer; transition: transform .1s ease, border-color .12s ease, background .12s ease;
+}
+.kids-scope .kids-comp-card:hover { border-color: color-mix(in srgb, var(--k-accent) 45%, transparent); }
+.kids-scope .kids-comp-card:active { transform: scale(0.98); }
+.kids-scope .kids-comp-card.on { border-color: var(--k-accent); background: var(--k-brand-50); }
+.kids-scope .kids-comp-face {
+  width: 104px; height: 104px; margin: 0 auto 10px; border-radius: 50%; background: var(--k-brand-50);
+  display: grid; place-items: center;
+}
+.kids-scope .kids-comp-card.on .kids-comp-face { background: #fff; }
+.kids-scope .kids-comp-name { font-family: var(--ge-serif); font-size: 17px; }
+.kids-scope .kids-comp-species { font-size: 12px; color: var(--k-muted); margin-top: 1px; }
+
+/* Kids Home (design 02) */
+.kids-scope.has-nav .kids-wrap { padding-bottom: 96px; }
+.kids-scope .kh-top { display: flex; align-items: center; gap: 14px; margin: 4px 0 20px; }
+.kids-scope .kh-top .kids-avatar { flex: none; }
+.kids-scope .kh-streak {
+  margin-left: auto; display: inline-flex; align-items: center; gap: 6px; padding: 9px 16px;
+  background: #fff; border: 1px solid var(--k-hair); border-radius: 999px; font-size: 13px; font-weight: 600;
+}
+.kids-scope .kh-streak b { font-family: var(--ge-serif); font-feature-settings: 'tnum'; }
+
+.kids-scope .kh-mission { position: relative; overflow: hidden; background: #fff; border-radius: var(--k-radius); box-shadow: var(--k-shadow); padding: 22px; }
+.kids-scope .kh-mission-orb { position: absolute; right: -40px; top: -40px; width: 200px; height: 200px; background: var(--k-brand-50); border-radius: 50%; }
+.kids-scope .kh-mission-title { font-family: var(--ge-serif); font-size: clamp(22px, 5vw, 30px); font-weight: 500; margin: 8px 0 6px; line-height: 1.15; }
+.kids-scope .kh-mission-meta { font-size: 13px; color: var(--k-muted); }
+.kids-scope .kh-mission-illo { margin-top: 16px; padding: 16px; background: var(--k-brand-50); border-radius: 18px; display: flex; align-items: center; gap: 16px; }
+.kids-scope .kh-illo-comp { width: 76px; height: 76px; border-radius: 50%; display: grid; place-items: center; flex: none; }
+.kids-scope .kh-illo-comp .kc { transform: scale(.8); }
+.kids-scope .kh-dots { display: flex; gap: 8px; flex: 1; }
+.kids-scope .kh-dots span { width: 26px; height: 30px; border-radius: 50% 50% 42% 42%; opacity: .9; }
+.kids-scope .kh-dots span:nth-child(n+4) { background: #fff !important; border: 1.5px dashed var(--k-accent); opacity: 1; }
+
+.kids-scope .kh-journey { margin-top: 18px; background: #fff; border: 1px solid var(--k-hair); border-radius: 20px; padding: 18px 20px; }
+.kids-scope .kh-row-head { display: flex; align-items: baseline; }
+.kids-scope .kh-link { margin-left: auto; font-size: 12px; color: var(--k-accent); font-weight: 600; text-decoration: none; }
+.kids-scope .kh-journey-row { display: flex; align-items: center; gap: 14px; margin-top: 12px; }
+.kids-scope .kh-terr { width: 52px; height: 52px; border-radius: 16px; display: grid; place-items: center; font-size: 24px; flex: none; }
+.kids-scope .kh-terr-name { font-family: var(--ge-serif); font-size: 16px; }
+.kids-scope .kh-terr-bar { display: flex; align-items: center; gap: 10px; margin-top: 8px; }
+.kids-scope .kh-track { flex: 1; height: 6px; background: var(--k-hair); border-radius: 999px; overflow: hidden; }
+.kids-scope .kh-track span { display: block; height: 100%; border-radius: 999px; }
+.kids-scope .kh-pct { font-family: var(--ge-serif); font-size: 13px; color: var(--k-muted); }
+
+.kids-scope .kh-skills { margin-top: 16px; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+.kids-scope .kh-skill { background: #fff; border: 1px solid var(--k-hair); border-radius: 16px; padding: 14px 10px; text-align: center; cursor: pointer; transition: transform .1s ease; }
+.kids-scope .kh-skill:active { transform: scale(0.97); }
+.kids-scope .kh-skill-ic { width: 36px; height: 36px; margin: 0 auto 8px; border-radius: 12px; display: grid; place-items: center; font-size: 18px; }
+.kids-scope .kh-skill-name { font-family: var(--ge-serif); font-size: 13px; }
+.kids-scope .kh-skill-stat { font-size: 10.5px; color: var(--k-muted); margin-top: 2px; }
+
+/* Kids bottom nav */
+.kids-scope .knav {
+  position: fixed; left: 50%; bottom: 14px; transform: translateX(-50%);
+  width: calc(100% - 32px); max-width: 928px; display: flex; justify-content: space-around; gap: 2px;
+  background: #fff; border: 1px solid var(--k-hair); border-radius: 22px; padding: 10px 8px;
+  box-shadow: var(--k-shadow-lg); z-index: 40;
+}
+.kids-scope .knav-item {
+  flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px;
+  font-size: 10.5px; color: var(--k-muted); font-weight: 600; text-decoration: none;
+}
+.kids-scope .knav-item.on { color: var(--k-accent); }
+.kids-scope .knav-ic { width: 30px; height: 30px; display: grid; place-items: center; border-radius: 10px; font-size: 15px; }
+.kids-scope .knav-item.on .knav-ic { background: var(--k-brand-50); }

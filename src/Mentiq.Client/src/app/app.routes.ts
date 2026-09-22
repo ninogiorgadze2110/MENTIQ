@@ -55,9 +55,26 @@ export const routes: Routes = [
           import('./features/kids/kids-home.component').then((m) => m.KidsHomeComponent)
       },
       {
+        path: 'map',
+        loadComponent: () =>
+          import('./features/kids/kids-journey.component').then((m) => m.KidsJourneyComponent)
+      },
+      {
+        path: 'choose',
+        loadComponent: () =>
+          import('./features/kids/kids-companion-picker.component').then((m) => m.KidsCompanionPickerComponent)
+      },
+      {
         path: 'world/:id',
         loadComponent: () =>
           import('./features/kids/kids-world.component').then((m) => m.KidsWorldComponent)
+      },
+      {
+        // The speed world is a calm, personal 60-second challenge (design 08),
+        // not the generic mission runner. Static path wins over ':id' below.
+        path: 'world/speed/play',
+        loadComponent: () =>
+          import('./features/kids/kids-speed-challenge.component').then((m) => m.KidsSpeedChallengeComponent)
       },
       {
         path: 'world/:id/play',
@@ -68,6 +85,21 @@ export const routes: Routes = [
         path: 'achievements',
         loadComponent: () =>
           import('./features/kids/kids-achievements.component').then((m) => m.KidsAchievementsComponent)
+      },
+      {
+        path: 'friend',
+        loadComponent: () =>
+          import('./features/kids/kids-friend.component').then((m) => m.KidsFriendComponent)
+      },
+      {
+        path: 'my-world',
+        loadComponent: () =>
+          import('./features/kids/kids-my-world.component').then((m) => m.KidsMyWorldComponent)
+      },
+      {
+        path: 'parent',
+        loadComponent: () =>
+          import('./features/kids/kids-parent.component').then((m) => m.KidsParentComponent)
       }
     ]
   },

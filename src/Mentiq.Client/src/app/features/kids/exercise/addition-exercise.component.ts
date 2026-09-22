@@ -13,16 +13,29 @@ import { Exercise } from './exercise.models';
   template: `
     <button type="button" class="ex-instruction" (click)="replay()">🔊 {{ exercise.instruction }}</button>
 
-    <div class="ex-addition">
-      @for (a of exercise.visual.addends ?? []; track $index; let last = $last) {
-        <span class="ex-addend">
-          @for (i of range(a); track i) { <span class="ex-obj sm">{{ exercise.visual.emoji }}</span> }
-        </span>
-        @if (!last) { <span class="ex-plus">+</span> }
-      }
-      <span class="ex-plus">=</span>
-      <span class="ex-qmark">❓</span>
-    </div>
+    @if (exercise.visual.kind === 'makeN') {
+      <!-- Design 04 hero: N solid objects + the missing ones as dashed slots. -->
+      <div class="ex-maken">
+        @for (i of range(exercise.visual.count); track i) {
+          <span class="mk-obj">{{ exercise.visual.emoji }}</span>
+        }
+        <span class="mk-sep"></span>
+        @for (i of range(missing()); track i) {
+          <span class="mk-slot"></span>
+        }
+      </div>
+    } @else {
+      <div class="ex-addition">
+        @for (a of exercise.visual.addends ?? []; track $index; let last = $last) {
+          <span class="ex-addend">
+            @for (i of range(a); track i) { <span class="ex-obj sm">{{ exercise.visual.emoji }}</span> }
+          </span>
+          @if (!last) { <span class="ex-plus">+</span> }
+        }
+        <span class="ex-plus">=</span>
+        <span class="ex-qmark">❓</span>
+      </div>
+    }
 
     <div class="ex-options">
       @for (o of exercise.options; track o.value) {
@@ -54,6 +67,11 @@ export class AdditionExerciseComponent implements OnChanges {
 
   range(n: number): number[] {
     return Array.from({ length: n }, (_, i) => i);
+  }
+
+  /** How many objects are missing to reach the target (dashed slots to fill). */
+  missing(): number {
+    return Math.max(0, (this.exercise.visual.target ?? 0) - this.exercise.visual.count);
   }
 
   /** One dot per unit of the option's number, so pre-readers can count too. */

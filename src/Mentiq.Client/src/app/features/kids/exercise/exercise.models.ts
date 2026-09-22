@@ -9,6 +9,8 @@ export interface ExerciseVisual {
   kind: string;
   emoji: string | null;
   count: number;
+  /** Target total for the "makeN" (complete-to-N) kind. */
+  target?: number | null;
   addends?: number[] | null;
   items?: string[] | null;
 }

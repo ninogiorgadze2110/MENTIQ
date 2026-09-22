@@ -1,10 +1,11 @@
 import { Component, OnDestroy, inject, signal } from '@angular/core';
-import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
+import { NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { Subscription, filter } from 'rxjs';
 
 import { AudioService } from '../../core/services/audio.service';
 import { AuthService } from '../../core/services/auth.service';
 import { KidsExerciseService } from './exercise/kids-exercise.service';
+import { KidsProfileService } from './kids-profile.service';
 
 /**
  * Chrome for the whole MENTIQ Kids area: the playful scoped theme, a top bar
@@ -14,9 +15,9 @@ import { KidsExerciseService } from './exercise/kids-exercise.service';
 @Component({
   selector: 'app-kids-layout',
   standalone: true,
-  imports: [RouterOutlet],
+  imports: [RouterOutlet, RouterLink, RouterLinkActive],
   template: `
-    <div class="kids-scope">
+    <div class="kids-scope" [class.has-nav]="showNav()">
       <div class="kids-wrap">
         <div class="kids-top">
           <div class="kids-brand">MENTIQ <small>Kids</small></div>
@@ -32,8 +33,11 @@ import { KidsExerciseService } from './exercise/kids-exercise.service';
         @if (menu()) {
           <div class="kids-menu" (click)="menu.set(false)">
             <div class="kids-menu-card" (click)="$event.stopPropagation()">
-              <button type="button" class="kids-menu-item" (click)="go('/kids')">🏠 მთავარი</button>
-              <button type="button" class="kids-menu-item" (click)="go('/kids/achievements')">🏆 ჯილდოები</button>
+              <button type="button" class="kids-menu-item" (click)="go('/kids/map')">🗺️ რუკა</button>
+              <button type="button" class="kids-menu-item" (click)="go('/kids/my-world')">🏰 ჩემი სამყარო</button>
+              <button type="button" class="kids-menu-item" (click)="go('/kids/achievements')">🌈 ჯილდოები</button>
+              <button type="button" class="kids-menu-item" (click)="go('/kids/friend')">🐰 მეგობარი</button>
+              <button type="button" class="kids-menu-item" (click)="go('/kids/parent')">👪 მშობლის ხედი</button>
               <button type="button" class="kids-menu-item danger" (click)="logout()">🚪 გასვლა</button>
             </div>
           </div>
@@ -41,6 +45,15 @@ import { KidsExerciseService } from './exercise/kids-exercise.service';
 
         <router-outlet />
       </div>
+
+      @if (showNav()) {
+        <nav class="knav">
+          <a routerLink="/kids" routerLinkActive="on" [routerLinkActiveOptions]="{ exact: true }" class="knav-item"><span class="knav-ic">◐</span>მთავარი</a>
+          <a routerLink="/kids/map" routerLinkActive="on" class="knav-item"><span class="knav-ic">◇</span>რუკა</a>
+          <a routerLink="/kids/achievements" routerLinkActive="on" class="knav-item"><span class="knav-ic">★</span>ჯილდოები</a>
+          <a routerLink="/kids/friend" routerLinkActive="on" class="knav-item"><span class="knav-ic">☺</span>მეგობარი</a>
+        </nav>
+      }
     </div>
   `
 })
@@ -48,19 +61,34 @@ export class KidsLayoutComponent implements OnDestroy {
   readonly audio = inject(AudioService);
   private readonly api = inject(KidsExerciseService);
   private readonly auth = inject(AuthService);
+  private readonly profile = inject(KidsProfileService);
   private readonly router = inject(Router);
 
   readonly stars = signal(0);
   readonly menu = signal(false);
+  /** The bottom nav is hidden inside a mission (its own chrome). */
+  readonly showNav = signal(true);
 
   private readonly sub: Subscription;
 
   constructor() {
     this.refreshStars();
-    // Refresh the total whenever we land back on a Kids screen (e.g. after a session).
+    this.updateNav(this.router.url);
+    // Refresh stars on each Kids screen, and send first-run children to pick a
+    // companion before anything else.
     this.sub = this.router.events
-      .pipe(filter((e) => e instanceof NavigationEnd))
-      .subscribe(() => this.refreshStars());
+      .pipe(filter((e): e is NavigationEnd => e instanceof NavigationEnd))
+      .subscribe((e) => {
+        this.refreshStars();
+        this.updateNav(e.urlAfterRedirects);
+        if (!this.profile.hasCompanion() && !e.urlAfterRedirects.startsWith('/kids/choose')) {
+          this.router.navigateByUrl('/kids/choose');
+        }
+      });
+  }
+
+  private updateNav(url: string): void {
+    this.showNav.set(!url.includes('/play'));
   }
 
   private refreshStars(): void {

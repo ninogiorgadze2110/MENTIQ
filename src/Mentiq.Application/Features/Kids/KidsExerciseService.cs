@@ -18,10 +18,21 @@ public sealed class KidsExerciseService : IKidsExerciseService
     private static readonly Dictionary<string, string> WorldEmoji = new()
     {
         ["apples"] = "🍎",
-        ["space"] = "🚀",
+        ["space"] = "⭐",
         ["sea"] = "🐠",
         ["toys"] = "🧸",
         ["rabbits"] = "🥕"
+    };
+
+    // Georgian noun for each world's object, used to make instructions narrative
+    // ("დაითვალე — რამდენი ვაშლია ხეზე?") instead of dry ("რამდენია?").
+    private static readonly Dictionary<string, (string One, string Where)> WorldNoun = new()
+    {
+        ["apples"] = ("ვაშლი", "ბაღში"),
+        ["rabbits"] = ("სტაფილო", "ბაღში"),
+        ["space"] = ("ვარსკვლავი", "ცაზე"),
+        ["toys"] = ("სათამაშო", "ოთახში"),
+        ["sea"] = ("თევზი", "ზღვაში")
     };
 
     // Which (skill, exercise type) each world runs. Worlds without an implemented
@@ -200,13 +211,18 @@ public sealed class KidsExerciseService : IKidsExerciseService
             Skill = skill,
             World = world,
             Difficulty = level,
-            Instruction = "რამდენია?",
+            Instruction = CountingPrompt(world),
             InstructionAudioKey = "counting.howMany",
             Visual = new ExerciseVisual { Kind = "objects", Emoji = emoji, Count = n },
             Options = options,
             Token = _tokens.Issue(payload)
         };
     }
+
+    private static string CountingPrompt(string? world)
+        => world is not null && WorldNoun.TryGetValue(world, out var w)
+            ? $"დაითვალე — რამდენი {w.One}ა {w.Where}?"
+            : "დაითვალე — რამდენია?";
 
     // -----------------------------------------------------------------------
     // Comparison (More / Less)
@@ -227,7 +243,9 @@ public sealed class KidsExerciseService : IKidsExerciseService
             new ExerciseOption { Value = "b", Emoji = emoji, Count = b }
         }.OrderBy(_ => Random.Shared.Next()).ToList();
 
-        return Build(type, skill, world, level, "სად არის მეტი?", "comparison.more",
+        var noun = world is not null && WorldNoun.TryGetValue(world, out var w) ? w.One : null;
+        var prompt = noun is not null ? $"სად არის მეტი {noun}?" : "სად არის მეტი?";
+        return Build(type, skill, world, level, prompt, "comparison.more",
             new ExerciseVisual { Kind = "none" }, options, bigger);
     }
 
@@ -261,19 +279,28 @@ public sealed class KidsExerciseService : IKidsExerciseService
 
     private ExerciseDto GenerateAddition(int level, string? world, string skill, string type)
     {
-        var sumMax = level switch { <= 1 => 5, 2 => 6, 3 => 8, _ => 10 };
-        var x = Random.Shared.Next(1, sumMax);
-        var y = Random.Shared.Next(1, sumMax - x + 1);
-        var sum = x + y;
+        // Design 04 hero task — "complete to N": show `have` solid objects and
+        // `target - have` dashed slots, ask how many MORE are needed to reach the
+        // target. Concrete, story-framed, and the answer is the missing count.
+        var target = level switch { <= 1 => 5, 2 => 6, 3 => 8, _ => 10 };
+        var have = Random.Shared.Next(1, target); // 1..target-1
+        var missing = target - have;
 
         var emoji = EmojiFor(world, "🍎");
-        var options = BuildNumberOptions(sum, sumMax)
+        var options = BuildNumberOptions(missing, target)
             .Select(v => new ExerciseOption { Value = v.ToString(), Label = v.ToString() })
             .ToList();
 
-        return Build(type, skill, world, level, "რამდენი იქნება?", "addition.howMany",
-            new ExerciseVisual { Kind = "addition", Emoji = emoji, Addends = new[] { x, y } },
-            options, sum.ToString());
+        return Build(type, skill, world, level, MakeNPrompt(world, have, target), "addition.makeN",
+            new ExerciseVisual { Kind = "makeN", Emoji = emoji, Count = have, Target = target },
+            options, missing.ToString());
+    }
+
+    private static string MakeNPrompt(string? world, int have, int target)
+    {
+        if (world is not null && WorldNoun.TryGetValue(world, out var w))
+            return $"{w.Where} {have} {w.One}ა. კიდევ რამდენი დაგვჭირდება, რომ {target} გახდეს?";
+        return $"{have}-ია. კიდევ რამდენი დაგვჭირდება, რომ {target} გახდეს?";
     }
 
     // -----------------------------------------------------------------------
@@ -324,7 +351,7 @@ public sealed class KidsExerciseService : IKidsExerciseService
             .Select(v => new ExerciseOption { Value = v.ToString(), Label = v.ToString() })
             .ToList();
 
-        return Build(type, skill, world, level, $"რამდენი {target}-ია?", "attention.count",
+        return Build(type, skill, world, level, $"ყურადღებით დაითვალე — რამდენი {target}-ია?", "attention.count",
             new ExerciseVisual { Kind = "mixed", Emoji = target, Items = items },
             options, targetCount.ToString());
     }
