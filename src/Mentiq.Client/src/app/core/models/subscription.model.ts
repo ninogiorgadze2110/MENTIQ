@@ -1,6 +1,6 @@
 /** Effective access snapshot — always computed on the backend, never trusted from the client. */
 export interface SubscriptionStatus {
-  status: 'Trial' | 'Active' | 'Expired' | 'Cancelled';
+  status: 'Trial' | 'Active' | 'Expired' | 'Cancelled' | 'Beta';
   hasAccess: boolean;
   isTrial: boolean;
   trialStartDate: string;
@@ -10,6 +10,7 @@ export interface SubscriptionStatus {
   plan: string | null;
   daysRemaining: number;
   accessEndsUtc: string | null;
+  betaFreeAccess?: boolean;
 }
 
 export interface SubscriptionDto {

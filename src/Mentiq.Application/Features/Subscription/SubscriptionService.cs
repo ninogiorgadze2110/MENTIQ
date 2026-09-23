@@ -23,6 +23,8 @@ public sealed class SubscriptionService : ISubscriptionService
     // Self / access
     // -----------------------------------------------------------------------
 
+    private const string BetaFreeAccessKey = "BetaFreeAccess";
+
     public async Task<SubscriptionStatusDto> GetStatusAsync(Guid userId, CancellationToken cancellationToken = default)
     {
         var user = await _db.Users.AsNoTracking().FirstOrDefaultAsync(u => u.Id == userId, cancellationToken)
@@ -30,11 +32,45 @@ public sealed class SubscriptionService : ISubscriptionService
 
         var sub = await _db.Subscriptions.AsNoTracking().FirstOrDefaultAsync(s => s.UserId == userId, cancellationToken);
 
-        return Evaluate(user, sub, DateTime.UtcNow);
+        var status = Evaluate(user, sub, DateTime.UtcNow);
+
+        // Beta mode: everyone has access and the paywall/trial nudges are hidden.
+        if (await GetBetaFreeAccessAsync(cancellationToken))
+        {
+            return status with { Status = "Beta", HasAccess = true, IsTrial = false, BetaFreeAccess = true };
+        }
+        return status;
+    }
+
+    public async Task<bool> GetBetaFreeAccessAsync(CancellationToken cancellationToken = default)
+    {
+        var value = await _db.PlatformSettings.AsNoTracking()
+            .Where(s => s.Key == BetaFreeAccessKey)
+            .Select(s => s.Value)
+            .FirstOrDefaultAsync(cancellationToken);
+        return string.Equals(value, "true", StringComparison.OrdinalIgnoreCase);
+    }
+
+    public async Task SetBetaFreeAccessAsync(bool enabled, CancellationToken cancellationToken = default)
+    {
+        var setting = await _db.PlatformSettings.FirstOrDefaultAsync(s => s.Key == BetaFreeAccessKey, cancellationToken);
+        if (setting is null)
+        {
+            setting = new PlatformSetting { Key = BetaFreeAccessKey };
+            _db.PlatformSettings.Add(setting);
+        }
+        setting.Value = enabled ? "true" : "false";
+        await _db.SaveChangesAsync(cancellationToken);
     }
 
     public async Task<bool> HasActiveAccessAsync(Guid userId, CancellationToken cancellationToken = default)
     {
+        // Beta mode grants access to everyone.
+        if (await GetBetaFreeAccessAsync(cancellationToken))
+        {
+            return true;
+        }
+
         var now = DateTime.UtcNow;
 
         var trialEnd = await _db.Users

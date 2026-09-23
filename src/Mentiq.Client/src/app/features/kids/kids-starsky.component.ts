@@ -7,6 +7,7 @@ import { KidsProfileService } from './kids-profile.service';
 import { KidsCompanionComponent } from './kids-companion.component';
 import { SkillProgress } from './exercise/exercise.models';
 import { isMastered, MASTERY_CORRECT } from './kids-mastery';
+import { KIDS_WORLDS } from './kids-worlds.data';
 
 interface Star {
   icon: string;
@@ -43,6 +44,17 @@ interface Star {
       </div>
     </div>
 
+    @if (!unlocked()) {
+      <!-- Volume II opens only after Volume I (the map) is fully completed. -->
+      <div class="sky-lock">
+        <div class="sky-lock-ic">🔒</div>
+        <div class="sky-lock-t">ცა ჯერ ჩაკეტილია</div>
+        <p class="sky-lock-s">ჯერ დაასრულე <b>— ტომი I · მოგზაურობის რუკა</b> (ყველა 8 ტერიტორია), მერე ვარსკვლავებით სავსე ცა გაიხსნება.</p>
+        <div class="sky-lock-bar"><span [style.width.%]="tourPct()"></span></div>
+        <div class="sky-lock-n">{{ toursMastered() }} / {{ totalTours }} ტერიტორია დასრულებულია</div>
+        <button type="button" class="kids-btn" style="margin-top:16px;" (click)="goMap()">რუკაზე დაბრუნება →</button>
+      </div>
+    } @else {
     <div class="sky-badges">
       <span class="sky-badge">✦ {{ earned() }} / {{ stars().length }} ანთია</span>
       <span class="sky-badge streak">🔥 {{ streak() }} დღიანი სერია</span>
@@ -96,6 +108,7 @@ interface Star {
         </button>
       }
     </div>
+    }
   `
 })
 export class KidsStarskyComponent implements OnInit {
@@ -107,17 +120,21 @@ export class KidsStarskyComponent implements OnInit {
   readonly progress = signal<SkillProgress[]>([]);
   readonly streak = this.profile.streak;
 
-  private mastered(skill: string): boolean {
-    return isMastered(this.progress().find((p) => p.skill === skill));
-  }
-
   /** The highest number the child has correctly counted. */
   private maxCount(): number {
     return this.progress().find((p) => p.skill === 'counting')?.maxCorrectValue ?? 0;
   }
 
+  /** Correct answers for a skill earned inside the Star Sky only (independent
+   *  of the Volume I map tours). */
   private correctFor(skill: string): number {
-    return this.progress().find((p) => p.skill === skill)?.correctAttempts ?? 0;
+    return this.progress().find((p) => p.skill === skill)?.skyCorrectCount ?? 0;
+  }
+  private skyTotalCorrect(): number {
+    return this.progress().reduce((s, p) => s + (p.skyCorrectCount ?? 0), 0);
+  }
+  private skyMastered(skill: string): boolean {
+    return this.correctFor(skill) >= MASTERY_CORRECT;
   }
 
   /** A gentle wave of positions across the sky — works for any milestone count. */
@@ -145,35 +162,47 @@ export class KidsStarskyComponent implements OnInit {
     const st = this.streak();
     const speed = this.speedBest();
     const maxCount = this.maxCount();
-    const allMastered = this.progress().length > 0 &&
-      ['counting', 'comparison', 'patterns', 'classification', 'addition', 'attention', 'memory', 'speed']
-        .every((s) => this.mastered(s));
 
     const M = MASTERY_CORRECT;
-    const masteredCount = this.progress().filter((p) => isMastered(p)).length;
+    const skyTotal = this.skyTotalCorrect();
+    // The final star lights when every themed star (the skill masteries) is lit.
+    const skyMasteredCount = ['patterns', 'comparison', 'addition', 'attention', 'memory']
+      .filter((s) => this.skyMastered(s)).length;
     const base: Omit<Star, 'x' | 'y'>[] = [
-      { icon: '🌱', label: 'პირველი ნაბიჯი', hint: '10 სწორი პასუხი', done: this.totalCorrect() >= 10, type: 'counting', cur: this.totalCorrect(), goal: 10 },
+      { icon: '🌱', label: 'პირველი ნაბიჯი', hint: '10 სწორი პასუხი', done: skyTotal >= 10, type: 'counting', cap: 10, cur: skyTotal, goal: 10 },
       { icon: '🔟', label: 'თვლა 10-მდე', hint: 'დაითვალე 10-მდე', done: maxCount >= 10, type: 'counting', cap: 10, cur: maxCount, goal: 10 },
       { icon: '🔢', label: 'თვლა 20-მდე', hint: 'დაითვალე 20-მდე', done: maxCount >= 20, type: 'counting', cap: 20, cur: maxCount, goal: 20 },
       { icon: '💯', label: 'თვლა 100-მდე', hint: 'დაითვალე 100-მდე', done: maxCount >= 100, type: 'counting', cap: 100, cur: maxCount, goal: 100 },
-      { icon: '🎨', label: 'ფერების ოსტატი', hint: 'ვარსკვლავების ფერები', done: this.mastered('patterns'), type: 'patterns', cur: this.correctFor('patterns'), goal: M },
-      { icon: '⭐', label: 'შედარების ოსტატი', hint: 'რომელ ცაშია მეტი?', done: this.mastered('comparison'), type: 'comparison', cur: this.correctFor('comparison'), goal: M },
-      { icon: '➕', label: 'შეკრების ოსტატი', hint: 'ტომის ვარსკვლავები', done: this.mastered('addition'), type: 'addition', cur: this.correctFor('addition'), goal: M },
-      { icon: '🔭', label: 'ყურადღების თვალი', hint: 'იპოვე ვარსკვლავი', done: this.mastered('attention'), type: 'attention', cur: this.correctFor('attention'), goal: M },
-      { icon: '🧠', label: 'მეხსიერების ოსტატი', hint: 'დამალული ვარსკვლავი', done: this.mastered('memory'), type: 'memory', cur: this.correctFor('memory'), goal: M },
+      { icon: '🎨', label: 'ფერების ოსტატი', hint: 'ვარსკვლავების ფერები', done: this.skyMastered('patterns'), type: 'patterns', cur: this.correctFor('patterns'), goal: M },
+      { icon: '⭐', label: 'შედარების ოსტატი', hint: 'რომელ ცაშია მეტი?', done: this.skyMastered('comparison'), type: 'comparison', cur: this.correctFor('comparison'), goal: M },
+      { icon: '➕', label: 'შეკრების ოსტატი', hint: 'ტომის ვარსკვლავები', done: this.skyMastered('addition'), type: 'addition', cur: this.correctFor('addition'), goal: M },
+      { icon: '🔭', label: 'ყურადღების თვალი', hint: 'იპოვე ვარსკვლავი', done: this.skyMastered('attention'), type: 'attention', cur: this.correctFor('attention'), goal: M },
+      { icon: '🧠', label: 'მეხსიერების ოსტატი', hint: 'დამალული ვარსკვლავი', done: this.skyMastered('memory'), type: 'memory', cur: this.correctFor('memory'), goal: M },
       { icon: '⚡', label: 'სწრაფი გონება', hint: '20 პასუხი 60 წამში', done: speed >= 20, type: 'speed', cur: speed, goal: 20 },
       { icon: '🔥', label: '7-დღიანი სერია', hint: '7 დღე ზედიზედ', done: st >= 7, cur: st, goal: 7 },
       { icon: '🔥', label: '30-დღიანი სერია', hint: '30 დღე ზედიზედ', done: st >= 30, cur: st, goal: 30 },
-      { icon: '🌈', label: 'ფინალი · შერეული', hint: 'ყველა ტური დაასრულე', done: allMastered, cur: masteredCount, goal: 8 }
+      { icon: '🌈', label: 'ფინალი · შერეული', hint: 'ყველა ვარსკვლავი აანთე', done: skyMasteredCount >= 5, cur: skyMasteredCount, goal: 5 }
     ];
     const n = base.length;
     return base.map((b, i) => ({ ...b, ...this.position(i, n) }));
   });
 
-  readonly totalCorrect = computed(() => this.progress().reduce((s, p) => s + (p.correctAttempts ?? 0), 0));
-
   readonly earned = computed(() => this.stars().filter((s) => s.done).length);
   readonly nextIndex = computed(() => this.stars().findIndex((s) => !s.done));
+
+  /** Volume II unlocks only when Volume I (all 8 map tours) is mastered. Each
+   *  future volume follows the same rule: gated behind the one before it. */
+  readonly totalTours = KIDS_WORLDS.length;
+  readonly toursMastered = computed(() =>
+    KIDS_WORLDS.filter((w) => isMastered(this.progress().find((p) => p.skill === w.skill))).length
+  );
+  readonly unlocked = computed(() => this.toursMastered() >= this.totalTours);
+  tourPct(): number {
+    return Math.round((this.toursMastered() / this.totalTours) * 100);
+  }
+  goMap(): void {
+    this.router.navigate(['/kids/map']);
+  }
 
   /** The next thematic star to work on (mixed final only once themes are done). */
   readonly targetStar = computed(() =>

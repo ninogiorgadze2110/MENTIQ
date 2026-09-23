@@ -62,6 +62,16 @@ export class SubscriptionService {
 
   // ---- Admin ----
 
+  /** Read the platform-wide beta free-access switch. */
+  adminGetBeta(): Observable<{ enabled: boolean }> {
+    return this.http.get<{ enabled: boolean }>(`${this.adminUrl}/beta`);
+  }
+
+  /** Turn beta free-access mode on/off for everyone. */
+  adminSetBeta(enabled: boolean): Observable<{ enabled: boolean }> {
+    return this.http.put<{ enabled: boolean }>(`${this.adminUrl}/beta`, { enabled });
+  }
+
   adminList(query?: string): Observable<AdminSubscriptionListResponse> {
     const url = query ? `${this.adminUrl}?q=${encodeURIComponent(query)}` : this.adminUrl;
     return this.http.get<AdminSubscriptionListResponse>(url);

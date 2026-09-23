@@ -3,6 +3,7 @@ import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth.guard';
 import { subscriptionGuard } from './core/guards/subscription.guard';
 import { adminGuard } from './core/guards/admin.guard';
+import { kidsGuard } from './core/guards/kids.guard';
 
 export const routes: Routes = [
   // ---- Public marketing / auth ----
@@ -45,7 +46,7 @@ export const routes: Routes = [
   // ---- MENTIQ Kids (0 კლასი) — separate full-screen experience ----
   {
     path: 'kids',
-    canActivate: [authGuard, subscriptionGuard],
+    canActivate: [authGuard, subscriptionGuard, kidsGuard],
     loadComponent: () =>
       import('./features/kids/kids-layout.component').then((m) => m.KidsLayoutComponent),
     children: [

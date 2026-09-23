@@ -27,6 +27,15 @@ public sealed record SubscriptionStatusDto
 
     /// <summary>Access-granting expiry (paid end when active, else trial end). Null when no access.</summary>
     public DateTime? AccessEndsUtc { get; init; }
+
+    /// <summary>True when the platform is in admin-enabled beta free-access mode.</summary>
+    public bool BetaFreeAccess { get; init; }
+}
+
+/// <summary>The platform-wide beta free-access switch (admin toggle).</summary>
+public sealed record BetaAccessDto
+{
+    public bool Enabled { get; init; }
 }
 
 /// <summary>Full current-subscription detail for a user (admin + self views).</summary>

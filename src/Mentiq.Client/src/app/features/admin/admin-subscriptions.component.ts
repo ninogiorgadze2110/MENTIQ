@@ -22,6 +22,22 @@ import {
       <div class="spacer"></div>
     </div>
 
+    <!-- Beta free-access mode -->
+    <div style="border:1px solid var(--hair); background:#fff; padding:16px 18px; margin-bottom:18px; display:flex; align-items:center; gap:14px; flex-wrap:wrap;">
+      <span style="font-size:22px;">{{ beta() ? '🟢' : '🔒' }}</span>
+      <div style="flex:1; min-width:220px;">
+        <div style="font-family:var(--ge-serif); font-size:16px;">ბეტა — უფასო წვდომა ყველასთვის</div>
+        <div style="font-size:12.5px; color:color-mix(in srgb, var(--ink) 62%, transparent);">
+          ჩართვისას ყველა მომხმარებელს აქვს სრული წვდომა და გადახდის გვერდი იმალება (ტესტირების რეჟიმი).
+          {{ beta() ? 'ამჟამად ჩართულია.' : 'ამჟამად გამორთულია.' }}
+        </div>
+      </div>
+      <button type="button" class="btn" [class.btn-primary]="!beta()" [class.btn-secondary]="beta()"
+              [disabled]="betaBusy()" (click)="toggleBeta()">
+        {{ beta() ? 'გამორთვა' : 'ჩართვა' }}
+      </button>
+    </div>
+
     <!-- Search -->
     <div style="display:flex; gap:10px; margin-bottom:18px; flex-wrap:wrap;">
       <input class="input" style="max-width:320px;" placeholder="ძებნა ელფოსტით ან სახელით…"
@@ -128,6 +144,8 @@ export class AdminSubscriptionsComponent {
   readonly detail = signal<AdminSubscriptionDetail | null>(null);
   readonly selectedId = computed(() => this.detail()?.current.userId ?? null);
   readonly busy = signal(false);
+  readonly beta = signal(false);
+  readonly betaBusy = signal(false);
 
   planCode = 'monthly';
   startDate = this.todayIso();
@@ -143,7 +161,21 @@ export class AdminSubscriptionsComponent {
       }
       this.recomputeEnd();
     });
+    this.subs.adminGetBeta().subscribe({ next: (r) => this.beta.set(r.enabled), error: () => {} });
     this.search();
+  }
+
+  toggleBeta(): void {
+    this.betaBusy.set(true);
+    const next = !this.beta();
+    this.subs.adminSetBeta(next).subscribe({
+      next: (r) => {
+        this.beta.set(r.enabled);
+        this.betaBusy.set(false);
+        this.notify.success(r.enabled ? 'ბეტა რეჟიმი ჩართულია — ყველას აქვს წვდომა.' : 'ბეტა რეჟიმი გამორთულია.');
+      },
+      error: () => this.betaBusy.set(false)
+    });
   }
 
   search(): void {

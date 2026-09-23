@@ -28,10 +28,21 @@ import { KidsProfileService } from './kids-profile.service';
             {{ audio.muted() ? '🔇' : '🔊' }}
           </button>
           <div class="kids-stars">⭐ {{ stars() }}</div>
+          @if (canSwitchView()) {
+            <button type="button" class="kids-round" aria-label="1 კლასის ვერსია" title="1 კლასის ვერსია" (click)="go('/dashboard')">🎓</button>
+          }
           <button type="button" class="kids-round" aria-label="მენიუ" (click)="menu.set(!menu())">☰</button>
         </div>
 
-        @if (showNav() && trial()) {
+        @if (showNav() && betaMode()) {
+          <div class="ktrial" style="cursor:default;">
+            <span class="ktrial-ic">🎉</span>
+            <div class="ktrial-tx">
+              <div class="ktrial-t">ბეტა — უფასო წვდომა</div>
+              <div class="ktrial-s">MENTIQ Kids ამჟამად უფასოა ტესტირების პერიოდში — ითამაშე ყველაფერი!</div>
+            </div>
+          </div>
+        } @else if (showNav() && trial()) {
           <a class="ktrial" routerLink="/pricing">
             <span class="ktrial-ic">🌈</span>
             <div class="ktrial-tx">
@@ -47,9 +58,12 @@ import { KidsProfileService } from './kids-profile.service';
               <button type="button" class="kids-menu-item" (click)="go('/kids/map')">🗺️ რუკა</button>
               <button type="button" class="kids-menu-item" (click)="go('/kids/my-world')">🏰 ჩემი სამყარო</button>
               <button type="button" class="kids-menu-item" (click)="go('/kids/achievements')">🌈 ჯილდოები</button>
-              <button type="button" class="kids-menu-item" (click)="go('/kids/sky')">🌌 ვარსკვლავებით სავსე ცა</button>
+              <!-- <button type="button" class="kids-menu-item" (click)="go('/kids/sky')">🌌 ვარსკვლავებით სავსე ცა</button> -->
               <button type="button" class="kids-menu-item" (click)="go('/kids/friend')">🐰 მეგობარი</button>
               <button type="button" class="kids-menu-item" (click)="go('/kids/parent')">👪 მშობლის ხედი</button>
+              @if (canSwitchView()) {
+                <button type="button" class="kids-menu-item" (click)="go('/dashboard')">🎓 1 კლასის ვერსია</button>
+              }
               <button type="button" class="kids-menu-item danger" (click)="logout()">🚪 გასვლა</button>
             </div>
           </div>
@@ -83,8 +97,11 @@ export class KidsLayoutComponent implements OnDestroy {
   readonly showNav = signal(true);
 
   /** Warm, journey-framed trial reminder (only while on the free trial). */
+  readonly betaMode = computed(() => this.subs.status()?.betaFreeAccess === true || this.subs.status()?.status === 'Beta');
   readonly trial = computed(() => this.subs.isTrial());
   readonly trialDays = computed(() => Math.max(0, this.subs.daysRemaining()));
+  /** First-graders can hop to the school version. */
+  readonly canSwitchView = this.auth.canSwitchView;
   companionName(): string {
     return this.profile.companionName();
   }

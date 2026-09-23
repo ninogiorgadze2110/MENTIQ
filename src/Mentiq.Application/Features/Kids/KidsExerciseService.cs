@@ -222,18 +222,24 @@ public sealed class KidsExerciseService : IKidsExerciseService
         // (Tbilisi = UTC+4) and the largest numeric answer answered correctly.
         var attempts = await _db.ExerciseAttempts.AsNoTracking()
             .Where(a => a.UserId == userId)
-            .Select(a => new { a.Skill, a.ExerciseType, a.CreatedAtUtc, a.CorrectAnswer, a.IsCorrect })
+            .Select(a => new { a.Skill, a.ExerciseType, a.World, a.CreatedAtUtc, a.CorrectAnswer, a.IsCorrect })
             .ToListAsync(cancellationToken);
         var daysBySkill = attempts
             .GroupBy(a => a.Skill)
             .ToDictionary(g => g.Key, g => g.Select(a => a.CreatedAtUtc.AddHours(4).Date).Distinct().Count());
-        // The "count to N" stars must reflect genuine counting only — not addition
-        // or make-N answers that happen to share the counting skill.
+        // The Star Sky "count to N" stars belong to Volume II — they light only from
+        // genuine counting done inside the Star Sky, never from the map tours.
         var maxCountingValue = attempts
-            .Where(a => a.IsCorrect && a.ExerciseType == "counting")
+            .Where(a => a.IsCorrect && a.ExerciseType == "counting" && a.World == "sky")
             .Select(a => int.TryParse(a.CorrectAnswer, out var v) ? v : 0)
             .DefaultIfEmpty(0)
             .Max();
+        // Correct answers per skill earned inside the Star Sky (Volume II is
+        // independent of the map tours).
+        var skyCorrectBySkill = attempts
+            .Where(a => a.IsCorrect && a.World == "sky")
+            .GroupBy(a => a.Skill)
+            .ToDictionary(g => g.Key, g => g.Count());
 
         return rows.Select(p => new SkillProgressDto
         {
@@ -245,7 +251,8 @@ public sealed class KidsExerciseService : IKidsExerciseService
             Accuracy = p.TotalAttempts > 0 ? (int)Math.Round(100.0 * p.CorrectAttempts / p.TotalAttempts) : 0,
             AverageResponseTimeMs = (int)Math.Round(p.AverageResponseTimeMs),
             DaysPracticed = daysBySkill.GetValueOrDefault(p.Skill, 0),
-            MaxCorrectValue = p.Skill == "counting" ? maxCountingValue : 0
+            MaxCorrectValue = p.Skill == "counting" ? maxCountingValue : 0,
+            SkyCorrectCount = skyCorrectBySkill.GetValueOrDefault(p.Skill, 0)
         }).ToList();
     }
 

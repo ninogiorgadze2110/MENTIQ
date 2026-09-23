@@ -55,4 +55,5 @@ export interface SkillProgress {
   averageResponseTimeMs: number;
   daysPracticed: number;
   maxCorrectValue: number;
+  skyCorrectCount: number;
 }

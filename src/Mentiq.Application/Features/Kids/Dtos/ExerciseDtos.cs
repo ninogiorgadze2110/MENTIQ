@@ -106,6 +106,10 @@ public sealed record SkillProgressDto
     public int DaysPracticed { get; init; }
 
     /// <summary>Largest numeric answer the child has answered correctly for this
-    /// skill (e.g. the highest count reached) — drives the "count to N" stars.</summary>
+    /// skill IN THE STAR SKY (e.g. the highest count reached) — "count to N" stars.</summary>
     public int MaxCorrectValue { get; init; }
+
+    /// <summary>Correct answers for this skill done inside the Star Sky only, so
+    /// Volume II progresses independently of the Volume I map tours.</summary>
+    public int SkyCorrectCount { get; init; }
 }

@@ -24,6 +24,11 @@ interface NavItem {
               <span class="n-ic" aria-hidden="true">{{ item.icon }}</span> {{ item.label }}
             </a>
           }
+          @if (canSwitchView()) {
+            <a routerLink="/kids" routerLinkActive="active">
+              <span class="n-ic" aria-hidden="true">🧸</span> Kids ვერსია
+            </a>
+          }
           @if (isAdmin()) {
             <a routerLink="/admin/subscriptions" routerLinkActive="active">
               <span class="n-ic" aria-hidden="true">⚙</span> ადმინი
@@ -79,6 +84,7 @@ export class ShellComponent {
   ];
 
   readonly isAdmin = this.auth.isAdmin;
+  readonly canSwitchView = this.auth.canSwitchView;
 
   displayName(): string {
     return this.auth.user()?.displayName ?? 'სტუმარი';

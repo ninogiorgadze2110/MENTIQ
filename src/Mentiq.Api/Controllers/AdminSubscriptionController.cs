@@ -29,6 +29,22 @@ public sealed class AdminSubscriptionController : ApiControllerBase
         [FromQuery] string? q, CancellationToken cancellationToken)
         => Ok(await _subscriptions.ListAsync(q, cancellationToken));
 
+    /// <summary>Read the platform-wide beta free-access switch.</summary>
+    [HttpGet("beta")]
+    [ProducesResponseType(typeof(BetaAccessDto), StatusCodes.Status200OK)]
+    public async Task<ActionResult<BetaAccessDto>> GetBeta(CancellationToken cancellationToken)
+        => Ok(new BetaAccessDto { Enabled = await _subscriptions.GetBetaFreeAccessAsync(cancellationToken) });
+
+    /// <summary>Turn beta free-access mode on or off for everyone.</summary>
+    [HttpPut("beta")]
+    [ProducesResponseType(typeof(BetaAccessDto), StatusCodes.Status200OK)]
+    public async Task<ActionResult<BetaAccessDto>> SetBeta(
+        BetaAccessDto request, CancellationToken cancellationToken)
+    {
+        await _subscriptions.SetBetaFreeAccessAsync(request.Enabled, cancellationToken);
+        return Ok(new BetaAccessDto { Enabled = request.Enabled });
+    }
+
     /// <summary>Full subscription detail + history for one user.</summary>
     [HttpGet("{userId:guid}")]
     [ProducesResponseType(typeof(AdminSubscriptionDetail), StatusCodes.Status200OK)]

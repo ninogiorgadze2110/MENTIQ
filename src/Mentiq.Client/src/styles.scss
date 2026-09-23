@@ -889,6 +889,19 @@ html, body { max-width: 100%; overflow-x: hidden; }
 .kids-scope .sky-tile .sky-tile-go { font-size: 10px; font-weight: 700; color: var(--k-accent); margin-top: 5px; }
 .kids-scope .sky-tile.on .sky-tile-go { color: color-mix(in srgb, var(--k-sun) 75%, var(--k-ink)); }
 
+/* Star Sky locked state (Volume II gated behind Volume I) */
+.kids-scope .sky-lock {
+  text-align: center; padding: 30px 22px; margin-top: 8px; border-radius: 22px;
+  background: radial-gradient(120% 90% at 80% -10%, #3b3170, #241d4d 55%, #1a1533 100%); color: #fff;
+}
+.kids-scope .sky-lock-ic { font-size: 44px; }
+.kids-scope .sky-lock-t { font-family: var(--ge-serif); font-size: 22px; margin-top: 8px; }
+.kids-scope .sky-lock-s { font-size: 13px; line-height: 1.6; color: rgba(255,255,255,.78); margin: 8px auto 18px; max-width: 30ch; }
+.kids-scope .sky-lock-s b { color: color-mix(in srgb, var(--k-sun) 85%, #fff); }
+.kids-scope .sky-lock-bar { height: 8px; background: rgba(255,255,255,.16); border-radius: 999px; overflow: hidden; max-width: 260px; margin: 0 auto; }
+.kids-scope .sky-lock-bar span { display: block; height: 100%; background: var(--k-sun); border-radius: 999px; transition: width .5s ease; }
+.kids-scope .sky-lock-n { font-size: 12px; color: rgba(255,255,255,.7); margin-top: 8px; }
+
 /* Journey map — a clean vertical trail (design 03) */
 .kids-scope .jtrail { position: relative; display: flex; flex-direction: column; gap: 4px; padding: 6px 0 30px; }
 .kids-scope .jt-stop { display: flex; gap: 14px; align-items: stretch; position: relative; }

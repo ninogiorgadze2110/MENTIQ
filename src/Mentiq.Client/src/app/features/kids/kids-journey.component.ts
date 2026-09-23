@@ -65,14 +65,16 @@ import { isMastered, masteryPct } from './kids-mastery';
         </div>
       }
 
-      <!-- Next volume: the long-horizon Star Sky -->
+      <!-- Next volume: the long-horizon Star Sky (locked until Volume I is done) -->
       <div class="jt-stop tome2">
-        <div class="jt-rail"><span class="jt-node t2">🌌</span></div>
-        <button type="button" class="jt-card t2card" (click)="openSky()">
+        <div class="jt-rail"><span class="jt-node t2">{{ allMastered() ? '🌌' : '🔒' }}</span></div>
+        <button type="button" class="jt-card t2card" [class.locked]="!allMastered()" (click)="openSky()">
           <div class="kids-kicker" style="margin:0 0 2px;">— ტომი II</div>
           <div class="jt-name" style="color:#fff;">ვარსკვლავებით სავსე ცა</div>
           <div class="jt-sub" style="color:rgba(255,255,255,.72);">
-            {{ allMastered() ? '🌈 ტომი I დასრულდა — ცა გელოდება!' : 'გრძელვადიანი მიზანი · ანთე ვარსკვლავები →' }}
+            {{ allMastered()
+              ? '🌈 ტომი I დასრულდა — ცა გელოდება!'
+              : '🔒 გაიხსნება ' + masteredCount() + '/' + worlds.length + ' ტერიტორიის დასრულებისას' }}
           </div>
         </button>
       </div>

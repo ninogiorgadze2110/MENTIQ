@@ -20,6 +20,13 @@ public interface ISubscriptionService
 
     PlansResponse GetPlans();
 
+    // ---- Beta / free-access mode (admin-controlled) ----
+
+    /// <summary>When on, everyone has full access and the paywall is hidden.</summary>
+    Task<bool> GetBetaFreeAccessAsync(CancellationToken cancellationToken = default);
+
+    Task SetBetaFreeAccessAsync(bool enabled, CancellationToken cancellationToken = default);
+
     // ---- Admin ----
 
     Task<AdminSubscriptionListResponse> ListAsync(string? query, CancellationToken cancellationToken = default);

@@ -23,11 +23,21 @@ export class AuthService {
 
   /** MENTIQ experience segment of the signed-in user. */
   readonly educationLevel = computed(() => this._user()?.educationLevel ?? 'school');
+  readonly grade = computed(() => this._user()?.grade ?? -1);
   readonly isKid = computed(() => this.educationLevel() === 'preschool');
 
-  /** Where a user should land after authenticating, based on their segment. */
+  /**
+   * First-graders (school, grade 1 — around 6 years old) can use BOTH the Kids
+   * world and the school app, and get a view switch to move between them.
+   */
+  readonly isFirstGrade = computed(() => this.educationLevel() === 'school' && this.grade() === 1);
+  readonly canUseKids = computed(() => this.isKid() || this.isFirstGrade());
+  readonly canSwitchView = computed(() => this.isFirstGrade());
+
+  /** Where a user should land after authenticating. Kids-capable users
+   *  (preschool and first-graders) start in the Kids world by default. */
   homeRoute(): string {
-    return this.isKid() ? '/kids' : '/dashboard';
+    return this.canUseKids() ? '/kids' : '/dashboard';
   }
 
   register(request: RegisterRequest): Observable<AuthResponse> {

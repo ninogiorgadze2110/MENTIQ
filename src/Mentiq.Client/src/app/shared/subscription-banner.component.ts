@@ -14,7 +14,15 @@ import { SubscriptionService } from '../core/services/subscription.service';
   imports: [RouterLink],
   template: `
     @if (status(); as s) {
-      @if (s.status === 'Trial' || s.isTrial) {
+      @if (s.status === 'Beta' || s.betaFreeAccess) {
+        <div style="border:1px solid var(--gold); background:color-mix(in srgb, var(--gold) 9%, transparent); padding:14px 18px; margin-bottom:20px; display:flex; align-items:center; gap:14px; flex-wrap:wrap;">
+          <span style="font-size:20px;">🎉</span>
+          <div style="flex:1; min-width:200px;">
+            <div style="font-family:var(--ge-serif); font-size:16px;">ბეტა — უფასო წვდომა</div>
+            <div style="font-size:12.5px; color:color-mix(in srgb, var(--ink) 62%, transparent);">MENTIQ ამჟამად უფასოა ტესტირების პერიოდში. სრული წვდომა ყველა ფუნქციაზე.</div>
+          </div>
+        </div>
+      } @else if (s.status === 'Trial' || s.isTrial) {
         <div style="border:1px solid var(--gold); background:color-mix(in srgb, var(--gold) 7%, transparent); padding:14px 18px; margin-bottom:20px; display:flex; align-items:center; gap:14px; flex-wrap:wrap;">
           <span style="font-size:20px;">🎁</span>
           <div style="flex:1; min-width:200px;">

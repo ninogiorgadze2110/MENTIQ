@@ -33,12 +33,16 @@ public sealed class MentiqDbContext : DbContext, IApplicationDbContext
 
     public DbSet<SkillProgress> SkillProgress => Set<SkillProgress>();
 
+    public DbSet<PlatformSetting> PlatformSettings => Set<PlatformSetting>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
 
         // Apply every IEntityTypeConfiguration in this assembly.
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(MentiqDbContext).Assembly);
+
+        modelBuilder.Entity<PlatformSetting>().HasIndex(s => s.Key).IsUnique();
     }
 
     public Task<bool> CanConnectAsync(CancellationToken cancellationToken = default)
