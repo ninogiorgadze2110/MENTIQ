@@ -10,13 +10,15 @@ interface Group {
 }
 
 const CATEGORY_LABELS: Record<string, string> = {
+  belt: '🥋 ქამრები',
+  tricks: '🎩 ხრიკები',
   streak: '🔥 სერია',
-  competition: '🏆 შეჯიბრი',
   speed: '⚡ სიჩქარე',
   accuracy: '🎯 სიზუსტე',
+  competition: '🏆 შეჯიბრი',
   volume: '📚 ვარჯიში'
 };
-const CATEGORY_ORDER = ['streak', 'competition', 'speed', 'accuracy', 'volume'];
+const CATEGORY_ORDER = ['belt', 'tricks', 'streak', 'speed', 'accuracy', 'competition', 'volume'];
 
 @Component({
   selector: 'app-achievements',
@@ -43,7 +45,7 @@ const CATEGORY_ORDER = ['streak', 'competition', 'speed', 'accuracy', 'volume'];
   template: `
     <div class="top">
       <div>
-        <div style="font-size:var(--text-xs); color:color-mix(in srgb, var(--ink) 55%, transparent);">Trophy Cabinet</div>
+        <div class="ge-label">ჯილდოების კარადა</div>
         <h2>მიღწევები</h2>
       </div>
     </div>

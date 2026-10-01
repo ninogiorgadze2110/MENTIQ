@@ -1,5 +1,6 @@
 using Mentiq.Application.Common.Interfaces;
 using Mentiq.Application.Features.Achievements.Dtos;
+using Mentiq.Application.Features.Progression;
 using Mentiq.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
@@ -79,16 +80,51 @@ public sealed class AchievementService : IAchievementService
             .ToListAsync(cancellationToken);
 
         // Consecutive-day streak ending today (or yesterday).
+        var days = sessions.Select(s => DateOnly.FromDateTime(s.CompletedAtUtc)).ToHashSet();
         var streak = 0;
-        if (sessions.Count > 0)
+        if (days.Count > 0)
         {
-            var days = sessions.Select(s => DateOnly.FromDateTime(s.CompletedAtUtc)).ToHashSet();
             var today = DateOnly.FromDateTime(DateTime.UtcNow);
             var cursor = days.Contains(today) ? today : today.AddDays(-1);
             while (days.Contains(cursor)) { streak++; cursor = cursor.AddDays(-1); }
         }
 
+        // Best rolling 7-day window: most active days within any 7-day span.
+        var maxActiveDaysInWeek = 0;
+        foreach (var d in days)
+        {
+            var count = days.Count(x => x <= d && x > d.AddDays(-7));
+            maxActiveDaysInWeek = Math.Max(maxActiveDaysInWeek, count);
+        }
+
         var timed = sessions.Where(s => s.AvgSeconds > 0).ToList();
+
+        // Belt progression: current belt per skill, used for belt/trick achievements.
+        var beltRows = await _db.UserSkillProgress
+            .Where(p => p.UserId == userId)
+            .Select(p => new { p.Skill, p.BeltIndex })
+            .ToListAsync(cancellationToken);
+        var beltByKey = beltRows
+            .GroupBy(r => r.Skill, StringComparer.OrdinalIgnoreCase)
+            .ToDictionary(g => g.Key, g => g.Max(r => r.BeltIndex), StringComparer.OrdinalIgnoreCase);
+
+        var perSkillBelt = ProgressionConfig.Skills
+            .Select(s => beltByKey.TryGetValue(s.Key, out var b) ? b : 0)
+            .ToList();
+        var maxBeltIndex = perSkillBelt.Count > 0 ? perSkillBelt.Max() : 0;
+        var minBeltIndex = perSkillBelt.Count > 0 ? perSkillBelt.Min() : 0;
+
+        // Tricks "mastered" = tricks tied to belts the user has already passed.
+        var tricksMastered = ProgressionConfig.Skills
+            .SelectMany(s =>
+            {
+                var current = beltByKey.TryGetValue(s.Key, out var b) ? b : 0;
+                return s.LessonsByBelt
+                    .Take(current) // belts strictly below the current one are passed
+                    .SelectMany(lessons => lessons);
+            })
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .Count();
 
         // Competition ranks.
         var myEntries = await _db.CompetitionEntries
@@ -119,7 +155,11 @@ public sealed class AchievementService : IAchievementService
             AnyPerfectSession = sessions.Any(s => s.TotalQuestions > 0 && s.Accuracy == 100),
             Any20Of20 = sessions.Any(s => s.TotalQuestions >= 20 && s.Accuracy == 100),
             BestCompetitionRank = bestRank,
-            AnyCompetitionPerfect = myEntries.Any(e => e.Accuracy == 100)
+            AnyCompetitionPerfect = myEntries.Any(e => e.Accuracy == 100),
+            MaxBeltIndex = maxBeltIndex,
+            MinBeltIndex = minBeltIndex,
+            TricksMastered = tricksMastered,
+            MaxActiveDaysInWeek = maxActiveDaysInWeek
         };
     }
 }
