@@ -2,6 +2,7 @@ import { Component, HostListener, OnDestroy, computed, inject, signal } from '@a
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AnsweredQuestion, PracticeSessionService } from '../../core/services/practice-session.service';
 import { ProgressService } from '../../core/services/progress.service';
+import { ProgressionService } from '../../core/services/progression.service';
 import { CompetitionService } from '../../core/services/competition.service';
 import { DailyChallengeService } from '../../core/services/daily-challenge.service';
 import { AuthService } from '../../core/services/auth.service';
@@ -291,6 +292,7 @@ export class PracticeComponent implements OnDestroy {
   private readonly router = inject(Router);
   private readonly sessions = inject(PracticeSessionService);
   private readonly progress = inject(ProgressService);
+  private readonly progression = inject(ProgressionService);
   private readonly competition = inject(CompetitionService);
   private readonly daily = inject(DailyChallengeService);
   private readonly auth = inject(AuthService);
@@ -338,6 +340,12 @@ export class PracticeComponent implements OnDestroy {
   readonly done = signal(false);
 
   constructor() {
+    // Ensure belt progression is available so finished answers can be recorded
+    // against the right skill (trick → owner skill lookup needs it).
+    if (!this.progression.state()) {
+      this.progression.load().subscribe({ error: () => {} });
+    }
+
     const params = inject(ActivatedRoute).snapshot.queryParamMap;
     const trick = params.get('trick');
     const op = params.get('op') as OpKey | null;
@@ -693,9 +701,34 @@ export class PracticeComponent implements OnDestroy {
         durationSeconds: this.elapsed(),
         startedAtUtc: this.startedAt.toISOString()
       }).subscribe({ error: () => { } });
+
+      // Record the answers against the skill's belt progression (mastery/unlocks).
+      const skill = this.progressionSkill();
+      if (skill) {
+        this.progression.recordAnswers(
+          skill,
+          this.answered.map((a) => ({ correct: a.correct, timeMs: Math.round(a.seconds * 1000) }))
+        ).subscribe({ error: () => { } });
+      }
     }
 
     this.router.navigate(['/results']);
+  }
+
+  /**
+   * The progression skill this drill trains: the selected operation for op/manual
+   * drills, or the skill that owns the trick for a trick drill. Null when it maps
+   * to no single skill (e.g. an unknown trick before progression has loaded).
+   */
+  private progressionSkill(): string | null {
+    const trick = this.trickKey();
+    if (trick) {
+      const owner = this.progression
+        .skills()
+        .find((s) => (s.lessonsByBelt ?? []).some((belt) => belt.includes(trick)));
+      return owner?.key ?? null;
+    }
+    return this.selectedOp();
   }
 
   private flash(k: string): void {

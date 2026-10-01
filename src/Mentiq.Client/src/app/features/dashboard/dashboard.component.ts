@@ -32,6 +32,7 @@ interface SkillRow {
   key: string;
   name: string;
   unlocked: boolean;
+  maxed: boolean;
   beltId: BeltColor;
   beltName: string;
   accuracy: number;
@@ -111,8 +112,13 @@ interface SkillRow {
                   <span style="font-family:var(--ge-serif); font-size:var(--text-lg);">{{ s.name }}</span>
                   <app-belt-badge [belt]="s.beltId" [label]="s.beltName" />
                 </div>
-                <app-mastery-bar [value]="s.accuracy" [belt]="s.beltId" />
-                <div class="ge-label">{{ s.answersCount }}/{{ window() }} პასუხი · სიზუსტე {{ s.accuracy }}%</div>
+                @if (s.maxed) {
+                  <app-mastery-bar [value]="100" [belt]="s.beltId" [showValue]="false" />
+                  <div class="ge-label">✓ ოსტატი — უმაღლესი ქამარი</div>
+                } @else {
+                  <app-mastery-bar [value]="s.accuracy" [belt]="s.beltId" />
+                  <div class="ge-label">{{ s.answersCount }}/{{ window() }} პასუხი · სიზუსტე {{ s.accuracy }}%</div>
+                }
               </a>
             } @else {
               <div class="skill-row is-locked-progress">
@@ -273,22 +279,24 @@ export class DashboardComponent {
   });
 
   // ---- My belts ----
-  readonly skillRows = computed<SkillRow[]>(() =>
-    this.prog.skills().map((s) => {
+  readonly skillRows = computed<SkillRow[]>(() => {
+    const topIndex = this.prog.belts().length - 1;
+    return this.prog.skills().map((s) => {
       const belt = this.prog.belts().find((b) => b.index === s.beltIndex) ?? null;
       const m = this.prog.masteryProgress(s.key);
       return {
         key: s.key,
         name: s.name,
         unlocked: s.unlocked,
+        maxed: topIndex >= 0 && s.beltIndex >= topIndex,
         beltId: (s.beltId ?? 'white') as BeltColor,
         beltName: belt?.name ?? '',
         accuracy: m.accuracy,
         answersCount: m.answersCount,
         requiresText: s.unlocked || !s.requires ? null : this.reqText(s.requires.skill, s.requires.beltIndex)
       };
-    })
-  );
+    });
+  });
 
   private reqText(skillKey: string, beltIndex: number): string {
     const sk = this.prog.skills().find((s) => s.key === skillKey);
