@@ -44,6 +44,13 @@ public sealed class SubscriptionService : ISubscriptionService
 
     public async Task<bool> GetBetaFreeAccessAsync(CancellationToken cancellationToken = default)
     {
+        // The BETA_MODE config/env flag forces beta for everyone, regardless of
+        // the admin runtime toggle.
+        if (_settings.BetaMode)
+        {
+            return true;
+        }
+
         var value = await _db.PlatformSettings.AsNoTracking()
             .Where(s => s.Key == BetaFreeAccessKey)
             .Select(s => s.Value)

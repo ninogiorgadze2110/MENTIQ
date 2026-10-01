@@ -9,6 +9,14 @@ public sealed class SubscriptionSettings
 {
     public const string SectionName = "Subscription";
 
+    /// <summary>
+    /// Beta feature flag (config/env, e.g. Subscription__BetaMode=true). When on,
+    /// everyone gets full access, the paywall/pro nudges are hidden and the pricing
+    /// page shows "free during beta". Independent of the admin runtime toggle —
+    /// either one turns beta on.
+    /// </summary>
+    public bool BetaMode { get; set; } = false;
+
     /// <summary>Length of the free trial granted at registration.</summary>
     public int TrialDays { get; set; } = 7;
 

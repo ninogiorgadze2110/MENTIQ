@@ -9,15 +9,33 @@ import { Plan, PlansResponse } from '../../core/models/subscription.model';
   selector: 'app-pricing',
   standalone: true,
   imports: [RouterLink],
+  styles: [
+    `
+      .value-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin: 0 auto 36px; max-width: 900px; }
+      .value-card { border: 1px solid var(--hair); border-radius: var(--radius-card); background: #fff; padding: 22px 20px; }
+      .value-card .vi { font-size: 30px; line-height: 1; }
+      .value-card .vt { font-family: var(--ge-serif); font-size: 18px; margin: 10px 0 6px; }
+      .value-card .vd { font-size: 13.5px; line-height: 1.6; color: color-mix(in srgb, var(--ink) 66%, transparent); }
+      .plan-grid { display: grid; grid-template-columns: repeat(2, minmax(240px, 340px)); gap: 20px; justify-content: center; }
+      @media (max-width: 620px) { .value-grid, .plan-grid { grid-template-columns: 1fr; } }
+      .plan-card { border: 1px solid var(--hair); border-radius: var(--radius-card); background: #fff; padding: 34px 30px; }
+      .plan-card.primary { border: 2px solid var(--gold); background: color-mix(in srgb, var(--gold) 5%, transparent); }
+    `
+  ],
   template: `
     <div style="padding:32px 56px 0; max-width:1280px; margin:0 auto;">
       <a [routerLink]="homeLink()" style="font-family:var(--ge-serif); font-size:20px; color:var(--ink); text-decoration:none;">← MENTIQ</a>
     </div>
     <div style="padding:40px 72px 72px; background:var(--paper); max-width:1280px; margin:0 auto;">
-      <div style="text-align:center; max-width:640px; margin:0 auto 40px;">
-        <!-- <div style="font-size:var(--text-xs); color:var(--gold);">— ფასი</div> -->
-        <!-- <h1 style="font-family:var(--ge-serif); font-size:56px; margin:14px 0 14px; line-height:1.02; font-weight:500;">ერთი ფინჯანი ყავის ფასი,<br><em style="color:var(--gold);">უფრო სწრაფი ტვინი.</em></h1> -->
-        <p style="font-size:15px; line-height:1.65; color:color-mix(in srgb, var(--ink) 70%, transparent); margin:0;">დაიწყე 7 დღიანი უფასო საცდელი ვერსიით. გადაიხადე მაშინ, როცა მზად იქნები — ან ტრიალის დასრულების შემდეგ.</p>
+      <div style="text-align:center; max-width:640px; margin:0 auto 36px;">
+        <div class="ge-label" style="color:var(--gold); margin-bottom:12px;">— {{ beta() ? 'ბეტა' : 'ფასი' }}</div>
+        @if (beta()) {
+          <h1 style="font-family:var(--ge-serif); font-size:46px; margin:0 0 12px; line-height:1.04; font-weight:500;">ბეტაში ყველაფერი უფასოა</h1>
+          <p style="font-size:15px; line-height:1.65; color:color-mix(in srgb, var(--ink) 70%, transparent); margin:0;">MENTIQ ამ ეტაპზე სრულად უფასოა — ყველა ფუნქცია, ყველა კლასი, ყოველგვარი ლიმიტის გარეშე. უბრალოდ დაიწყე.</p>
+        } @else {
+          <h1 style="font-family:var(--ge-serif); font-size:46px; margin:0 0 12px; line-height:1.04; font-weight:500;">7 დღე უფასოდ, მერე თვიური გამოწერა</h1>
+          <p style="font-size:15px; line-height:1.65; color:color-mix(in srgb, var(--ink) 70%, transparent); margin:0;">დაიწყე უფასო საცდელით. გადაიხადე მხოლოდ მაშინ, როცა დარწმუნდები, რომ შვილს ეხმარება.</p>
+        }
       </div>
 
       <!-- Access banner for signed-in users -->
@@ -27,54 +45,56 @@ import { Plan, PlansResponse } from '../../core/models/subscription.model';
         </div>
       }
 
-      <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:0; border:1px solid var(--hair); background:#fff;">
-        <!-- Free / Trial -->
-        <div style="padding:36px 30px; border-right:1px solid var(--hair);">
-          <div style="font-family:var(--ge-serif); font-size:14px; color:var(--gold); font-style:italic;">— Trial</div>
-          <h3 style="font-family:var(--ge-serif); font-size:26px; margin:8px 0 16px; font-weight:500;">უფასო</h3>
-          <div style="font-family:var(--ge-serif); font-size:48px; line-height:1; font-feature-settings:'tnum';">0<span style="font-size:20px; color:color-mix(in srgb, var(--ink) 50%, transparent);"> ₾</span></div>
-          <div style="font-size:12px; color:color-mix(in srgb, var(--ink) 55%, transparent); margin-top:4px;">7 დღე · სრული წვდომა</div>
-          <a routerLink="/onboarding" class="btn btn-secondary" style="display:block; text-align:center; padding:12px; margin-top:24px;">დაწყება</a>
-          <ul style="list-style:none; padding:0; margin:28px 0 0; font-size:13.5px; line-height:1.9;">
-            <li style="border-top:1px solid var(--hair); padding:8px 0;">✓ ყველა ვარჯიში 7 დღის განმავლობაში</li>
-            <li style="border-top:1px solid var(--hair); padding:8px 0;">✓ ყველა დონე და ხრიკი</li>
-            <li style="border-top:1px solid var(--hair); padding:8px 0;">✓ შეჯიბრები და მიღწევები</li>
-            <li style="border-top:1px solid var(--hair); padding:8px 0; color:color-mix(in srgb, var(--ink) 40%, transparent);">— ბარათი არ არის საჭირო</li>
-          </ul>
+      <!-- Value for parents (not just a feature list) -->
+      <div class="value-grid">
+        <div class="value-card">
+          <div class="vi">🥋</div>
+          <div class="vt">ქამრები — ხედავ პროგრესს</div>
+          <div class="vd">შვილი ქამრებს ოსტატობით იღებს (თეთრიდან შავამდე). ერთ შეხედვაში ხვდები, რა ეტაპზეა და რა არის შემდეგი.</div>
         </div>
-
-        <!-- Configured paid plans -->
-        @for (plan of plans(); track plan.code; let idx = $index) {
-          <div [style.border-right]="idx === 0 ? '1px solid var(--hair)' : 'none'"
-               [style.background]="idx === 0 ? 'color-mix(in srgb, var(--gold) 5%, transparent)' : '#fff'"
-               style="padding:36px 30px; position:relative;">
-            @if (idx === 0) {
-              <!-- <div style="position:absolute; top:-12px; left:30px; background:var(--ink); color:var(--paper); font-size:var(--text-xs); padding:6px 14px;">— რეკომენდებული</div> -->
-            }
-            <div style="display:flex; align-items:center; gap:10px;">
-              <div style="font-family:var(--ge-serif); font-size:14px; color:var(--gold); font-style:italic;">— {{ plan.name }}</div>
-              @if (plan.oldPrice && plan.oldPrice > plan.price) {
-                <span style="background:#b22; color:#fff; font-size:10px; letter-spacing:.06em; padding:3px 8px; border-radius:2px;">-{{ discount(plan) }}%</span>
-              }
-            </div>
-            <h3 style="font-family:var(--ge-serif); font-size:26px; margin:8px 0 16px; font-weight:500;">{{ plan.name }}</h3>
-            <div style="display:flex; align-items:baseline; gap:10px;">
-              @if (plan.oldPrice && plan.oldPrice > plan.price) {
-                <span style="font-family:var(--ge-serif); font-size:26px; color:color-mix(in srgb, var(--ink) 40%, transparent); text-decoration:line-through; font-feature-settings:'tnum';">{{ plan.oldPrice }}</span>
-              }
-              <div style="font-family:var(--ge-serif); font-size:48px; line-height:1; font-feature-settings:'tnum';">{{ plan.price }}<span style="font-size:20px; color:color-mix(in srgb, var(--ink) 50%, transparent);"> {{ plan.currency }} / {{ periodLabel(plan) }}</span></div>
-            </div>
-            <div style="font-size:12px; color:color-mix(in srgb, var(--ink) 55%, transparent); margin-top:4px;">{{ plan.description }}</div>
-            <button type="button" class="btn btn-primary btn-block" style="padding:12px; margin-top:24px;" (click)="subscribe(plan)">გამოწერა</button>
-            <ul style="list-style:none; padding:0; margin:28px 0 0; font-size:13.5px; line-height:1.9;">
-              <li style="border-top:1px solid var(--hair); padding:8px 0;">✓ ულიმიტო ვარჯიში</li>
-              <li style="border-top:1px solid var(--hair); padding:8px 0;">✓ ნებისმიერი სირთულის ვარჯიში</li>
-              <li style="border-top:1px solid var(--hair); padding:8px 0;">✓ ხრიკები + შეჯიბრები</li>
-              <li style="border-top:1px solid var(--hair); padding:8px 0;">✓ პროგრესის სრული ისტორია</li>
-            </ul>
-          </div>
-        }
+        <div class="value-card">
+          <div class="vi">🎩</div>
+          <div class="vt">ხრიკები — სწრაფი თვლა</div>
+          <div class="vd">სწავლობს თავში სწრაფად თვლის ხრიკებს — მნიშვნელოვანია არა მხოლოდ სწორი პასუხი, არამედ როგორ ფიქრობს.</div>
+        </div>
+        <div class="value-card">
+          <div class="vi">📊</div>
+          <div class="vt">კვირის ანგარიში</div>
+          <div class="vd">მშობლის გვერდზე ხედავ: რამდენ დღე ივარჯიშა, სად გაუმჯობესდა სიჩქარე და სად სჭირდება დახმარება.</div>
+        </div>
       </div>
+
+      @if (beta()) {
+        <!-- Beta: future price shown for information only -->
+        <div class="plan-card primary" style="max-width:420px; margin:0 auto; text-align:center;">
+          <div class="ge-label" style="color:var(--gold);">— მომავალი ფასი (ინფორმაციულად)</div>
+          @if (mainPlan(); as p) {
+            <div style="font-family:var(--ge-serif); font-size:44px; line-height:1; margin:10px 0 4px; font-feature-settings:'tnum';">{{ p.price }}<span style="font-size:18px; color:color-mix(in srgb, var(--ink) 50%, transparent);"> {{ p.currency }} / თვე</span></div>
+            <p style="font-size:13.5px; color:color-mix(in srgb, var(--ink) 65%, transparent); margin:8px 0 18px; line-height:1.6;">ასე იქნება ბეტის დასრულების შემდეგ. ახლა არაფრის გადახდა არ გჭირდება.</p>
+          }
+          <a [routerLink]="homeLink()" class="btn btn-primary" style="padding:12px 26px;">დაიწყე უფასოდ →</a>
+        </div>
+      } @else {
+        <!-- Simple scheme: free trial → monthly -->
+        <div class="plan-grid">
+          <div class="plan-card">
+            <div class="ge-label" style="color:var(--gold);">— საცდელი</div>
+            <h3 style="font-family:var(--ge-serif); font-size:26px; margin:8px 0 12px; font-weight:500;">7 დღე უფასოდ</h3>
+            <div style="font-family:var(--ge-serif); font-size:44px; line-height:1; font-feature-settings:'tnum';">0<span style="font-size:18px; color:color-mix(in srgb, var(--ink) 50%, transparent);"> ₾</span></div>
+            <div style="font-size:12.5px; color:color-mix(in srgb, var(--ink) 55%, transparent); margin-top:4px;">სრული წვდომა · ბარათი არ არის საჭირო</div>
+            <a routerLink="/onboarding" class="btn btn-secondary btn-block" style="padding:12px; margin-top:22px;">დაწყება</a>
+          </div>
+          @if (mainPlan(); as p) {
+            <div class="plan-card primary">
+              <div class="ge-label" style="color:var(--gold);">— გამოწერა</div>
+              <h3 style="font-family:var(--ge-serif); font-size:26px; margin:8px 0 12px; font-weight:500;">თვიური</h3>
+              <div style="font-family:var(--ge-serif); font-size:44px; line-height:1; font-feature-settings:'tnum';">{{ p.price }}<span style="font-size:18px; color:color-mix(in srgb, var(--ink) 50%, transparent);"> {{ p.currency }} / თვე</span></div>
+              <div style="font-size:12.5px; color:color-mix(in srgb, var(--ink) 55%, transparent); margin-top:4px;">{{ p.description || 'ულიმიტო წვდომა ყველა ფუნქციაზე' }}</div>
+              <button type="button" class="btn btn-primary btn-block" style="padding:12px; margin-top:22px;" (click)="subscribe(p)">გამოწერა</button>
+            </div>
+          }
+        </div>
+      }
 
       <!-- FAQ -->
       <div style="margin-top:56px;">
@@ -129,6 +149,18 @@ export class PricingComponent {
       const aud = p.audiences ?? [];
       return aud.length === 0 || aud.includes('all') || aud.includes(seg);
     });
+  });
+
+  /** Beta mode: everything free, paywall hidden. */
+  readonly beta = computed(() => {
+    const s = this.subs.status();
+    return s?.betaFreeAccess === true || s?.status === 'Beta';
+  });
+
+  /** The single headline plan (monthly) for the simple scheme and the beta price note. */
+  readonly mainPlan = computed(() => {
+    const ps = this.plans();
+    return ps.find((p) => p.period === 'month') ?? ps[0] ?? null;
   });
 
   readonly instructions = computed(() => this.data()?.paymentInstructions ?? '');

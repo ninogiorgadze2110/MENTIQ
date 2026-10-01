@@ -1,8 +1,9 @@
-import { Component, inject } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet, Router } from '@angular/router';
 
 import { AuthService } from '../../core/services/auth.service';
 import { NotificationService } from '../../core/services/notification.service';
+import { SubscriptionService } from '../../core/services/subscription.service';
 
 interface NavItem {
   path: string;
@@ -43,10 +44,14 @@ interface NavItem {
             <div class="av">{{ initial() }}</div>
             <div>
               <div style="color:var(--ink); font-size:13px;">{{ displayName() }}</div>
-              <div style="font-size:11px;">უფასო გეგმა</div>
+              @if (!beta()) {
+                <div style="font-size:11px;">უფასო გეგმა</div>
+              }
             </div>
           </div>
-          <a routerLink="/pricing" style="color:var(--gold); font-size:12px;">↗ განახლდი Pro-ზე</a>
+          @if (!beta()) {
+            <a routerLink="/pricing" style="color:var(--gold); font-size:12px;">↗ განახლდი Pro-ზე</a>
+          }
           <div style="margin-top:10px;">
             <a href="javascript:void(0)" (click)="logout()" style="color:color-mix(in srgb, var(--ink) 55%, transparent); font-size:12px;">→ გამოსვლა</a>
           </div>
@@ -71,7 +76,20 @@ interface NavItem {
 export class ShellComponent {
   private readonly auth = inject(AuthService);
   private readonly router = inject(Router);
+  private readonly subs = inject(SubscriptionService);
   readonly notifications = inject(NotificationService);
+
+  /** Beta mode hides the paywall/pro nudges. */
+  readonly beta = computed(() => {
+    const s = this.subs.status();
+    return s?.betaFreeAccess === true || s?.status === 'Beta';
+  });
+
+  constructor() {
+    if (!this.subs.status()) {
+      this.subs.loadStatus().subscribe({ error: () => {} });
+    }
+  }
 
   readonly nav: NavItem[] = [
     { path: '/dashboard', label: 'მთავარი', icon: '◈' },
