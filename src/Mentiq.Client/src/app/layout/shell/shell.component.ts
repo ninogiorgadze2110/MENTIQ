@@ -79,6 +79,7 @@ export class ShellComponent {
     { path: '/learn', label: 'ისწავლე', icon: '☰' },
     { path: '/competition', label: 'შეჯიბრი', icon: '⚑' },
     { path: '/achievements', label: 'მიღწევები', icon: '★' },
+    { path: '/parent', label: 'მშობლისთვის', icon: '⌂' },
     { path: '/pricing', label: 'ფასი', icon: '₾' },
     { path: '/contact', label: 'კონტაქტი', icon: '✉' }
   ];

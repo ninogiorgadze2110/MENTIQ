@@ -147,6 +147,11 @@ export const routes: Routes = [
           import('./features/achievements/achievements.component').then((m) => m.AchievementsComponent)
       },
       {
+        path: 'parent',
+        loadComponent: () =>
+          import('./features/parent/parent.component').then((m) => m.ParentComponent)
+      },
+      {
         path: 'contact',
         loadComponent: () =>
           import('./features/contact/contact.component').then((m) => m.ContactComponent)
