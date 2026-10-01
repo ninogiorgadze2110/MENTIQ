@@ -151,23 +151,6 @@ const EMAIL_KEY = 'mentiq.parentWeeklyEmail';
             </div>
           </div>
         </div>
-
-        <!-- Weekly email opt-in -->
-        <div class="ui-card card-muted p-card" style="display:flex; align-items:center; gap:16px;">
-          <span class="ic">✉️</span>
-          <div style="flex:1; min-width:0;">
-            <div style="font-family:var(--ge-serif); font-size:16px;">კვირეული შეჯამება იმეილზე</div>
-            <div style="font-size:13px; color:color-mix(in srgb, var(--ink) 62%, transparent); margin-top:2px;">
-              ყოველ კვირას მოგივა ეს შეჯამება. {{ emailOptIn() ? 'ჩართულია.' : 'ახლა გამორთულია.' }}
-            </div>
-          </div>
-          <button type="button" class="toggle" [class.on]="emailOptIn()" (click)="toggleEmail()" [attr.aria-pressed]="emailOptIn()" aria-label="კვირეული იმეილი">
-            <span class="knob"></span>
-          </button>
-        </div>
-        <p style="font-size:12px; color:color-mix(in srgb, var(--ink) 50%, transparent); margin:10px 0 0; max-width:760px;">
-          იმეილით გაგზავნა ჩაირთვება, როგორც კი საფოსტო სერვისი დაკონფიგურდება. არჩევანი შენახულია.
-        </p>
       } @else {
         <p class="muted">ვერ ჩაიტვირთა.</p>
       }
