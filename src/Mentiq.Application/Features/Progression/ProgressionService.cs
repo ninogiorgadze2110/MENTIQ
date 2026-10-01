@@ -65,23 +65,40 @@ public sealed class ProgressionService : IProgressionService
     // Helpers
     // -----------------------------------------------------------------------
 
-    /// <summary>Ensures a row exists per skill. First-time users start at white;
-    /// their existing practice history is used for a best-effort belt backfill.</summary>
+    /// <summary>
+    /// Ensures a row exists per skill. Everyone starts at the white belt (index 0):
+    /// belts are earned only through recorded answers (a full mastery window at the
+    /// required accuracy and target time), never inferred from past session
+    /// aggregates — mastery is the single path to progress.
+    /// </summary>
     private async Task<List<UserSkillProgress>> LoadOrInitAsync(Guid userId, CancellationToken cancellationToken)
     {
         var rows = await _db.UserSkillProgress.Where(p => p.UserId == userId).ToListAsync(cancellationToken);
         if (rows.Count > 0)
         {
+            // One-time cleanup of belts inferred from session history before mastery
+            // recording existed: a belt above white with zero recorded answers was
+            // never actually earned, so reset it to white. Belts earned through real
+            // answers (TotalAnswers > 0) are left untouched.
+            var inferredOnly = rows.Where(r => r.BeltIndex > 0 && r.TotalAnswers == 0).ToList();
+            if (inferredOnly.Count > 0)
+            {
+                foreach (var r in inferredOnly)
+                {
+                    r.BeltIndex = 0;
+                    r.RecentJson = "[]";
+                }
+                await _db.SaveChangesAsync(cancellationToken);
+            }
             return rows;
         }
 
-        var inferred = await InferBeltsFromHistoryAsync(userId, cancellationToken);
         rows = ProgressionConfig.Skills
             .Select(s => new UserSkillProgress
             {
                 UserId = userId,
                 Skill = s.Key,
-                BeltIndex = inferred.GetValueOrDefault(s.Key, 0),
+                BeltIndex = 0,
                 RecentJson = "[]"
             })
             .ToList();
@@ -89,54 +106,6 @@ public sealed class ProgressionService : IProgressionService
         _db.UserSkillProgress.AddRange(rows);
         await _db.SaveChangesAsync(cancellationToken);
         return rows;
-    }
-
-    /// <summary>
-    /// Best-effort backfill from existing <see cref="PracticeSession"/> history:
-    /// for each skill, the highest belt whose target was met in a ≥90%-accuracy
-    /// session (matched by the skill's Georgian name in the session title). Only
-    /// session aggregates exist, so this is approximate; new answers refine it.
-    /// </summary>
-    private async Task<Dictionary<string, int>> InferBeltsFromHistoryAsync(Guid userId, CancellationToken cancellationToken)
-    {
-        var sessions = await _db.PracticeSessions
-            .Where(s => s.UserId == userId && s.Accuracy >= ProgressionConfig.MinAccuracyPercent && s.AvgSeconds > 0)
-            .Select(s => new { s.Title, s.AvgSeconds })
-            .ToListAsync(cancellationToken);
-
-        var result = new Dictionary<string, int>();
-        if (sessions.Count == 0)
-        {
-            return result;
-        }
-
-        foreach (var skill in ProgressionConfig.Skills)
-        {
-            var matching = sessions
-                .Where(s => s.Title.Contains(skill.Name, StringComparison.OrdinalIgnoreCase))
-                .ToList();
-            if (matching.Count == 0)
-            {
-                continue;
-            }
-
-            var bestAvg = matching.Min(s => s.AvgSeconds);
-            // Highest belt whose target (seconds) the user already beat.
-            var passed = 0;
-            foreach (var belt in ProgressionConfig.Belts)
-            {
-                if (bestAvg <= belt.TargetSeconds)
-                {
-                    passed = Math.Max(passed, belt.Index);
-                }
-            }
-            if (passed > 0)
-            {
-                result[skill.Key] = passed;
-            }
-        }
-
-        return result;
     }
 
     private static BeltProgressResponse BuildResponse(List<UserSkillProgress> rows)
