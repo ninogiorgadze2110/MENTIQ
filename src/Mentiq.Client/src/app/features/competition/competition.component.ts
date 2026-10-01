@@ -30,7 +30,7 @@ type Tab = 'league' | 'friends';
       .seg button { border: 0; background: transparent; font: inherit; font-family: var(--ge-serif); padding: 8px 20px; cursor: pointer; color: var(--ink); }
       .seg button + button { border-left: 1px solid var(--hair); }
       .seg button.on { background: var(--ink); color: var(--paper); }
-      .tier-chip { display: inline-grid; place-items: center; width: 54px; height: 54px; border-radius: 14px; font-family: var(--ge-serif); font-size: 13px; font-weight: 600; text-align: center; line-height: 1.1; padding: 4px; }
+      .tier-chip { display: grid; place-items: center; width: 48px; height: 48px; border-radius: 50%; font-size: 24px; line-height: 1; flex: none; box-shadow: inset 0 0 0 2px rgba(255,255,255,.6); }
     `
   ],
   template: `
@@ -65,7 +65,7 @@ type Tab = 'league' | 'friends';
         @if (league(); as lg) {
         <div class="ui-card card-secondary" style="margin-bottom:20px; display:flex; gap:24px; flex-wrap:wrap; align-items:center;">
           <div style="display:flex; align-items:center; gap:14px;">
-            <span class="tier-chip" [style.background]="tierBg(lg.tierIndex)" [style.color]="tierFg(lg.tierIndex)">{{ lg.tierName }}</span>
+            <span class="tier-chip" [style.background]="tierBg(lg.tierIndex)">{{ tierIcon(lg.tierIndex) }}</span>
             <div>
               <div class="ge-label" style="color:var(--gold);">— ჩემი ლიგა</div>
               <div style="font-family:var(--ge-serif); font-size:20px; margin-top:2px;">{{ lg.tierName }} ლიგა · {{ lg.grade }} კლასი</div>
@@ -380,6 +380,11 @@ export class CompetitionComponent {
 
   tierFg(index: number): string {
     return this.tierFgs[Math.max(0, Math.min(this.tierFgs.length - 1, index))];
+  }
+
+  private readonly tierIcons = ['🥉', '🥈', '🥇', '💎'];
+  tierIcon(index: number): string {
+    return this.tierIcons[Math.max(0, Math.min(this.tierIcons.length - 1, index))];
   }
 
   zoneBg(zone: LeagueRankRow['zone']): string {
