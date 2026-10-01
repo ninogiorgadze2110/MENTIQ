@@ -5,6 +5,7 @@ using Mentiq.Application.Features.Contact;
 using Mentiq.Application.Features.DailyChallenge;
 using Mentiq.Application.Features.Kids;
 using Mentiq.Application.Features.Practice;
+using Mentiq.Application.Features.Progression;
 using Mentiq.Application.Features.Subscription;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -23,6 +24,7 @@ public static class DependencyInjection
         services.AddScoped<IDailyChallengeService, DailyChallengeService>();
         services.AddScoped<IContactService, ContactService>();
         services.AddScoped<IKidsExerciseService, KidsExerciseService>();
+        services.AddScoped<IProgressionService, ProgressionService>();
 
         return services;
     }

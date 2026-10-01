@@ -19,6 +19,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mentiq.UnitTests", "tests\M
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mentiq.IntegrationTests", "tests\Mentiq.IntegrationTests\Mentiq.IntegrationTests.csproj", "{1AE433C0-3423-4B87-AE2E-7FF6C0E35742}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mentiq.Tests", "tests\Mentiq.Tests\Mentiq.Tests.csproj", "{E820A68E-4D37-4682-B690-95A2CB70AB1D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -101,6 +103,18 @@ Global
 		{1AE433C0-3423-4B87-AE2E-7FF6C0E35742}.Release|x64.Build.0 = Release|Any CPU
 		{1AE433C0-3423-4B87-AE2E-7FF6C0E35742}.Release|x86.ActiveCfg = Release|Any CPU
 		{1AE433C0-3423-4B87-AE2E-7FF6C0E35742}.Release|x86.Build.0 = Release|Any CPU
+		{E820A68E-4D37-4682-B690-95A2CB70AB1D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E820A68E-4D37-4682-B690-95A2CB70AB1D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E820A68E-4D37-4682-B690-95A2CB70AB1D}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{E820A68E-4D37-4682-B690-95A2CB70AB1D}.Debug|x64.Build.0 = Debug|Any CPU
+		{E820A68E-4D37-4682-B690-95A2CB70AB1D}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{E820A68E-4D37-4682-B690-95A2CB70AB1D}.Debug|x86.Build.0 = Debug|Any CPU
+		{E820A68E-4D37-4682-B690-95A2CB70AB1D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E820A68E-4D37-4682-B690-95A2CB70AB1D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E820A68E-4D37-4682-B690-95A2CB70AB1D}.Release|x64.ActiveCfg = Release|Any CPU
+		{E820A68E-4D37-4682-B690-95A2CB70AB1D}.Release|x64.Build.0 = Release|Any CPU
+		{E820A68E-4D37-4682-B690-95A2CB70AB1D}.Release|x86.ActiveCfg = Release|Any CPU
+		{E820A68E-4D37-4682-B690-95A2CB70AB1D}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -112,5 +126,6 @@ Global
 		{040D6954-CC45-49FF-9CD4-505BD2E98707} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
 		{E85D377D-D51D-4BEE-A558-E3F5A3A36492} = {0AB3BF05-4346-4AA6-1389-037BE0695223}
 		{1AE433C0-3423-4B87-AE2E-7FF6C0E35742} = {0AB3BF05-4346-4AA6-1389-037BE0695223}
+		{E820A68E-4D37-4682-B690-95A2CB70AB1D} = {0AB3BF05-4346-4AA6-1389-037BE0695223}
 	EndGlobalSection
 EndGlobal

@@ -33,6 +33,8 @@ public interface IApplicationDbContext
 
     DbSet<PlatformSetting> PlatformSettings { get; }
 
+    DbSet<UserSkillProgress> UserSkillProgress { get; }
+
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 
     /// <summary>Returns whether the underlying database is reachable.</summary>

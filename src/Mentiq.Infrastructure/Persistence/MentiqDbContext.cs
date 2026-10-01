@@ -35,6 +35,8 @@ public sealed class MentiqDbContext : DbContext, IApplicationDbContext
 
     public DbSet<PlatformSetting> PlatformSettings => Set<PlatformSetting>();
 
+    public DbSet<UserSkillProgress> UserSkillProgress => Set<UserSkillProgress>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -43,6 +45,7 @@ public sealed class MentiqDbContext : DbContext, IApplicationDbContext
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(MentiqDbContext).Assembly);
 
         modelBuilder.Entity<PlatformSetting>().HasIndex(s => s.Key).IsUnique();
+        modelBuilder.Entity<UserSkillProgress>().HasIndex(p => new { p.UserId, p.Skill }).IsUnique();
     }
 
     public Task<bool> CanConnectAsync(CancellationToken cancellationToken = default)
