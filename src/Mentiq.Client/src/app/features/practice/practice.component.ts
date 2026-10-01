@@ -4,6 +4,7 @@ import { AnsweredQuestion, PracticeProgression, PracticeSessionService } from '.
 import { ProgressService } from '../../core/services/progress.service';
 import { ProgressionService } from '../../core/services/progression.service';
 import { CompetitionService } from '../../core/services/competition.service';
+import { LeagueService } from '../../core/services/league.service';
 import { DailyChallengeService } from '../../core/services/daily-challenge.service';
 import { DailyPlanSegment } from '../../core/models/daily-challenge.model';
 import { AuthService } from '../../core/services/auth.service';
@@ -324,6 +325,7 @@ export class PracticeComponent implements OnDestroy {
   private readonly progress = inject(ProgressService);
   private readonly progression = inject(ProgressionService);
   private readonly competition = inject(CompetitionService);
+  private readonly leagues = inject(LeagueService);
   private readonly daily = inject(DailyChallengeService);
   private readonly auth = inject(AuthService);
   private timer: ReturnType<typeof setInterval> | null = null;
@@ -794,6 +796,12 @@ export class PracticeComponent implements OnDestroy {
       durationSeconds: this.elapsed(),
       startedAtUtc: this.startedAt.toISOString()
     }).subscribe({ error: () => { } });
+
+    // Weekly league points: only level/op belt-difficulty drills ("ჩემი დონე"),
+    // never free mode (easy-farming), trick drills, daily or competition.
+    if (!this.freeMode() && !this.trickKey()) {
+      this.leagues.submitSession({ correct, avgSeconds }).subscribe({ error: () => { } });
+    }
 
     // Free mode counts toward stats only — never belt mastery.
     const skill = this.freeMode() ? null : this.progressionSkill();

@@ -1,3 +1,4 @@
+using Mentiq.Api.BackgroundJobs;
 using Mentiq.Api.Common;
 using Mentiq.Api.Middleware;
 using Mentiq.Application;
@@ -41,6 +42,9 @@ builder.Services.AddOpenApi();
 
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
+
+// Weekly league closing (promotion/relegation) runs in the background.
+builder.Services.AddHostedService<LeagueCloserService>();
 
 // Subscription/pricing configuration (plans, trial length, manual-payment
 // instructions) is bound from the "Subscription" section and injected as a

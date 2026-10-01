@@ -37,6 +37,12 @@ public sealed class MentiqDbContext : DbContext, IApplicationDbContext
 
     public DbSet<UserSkillProgress> UserSkillProgress => Set<UserSkillProgress>();
 
+    public DbSet<League> Leagues => Set<League>();
+
+    public DbSet<LeagueEntry> LeagueEntries => Set<LeagueEntry>();
+
+    public DbSet<UserLeagueStanding> UserLeagueStandings => Set<UserLeagueStanding>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);

@@ -35,6 +35,12 @@ public interface IApplicationDbContext
 
     DbSet<UserSkillProgress> UserSkillProgress { get; }
 
+    DbSet<League> Leagues { get; }
+
+    DbSet<LeagueEntry> LeagueEntries { get; }
+
+    DbSet<UserLeagueStanding> UserLeagueStandings { get; }
+
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 
     /// <summary>Returns whether the underlying database is reachable.</summary>
