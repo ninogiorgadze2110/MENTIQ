@@ -15,13 +15,16 @@ import { SubscriptionService } from '../core/services/subscription.service';
   template: `
     @if (status(); as s) {
       @if (s.status === 'Beta' || s.betaFreeAccess) {
-        <div style="border:1px solid var(--gold); background:color-mix(in srgb, var(--gold) 9%, transparent); padding:14px 18px; margin-bottom:20px; display:flex; align-items:center; gap:14px; flex-wrap:wrap;">
-          <span style="font-size:20px;">🎉</span>
-          <div style="flex:1; min-width:200px;">
-            <div style="font-family:var(--ge-serif); font-size:16px;">ბეტა — უფასო წვდომა</div>
-            <div style="font-size:12.5px; color:color-mix(in srgb, var(--ink) 62%, transparent);">MENTIQ ამჟამად უფასოა ტესტირების პერიოდში. სრული წვდომა ყველა ფუნქციაზე.</div>
+        @if (!betaDismissed()) {
+          <div style="border:1px solid var(--gold); background:color-mix(in srgb, var(--gold) 9%, transparent); border-radius:var(--radius-pill); padding:8px 10px 8px 16px; margin-bottom:20px; display:flex; align-items:center; gap:10px;">
+            <span style="flex:none;">🎉</span>
+            <div style="flex:1; min-width:0; font-size:var(--text-sm); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">
+              ბეტა — უფასო წვდომა ყველა ფუნქციაზე ტესტირების პერიოდში.
+            </div>
+            <button type="button" (click)="dismissBeta()" aria-label="დახურვა"
+              style="flex:none; border:none; background:transparent; cursor:pointer; font-size:18px; line-height:1; color:color-mix(in srgb, var(--ink) 55%, transparent); padding:2px 6px;">×</button>
           </div>
-        </div>
+        }
       } @else if (s.status === 'Trial' || s.isTrial) {
         <div style="border:1px solid var(--gold); background:color-mix(in srgb, var(--gold) 7%, transparent); padding:14px 18px; margin-bottom:20px; display:flex; align-items:center; gap:14px; flex-wrap:wrap;">
           <span style="font-size:20px;">🎁</span>
@@ -54,6 +57,10 @@ export class SubscriptionBannerComponent implements OnDestroy {
   private readonly subs = inject(SubscriptionService);
 
   readonly status = this.subs.status;
+
+  private static readonly BETA_KEY = 'mentiq.betaBannerDismissed';
+  readonly betaDismissed = signal(this.readBetaDismissed());
+
   private readonly tick = signal(0);
   private readonly timer: ReturnType<typeof setInterval>;
 
@@ -82,6 +89,23 @@ export class SubscriptionBannerComponent implements OnDestroy {
     }
     // Update the visual countdown once a minute.
     this.timer = setInterval(() => this.tick.update((n) => n + 1), 60000);
+  }
+
+  dismissBeta(): void {
+    this.betaDismissed.set(true);
+    try {
+      localStorage.setItem(SubscriptionBannerComponent.BETA_KEY, '1');
+    } catch {
+      /* storage unavailable (private mode) — dismissal is session-only */
+    }
+  }
+
+  private readBetaDismissed(): boolean {
+    try {
+      return localStorage.getItem(SubscriptionBannerComponent.BETA_KEY) === '1';
+    } catch {
+      return false;
+    }
   }
 
   ngOnDestroy(): void {
