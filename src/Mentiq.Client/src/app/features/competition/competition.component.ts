@@ -56,6 +56,11 @@ type Tab = 'league' | 'friends';
     @if (tab() === 'league') {
       @if (leagueLoading()) {
         <p class="muted">იტვირთება…</p>
+      } @else if (leagueError()) {
+        <div class="ui-card card-muted" style="padding:22px 24px;">
+          <div class="ge-label" style="color:var(--gold);">— ლიგა</div>
+          <p style="margin:8px 0 0; font-size:14px; color:color-mix(in srgb, var(--ink) 70%, transparent); line-height:1.6;">ლიგა ვერ ჩაიტვირთა. სცადე გვერდის განახლება ცოტა ხანში.</p>
+        </div>
       } @else {
         @if (league(); as lg) {
         <div class="ui-card card-secondary" style="margin-bottom:20px; display:flex; gap:24px; flex-wrap:wrap; align-items:center;">
@@ -73,13 +78,12 @@ type Tab = 'league' | 'friends';
           </div>
         </div>
 
-        <div style="display:flex; gap:18px; font-size:12.5px; margin-bottom:10px; flex-wrap:wrap;">
-          <span style="color:#2f8f57;">▲ ადის · ტოპ {{ lg.promoteCount }}</span>
-          <span style="color:color-mix(in srgb, var(--ink) 55%, transparent);">— რჩება</span>
-          <span style="color:#b22;">▼ ჩადის · ბოლო {{ lg.relegateCount }}</span>
-        </div>
-
         @if (lg.entries.length) {
+          <div style="display:flex; gap:18px; font-size:12.5px; margin-bottom:10px; flex-wrap:wrap;">
+            <span style="color:#2f8f57;">▲ ადის · ტოპ {{ lg.promoteCount }}</span>
+            <span style="color:color-mix(in srgb, var(--ink) 55%, transparent);">— რჩება</span>
+            <span style="color:#b22;">▼ ჩადის · ბოლო {{ lg.relegateCount }}</span>
+          </div>
           <table class="table">
             <thead><tr><th style="width:64px;">#</th><th>მონაწილე</th><th style="text-align:right;">ქულა</th></tr></thead>
             <tbody>
@@ -93,7 +97,15 @@ type Tab = 'league' | 'friends';
             </tbody>
           </table>
         } @else {
-          <p class="muted" style="margin-top:16px;">ამ კვირაში ამ ლიგაში ჯერ არავის უვარჯიშია. დაიწყე „ჩემი დონე" ვარჯიში და გახდი პირველი!</p>
+          <div class="ui-card card-muted" style="padding:24px; text-align:center;">
+            <div style="font-family:var(--ge-serif); font-size:20px; margin-bottom:6px;">
+              @if (lg.myRank) { ჯერ ქულა არ გაქვს ამ კვირაში } @else { ჯერ არ ხარ ამ კვირის ლიგაში }
+            </div>
+            <p style="font-size:14px; color:color-mix(in srgb, var(--ink) 68%, transparent); margin:0 0 14px; line-height:1.6; max-width:54ch; margin-inline:auto;">
+              ლიგის ქულა გროვდება მხოლოდ „ჩემი დონე" ვარჯიშიდან (სწორი პასუხები × სიჩქარე) — თავისუფალი რეჟიმი, ხრიკები და დღის ამოცანა არ ითვლება. დაასრულე ერთი „ჩემი დონე" სესია და ავტომატურად შეუერთდები {{ lg.grade }} კლასის {{ lg.tierName }} ლიგას.
+            </p>
+            <a routerLink="/practice" class="btn btn-primary" style="padding:11px 22px;">დაიწყე „ჩემი დონე" →</a>
+          </div>
         }
       } @else {
         <p class="muted">ვერ ჩაიტვირთა.</p>
@@ -232,6 +244,7 @@ export class CompetitionComponent {
   // League
   readonly league = signal<MyLeague | null>(null);
   readonly leagueLoading = signal(true);
+  readonly leagueError = signal(false);
 
   // Friends competitions
   readonly loading = signal(true);
@@ -282,9 +295,10 @@ export class CompetitionComponent {
 
   private loadLeague(): void {
     this.leagueLoading.set(true);
+    this.leagueError.set(false);
     this.leagues.getMyLeague().subscribe({
       next: (lg) => { this.league.set(lg); this.leagueLoading.set(false); },
-      error: () => this.leagueLoading.set(false)
+      error: () => { this.leagueError.set(true); this.leagueLoading.set(false); }
     });
   }
 

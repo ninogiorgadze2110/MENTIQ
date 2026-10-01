@@ -4,7 +4,9 @@ using Mentiq.Api.Middleware;
 using Mentiq.Application;
 using Mentiq.Application.Features.Subscription;
 using Mentiq.Infrastructure;
+using Mentiq.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -68,6 +70,23 @@ if (builder.Environment.IsDevelopment())
 }
 
 var app = builder.Build();
+
+// In development, apply any pending EF migrations on startup so new tables and
+// columns (leagues, progression, …) appear without a manual
+// `dotnet ef database update`. Never auto-migrate in production.
+if (app.Environment.IsDevelopment())
+{
+    using var scope = app.Services.CreateScope();
+    var db = scope.ServiceProvider.GetRequiredService<MentiqDbContext>();
+    try
+    {
+        db.Database.Migrate();
+    }
+    catch (Exception ex)
+    {
+        app.Logger.LogError(ex, "Startup database migration failed.");
+    }
+}
 
 // ---------------------------------------------------------------------------
 // HTTP pipeline
