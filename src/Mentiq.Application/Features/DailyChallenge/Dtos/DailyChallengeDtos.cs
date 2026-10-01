@@ -18,6 +18,31 @@ public sealed record DailyChallengeDto
 
     /// <summary>UTC instant the challenge resets to a new one (next 06:00 Tbilisi).</summary>
     public DateTime ResetsAtUtc { get; init; }
+
+    // ---- Progression-driven plan (see DailyPlanner) ----
+
+    /// <summary>The skill the day focuses on (the user's weakest), e.g. "div".</summary>
+    public string FocusSkill { get; init; } = string.Empty;
+
+    /// <summary>Its Georgian name, e.g. "გაყოფა".</summary>
+    public string FocusSkillName { get; init; } = string.Empty;
+
+    /// <summary>Why today targets this skill, e.g. "დღეს ვარჯიშობ გაყოფაზე — აქ ყველაზე ნელი ხარ".</summary>
+    public string Reason { get; init; } = string.Empty;
+
+    /// <summary>Weekly "challenge day" — the focus is raised one belt.</summary>
+    public bool IsChallengeDay { get; init; }
+
+    /// <summary>Weighted skill/difficulty slices the drill is generated from.</summary>
+    public IReadOnlyList<DailyPlanSegmentDto> Plan { get; init; } = Array.Empty<DailyPlanSegmentDto>();
+}
+
+/// <summary>One weighted slice of the daily drill: a skill at a difficulty (1–6).</summary>
+public sealed record DailyPlanSegmentDto
+{
+    public string Skill { get; init; } = string.Empty;
+    public int Difficulty { get; init; }
+    public int WeightPercent { get; init; }
 }
 
 public sealed record SubmitDailyChallengeRequest

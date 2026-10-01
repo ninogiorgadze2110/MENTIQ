@@ -5,6 +5,7 @@ import { ProgressService } from '../../core/services/progress.service';
 import { ProgressionService } from '../../core/services/progression.service';
 import { CompetitionService } from '../../core/services/competition.service';
 import { DailyChallengeService } from '../../core/services/daily-challenge.service';
+import { DailyPlanSegment } from '../../core/models/daily-challenge.model';
 import { AuthService } from '../../core/services/auth.service';
 import { lessonTitle } from '../../core/data/lesson-titles';
 import { Belt as BeltColor, BeltBadgeComponent } from '../../shared/ui';
@@ -355,6 +356,8 @@ export class PracticeComponent implements OnDestroy {
   readonly mixMode = signal(false);
   readonly competitionId = signal<string | null>(null);
   readonly dailyMode = signal(false);
+  /** Weighted skill/difficulty slices for the daily challenge drill. */
+  readonly dailyPlan = signal<DailyPlanSegment[]>([]);
 
   readonly currentQ = signal<Question>({ before: '', after: '', display: '', answer: 0, mode: 'num' });
   readonly index = signal(0);
@@ -386,14 +389,18 @@ export class PracticeComponent implements OnDestroy {
     };
 
     if (params.get('daily') != null) {
-      // Daily Challenge: a 60-second mixed drill for the user's own grade.
+      // Daily Challenge: a 60-second drill generated from today's progression plan
+      // (weakest skill + review), falling back to a mixed grade drill if absent.
       const grade = this.auth.user()?.grade ?? 4;
       this.dailyMode.set(true);
       this.mixMode.set(true);
       this.selectedGrade.set(Math.min(12, Math.max(1, grade)));
       this.mode.set('time');
       this.timeLimit.set(60);
-      this.start();
+      this.daily.getToday().subscribe({
+        next: (d) => { this.dailyPlan.set(d.plan ?? []); this.start(); },
+        error: () => this.start()
+      });
     } else if (trick && TRICKS[trick]) {
       this.trickKey.set(trick);
       this.fromLearn.set(true);
@@ -560,11 +567,34 @@ export class PracticeComponent implements OnDestroy {
   private genForMode(): Question {
     const t = this.trickKey();
     if (t && TRICKS[t]) return TRICKS[t].gen();
+    // Daily challenge: sample a plan slice (skill + difficulty) by weight.
+    if (this.dailyMode() && this.dailyPlan().length) {
+      const seg = this.pickSegment();
+      if (seg) {
+        const cfg = GRADES[seg.difficulty] ?? GRADES[6];
+        const op = seg.skill as OpKey;
+        const [lo, hi] = cfg.range[op] ?? [1, 20];
+        return this.genQuestion(op, lo, hi);
+      }
+    }
     // Grades 7–12 reuse the hardest defined config (6).
     const cfg = GRADES[this.selectedGrade()] ?? GRADES[6];
     const op = this.mixMode() ? cfg.ops[Math.floor(Math.random() * cfg.ops.length)] : this.selectedOp();
     const [lo, hi] = cfg.range[op] ?? [1, 20];
     return this.genQuestion(op, lo, hi);
+  }
+
+  /** Weighted-random pick of a daily plan slice. */
+  private pickSegment(): DailyPlanSegment | null {
+    const plan = this.dailyPlan();
+    if (!plan.length) return null;
+    const total = plan.reduce((sum, p) => sum + p.weightPercent, 0) || 1;
+    let r = Math.random() * total;
+    for (const p of plan) {
+      r -= p.weightPercent;
+      if (r <= 0) return p;
+    }
+    return plan[plan.length - 1];
   }
 
   private genQuestion(op: OpKey, lo: number, hi: number): Question {

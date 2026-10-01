@@ -1,6 +1,7 @@
 using Mentiq.Application.Common.Exceptions;
 using Mentiq.Application.Common.Interfaces;
 using Mentiq.Application.Features.DailyChallenge.Dtos;
+using Mentiq.Application.Features.Progression;
 using Mentiq.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
@@ -9,6 +10,7 @@ namespace Mentiq.Application.Features.DailyChallenge;
 public sealed class DailyChallengeService : IDailyChallengeService
 {
     private readonly IApplicationDbContext _db;
+    private readonly IProgressionService _progression;
 
     // Tbilisi is a fixed UTC+4 offset (no DST). The daily challenge rolls over
     // at 06:00 local time each morning.
@@ -18,9 +20,10 @@ public sealed class DailyChallengeService : IDailyChallengeService
     private const int QuizSeconds = 60;
     private const int LeaderboardSize = 50;
 
-    public DailyChallengeService(IApplicationDbContext db)
+    public DailyChallengeService(IApplicationDbContext db, IProgressionService progression)
     {
         _db = db;
+        _progression = progression;
     }
 
     public async Task<DailyChallengeDto> GetTodayAsync(Guid userId, CancellationToken cancellationToken = default)
@@ -35,6 +38,8 @@ public sealed class DailyChallengeService : IDailyChallengeService
         var myIndex = ordered.FindIndex(e => e.UserId == userId);
         var mine = myIndex >= 0 ? ordered[myIndex] : null;
 
+        var plan = await BuildPlanAsync(userId, date, cancellationToken);
+
         return new DailyChallengeDto
         {
             Date = date,
@@ -44,8 +49,31 @@ public sealed class DailyChallengeService : IDailyChallengeService
             MyScore = mine?.Score,
             MyRank = myIndex >= 0 ? myIndex + 1 : null,
             ParticipantCount = ordered.Count,
-            ResetsAtUtc = ResetsAtUtc(date)
+            ResetsAtUtc = ResetsAtUtc(date),
+            FocusSkill = plan.FocusSkill,
+            FocusSkillName = plan.FocusSkillName,
+            Reason = plan.Reason,
+            IsChallengeDay = plan.IsChallengeDay,
+            Plan = plan.Segments
+                .Select(s => new DailyPlanSegmentDto { Skill = s.Skill, Difficulty = s.Difficulty, WeightPercent = s.WeightPercent })
+                .ToList()
         };
+    }
+
+    /// <summary>Build today's drill plan from the user's belt progression.</summary>
+    private async Task<DailyPlanner.DailyPlan> BuildPlanAsync(Guid userId, DateTime date, CancellationToken cancellationToken)
+    {
+        var prog = await _progression.GetAsync(userId, cancellationToken);
+        var states = prog.Skills
+            .Select(s => new DailyPlanner.SkillState(
+                s.Key, s.Name, s.BeltIndex, s.Unlocked,
+                s.Mastery.AccuracyPercent, s.Mastery.MedianTimeMs, s.Mastery.AnswersCount))
+            .ToList();
+        var beltDifficulties = prog.Belts.Select(b => b.Difficulty).ToList();
+        var beltTargets = prog.Belts.Select(b => b.TargetSeconds).ToList();
+        var maxBeltIndex = Math.Max(0, prog.Belts.Count - 1);
+
+        return DailyPlanner.Build(states, beltDifficulties, beltTargets, maxBeltIndex, prog.MinAccuracyPercent, date);
     }
 
     public async Task<DailyChallengeDto> SubmitAsync(Guid userId, SubmitDailyChallengeRequest request, CancellationToken cancellationToken = default)

@@ -17,10 +17,15 @@ import { DailyChallenge, DailyChallengeLeaderboard } from '../../core/models/dai
   imports: [RouterLink],
   styles: [':host { display: block; }'],
   template: `
-    <div class="ge-label" style="color:var(--gold);">— დღის ამოცანა</div>
-    <h3 style="font-family:var(--ge-serif); font-size:32px; margin:10px 0 6px; font-weight:500; line-height:1.05;">1 წუთი · შერეული</h3>
+    <div style="display:flex; align-items:center; gap:8px;">
+      <div class="ge-label" style="color:var(--gold);">— დღის ამოცანა</div>
+      @if (data()?.isChallengeDay) {
+        <span class="lock-pro" style="padding:3px 10px;">★ გამოწვევის დღე</span>
+      }
+    </div>
+    <h3 style="font-family:var(--ge-serif); font-size:32px; margin:10px 0 6px; font-weight:500; line-height:1.05;">1 წუთი · {{ focusName() }}</h3>
     <p style="font-size:13.5px; color:color-mix(in srgb, var(--ink) 65%, transparent); margin:0 0 16px; line-height:1.55;">
-      {{ grade() }} კლასის შერეული სირთულის ტესტი. ყოველ დილით 6:00-ზე ახალი ამოცანა.
+      {{ reasonText() }}
     </p>
 
     @if (data()?.completed) {
@@ -103,6 +108,11 @@ export class DailyChallengeCardComponent implements OnDestroy {
   private readonly timer: ReturnType<typeof setInterval>;
 
   readonly grade = computed(() => this.data()?.grade ?? this.auth.user()?.grade ?? 0);
+
+  readonly focusName = computed(() => this.data()?.focusSkillName || 'შერეული');
+  readonly reasonText = computed(() =>
+    this.data()?.reason || `${this.grade()} კლასის ტესტი. ყოველ დილით 6:00-ზე ახალი ამოცანა.`
+  );
 
   readonly countdown = computed(() => {
     this.tick();

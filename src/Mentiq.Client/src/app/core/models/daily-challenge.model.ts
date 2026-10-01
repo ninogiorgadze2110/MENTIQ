@@ -1,3 +1,10 @@
+/** One weighted slice of the daily drill: a skill at a difficulty (1–6). */
+export interface DailyPlanSegment {
+  skill: string;
+  difficulty: number;
+  weightPercent: number;
+}
+
 export interface DailyChallenge {
   date: string;
   grade: number;
@@ -7,6 +14,12 @@ export interface DailyChallenge {
   myRank: number | null;
   participantCount: number;
   resetsAtUtc: string;
+  /** Progression-driven plan (see backend DailyPlanner). */
+  focusSkill: string;
+  focusSkillName: string;
+  reason: string;
+  isChallengeDay: boolean;
+  plan: DailyPlanSegment[];
 }
 
 export interface SubmitDailyChallengeRequest {
