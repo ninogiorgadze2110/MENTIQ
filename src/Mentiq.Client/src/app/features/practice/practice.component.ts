@@ -1,11 +1,13 @@
 import { Component, HostListener, OnDestroy, computed, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { AnsweredQuestion, PracticeSessionService } from '../../core/services/practice-session.service';
+import { AnsweredQuestion, PracticeProgression, PracticeSessionService } from '../../core/services/practice-session.service';
 import { ProgressService } from '../../core/services/progress.service';
 import { ProgressionService } from '../../core/services/progression.service';
 import { CompetitionService } from '../../core/services/competition.service';
 import { DailyChallengeService } from '../../core/services/daily-challenge.service';
 import { AuthService } from '../../core/services/auth.service';
+import { lessonTitle } from '../../core/data/lesson-titles';
+import { Belt as BeltColor, BeltBadgeComponent } from '../../shared/ui';
 
 type OpKey = 'add' | 'sub' | 'mul' | 'div' | 'cmp' | 'miss' | 'chain';
 type Mode = 'count' | 'time';
@@ -84,7 +86,7 @@ const fmt = (sec: number) =>
 @Component({
   selector: 'app-practice',
   standalone: true,
-  imports: [RouterLink],
+  imports: [RouterLink, BeltBadgeComponent],
   styles: [
     `
       .key {
@@ -158,34 +160,61 @@ const fmt = (sec: number) =>
 
         <div style="flex:1; display:grid; place-items:center; padding:40px 24px;">
           <div style="width:100%; max-width:760px;">
-            <div style="text-align:center; margin-bottom:28px;">
-              <div style="font-size:var(--text-xs); color:var(--gold); margin-bottom:12px;">— დღის ვარჯიში</div>
-              <h1 style="font-family:var(--ge-serif); font-size:50px; margin:0 0 8px; font-weight:500; line-height:1.02;">აირჩიე ვარჯიში</h1>
-              <p style="font-size:14px; color:color-mix(in srgb, var(--ink) 65%, transparent); margin:0;">სირთულე, ამოცანის ტიპი და რაოდენობა (ან დრო). დაიწყე და დაითვალე.</p>
+            <div style="text-align:center; margin-bottom:22px;">
+              <div class="ge-label" style="color:var(--gold); margin-bottom:12px;">— ვარჯიში</div>
+              <h1 style="font-family:var(--ge-serif); font-size:50px; margin:0; font-weight:500; line-height:1.02;">აირჩიე ვარჯიში</h1>
             </div>
 
-            <div style="font-size:var(--text-xs); color:color-mix(in srgb, var(--ink) 55%, transparent); margin-bottom:10px;">სირთულე</div>
-            <div class="grades" style="margin-bottom:26px;">
-              @for (g of gradeKeys; track g) {
-                <button type="button" class="grade" [class.on]="selectedGrade() === g" (click)="selectGrade(g)">
-                  <div class="g-num">{{ g }}</div>
-                  <!-- <div class="g-sub">{{ grades[g].sub }}</div> -->
-                </button>
-              }
+            <!-- Mode tabs -->
+            <div class="seg" style="display:flex; margin:0 auto 24px; width:fit-content;">
+              <button type="button" [class.on]="!freeMode()" (click)="setFreeMode(false)">ჩემი დონე</button>
+              <button type="button" [class.on]="freeMode()" (click)="setFreeMode(true)">თავისუფალი</button>
             </div>
 
-            <div style="font-size:var(--text-xs); color:color-mix(in srgb, var(--ink) 55%, transparent); margin-bottom:10px;">ამოცანის ტიპი</div>
-            <div class="op-grid">
-              @for (op of availableOps(); track op.key) {
-                <button type="button" class="op-card" [class.on]="selectedOp() === op.key" (click)="selectedOp.set(op.key)">
-                  <span class="op-sym">{{ op.symbol }}</span>
-                  <span>
-                    <span style="font-family:var(--ge-serif); font-size:20px; display:block;">{{ op.name }}</span>
-                    <span style="font-size:12px; color:color-mix(in srgb, var(--ink) 60%, transparent);">{{ op.sub }}</span>
-                  </span>
-                </button>
+            @if (!freeMode()) {
+              <!-- Level: pick an unlocked skill; difficulty follows its current belt. -->
+              @if (levelSkills().length) {
+                <div class="ge-label" style="margin-bottom:10px;">აირჩიე უნარი — სირთულე მიმდინარე ქამრიდან</div>
+                <div class="op-grid">
+                  @for (s of levelSkills(); track s.key) {
+                    <button type="button" class="op-card" [class.on]="selectedOp() === s.key" (click)="selectLevelSkill(s.key, s.difficulty)">
+                      <span class="op-sym">{{ s.symbol }}</span>
+                      <span style="flex:1; min-width:0;">
+                        <span style="font-family:var(--ge-serif); font-size:20px; display:block;">{{ s.name }}</span>
+                        <span class="ge-label">სირთულე {{ s.difficulty }}</span>
+                      </span>
+                      <app-belt-badge [belt]="s.beltId" [label]="s.beltName" />
+                    </button>
+                  }
+                </div>
+              } @else {
+                <div class="ge-label" style="text-align:center; padding:20px 0;">იტვირთება… ან სცადე „თავისუფალი" რეჟიმი.</div>
               }
-            </div>
+            } @else {
+              <!-- Free: all parameters open (counts in stats, not in belts). -->
+              <div class="ge-label" style="margin-bottom:10px;">სირთულე</div>
+              <div class="grades" style="margin-bottom:22px;">
+                @for (g of gradeKeys; track g) {
+                  <button type="button" class="grade" [class.on]="selectedGrade() === g" (click)="selectGrade(g)">
+                    <div class="g-num">{{ g }}</div>
+                  </button>
+                }
+              </div>
+
+              <div class="ge-label" style="margin-bottom:10px;">ამოცანის ტიპი</div>
+              <div class="op-grid">
+                @for (op of availableOps(); track op.key) {
+                  <button type="button" class="op-card" [class.on]="selectedOp() === op.key" (click)="selectedOp.set(op.key)">
+                    <span class="op-sym">{{ op.symbol }}</span>
+                    <span>
+                      <span style="font-family:var(--ge-serif); font-size:20px; display:block;">{{ op.name }}</span>
+                      <span style="font-size:12px; color:color-mix(in srgb, var(--ink) 60%, transparent);">{{ op.sub }}</span>
+                    </span>
+                  </button>
+                }
+              </div>
+              <div class="ge-label" style="margin-top:12px;">თავისუფალი რეჟიმი სტატისტიკაში ითვლება, ქამრებში — არა.</div>
+            }
 
             <div style="display:flex; align-items:center; gap:16px; margin-top:26px; flex-wrap:wrap;">
               <span style="font-size:var(--text-xs); color:color-mix(in srgb, var(--ink) 55%, transparent);">რეჟიმი</span>
@@ -321,6 +350,8 @@ export class PracticeComponent implements OnDestroy {
   readonly timeLimit = signal(60);
   readonly trickKey = signal<string | null>(null);
   readonly fromLearn = signal(false);
+  /** Free mode: all params open, counts in stats but not in belt mastery. */
+  readonly freeMode = signal(false);
   readonly mixMode = signal(false);
   readonly competitionId = signal<string | null>(null);
   readonly dailyMode = signal(false);
@@ -341,9 +372,10 @@ export class PracticeComponent implements OnDestroy {
 
   constructor() {
     // Ensure belt progression is available so finished answers can be recorded
-    // against the right skill (trick → owner skill lookup needs it).
+    // against the right skill (trick → owner skill lookup needs it) and the level
+    // picker can list unlocked skills with their current belts.
     if (!this.progression.state()) {
-      this.progression.load().subscribe({ error: () => {} });
+      this.progression.load().subscribe({ next: () => this.initLevelDefault(), error: () => {} });
     }
 
     const params = inject(ActivatedRoute).snapshot.queryParamMap;
@@ -369,10 +401,11 @@ export class PracticeComponent implements OnDestroy {
       this.count.set(TRICKS[trick].count);
       this.start();
     } else if (op && op in gradeForOp) {
-      // Launch a lesson-specific operation drill straight away (skip the picker).
+      // Launch a skill drill straight away (skip the picker). Difficulty follows
+      // the skill's current belt when progression is loaded, else a sensible grade.
       this.fromLearn.set(true);
       this.selectedOp.set(op);
-      this.selectedGrade.set(gradeForOp[op]);
+      this.selectedGrade.set(this.beltDifficulty(op) ?? gradeForOp[op]);
       this.mode.set('count');
       this.count.set(10);
       this.start();
@@ -392,10 +425,34 @@ export class PracticeComponent implements OnDestroy {
       }
       this.start();
     }
+
+    // Manual entry (no query launched a drill): default the level picker if
+    // progression is already loaded (otherwise the load callback handles it).
+    if (this.phase() === 'select') {
+      this.initLevelDefault();
+    }
   }
 
   readonly availableOps = computed(() =>
     GRADES[this.selectedGrade()].ops.map((key) => ({ key, ...OPS[key] }))
+  );
+
+  /** Unlocked skills with their current belt — the "ჩემი დონე" picker. */
+  readonly levelSkills = computed(() =>
+    this.progression
+      .skills()
+      .filter((s) => s.unlocked)
+      .map((s) => {
+        const belt = this.progression.currentBelt(s.key);
+        return {
+          key: s.key as OpKey,
+          name: OPS[s.key as OpKey]?.name ?? s.name,
+          symbol: OPS[s.key as OpKey]?.symbol ?? '•',
+          beltId: (belt?.id ?? 'white') as BeltColor,
+          beltName: belt?.name ?? '',
+          difficulty: belt?.difficulty ?? 1
+        };
+      })
   );
   readonly q = computed(() => this.currentQ());
   readonly opName = computed(() => {
@@ -673,7 +730,7 @@ export class PracticeComponent implements OnDestroy {
       return;
     }
 
-    this.sessions.set({
+    const session = {
       title,
       startedAt: this.startedAt.toISOString(),
       score: this.score(),
@@ -683,36 +740,86 @@ export class PracticeComponent implements OnDestroy {
       correctCount: correct,
       wrongCount: answeredCount - correct,
       questions: this.answered,
-      resumeTrick: this.trickKey()
-    });
+      resumeTrick: this.trickKey(),
+      progression: null as PracticeProgression | null
+    };
 
-    // Persist the session so progress (streaks, averages) can be computed server-side.
-    if (answeredCount > 0) {
-      this.progress.saveSession({
-        title,
-        mode: this.mode(),
-        totalQuestions: answeredCount,
-        correctCount: correct,
-        wrongCount: answeredCount - correct,
-        score: this.score(),
-        longestStreak: this.maxStreak,
-        accuracy,
-        avgSeconds,
-        durationSeconds: this.elapsed(),
-        startedAtUtc: this.startedAt.toISOString()
-      }).subscribe({ error: () => { } });
-
-      // Record the answers against the skill's belt progression (mastery/unlocks).
-      const skill = this.progressionSkill();
-      if (skill) {
-        this.progression.recordAnswers(
-          skill,
-          this.answered.map((a) => ({ correct: a.correct, timeMs: Math.round(a.seconds * 1000) }))
-        ).subscribe({ error: () => { } });
-      }
+    if (answeredCount === 0) {
+      this.sessions.set(session);
+      this.router.navigate(['/results']);
+      return;
     }
 
-    this.router.navigate(['/results']);
+    // Persist the session so progress (streaks, averages) can be computed server-side.
+    this.progress.saveSession({
+      title,
+      mode: this.mode(),
+      totalQuestions: answeredCount,
+      correctCount: correct,
+      wrongCount: answeredCount - correct,
+      score: this.score(),
+      longestStreak: this.maxStreak,
+      accuracy,
+      avgSeconds,
+      durationSeconds: this.elapsed(),
+      startedAtUtc: this.startedAt.toISOString()
+    }).subscribe({ error: () => { } });
+
+    // Free mode counts toward stats only — never belt mastery.
+    const skill = this.freeMode() ? null : this.progressionSkill();
+    if (!skill) {
+      this.sessions.set(session);
+      this.router.navigate(['/results']);
+      return;
+    }
+
+    // Record the whole session's answers in one batch — belts advance only here,
+    // never mid-session. Capture the mastery snapshot BEFORE recording so the
+    // results screen can show before → after and celebrate a promotion.
+    const beforeBelt = this.progression.currentBelt(skill);
+    const beforeMastery = this.progression.masteryProgress(skill);
+    const beforeUnlocked = new Set(
+      this.progression.skills().filter((s) => s.unlocked).map((s) => s.key)
+    );
+    const answers = this.answered.map((a) => ({ correct: a.correct, timeMs: Math.round(a.seconds * 1000) }));
+
+    const navigateWith = (progression: PracticeProgression | null) => {
+      session.progression = progression;
+      this.sessions.set(session);
+      this.router.navigate(['/results']);
+    };
+
+    this.progression.recordAnswers(skill, answers).subscribe({
+      next: (resp) => {
+        const afterSkill = resp.skills.find((s) => s.key === skill);
+        const afterIndex = afterSkill?.beltIndex ?? beforeBelt?.index ?? 0;
+        const afterBelt = resp.belts.find((b) => b.index === afterIndex);
+        const promoted = !!afterSkill && !!beforeBelt && afterSkill.beltIndex > beforeBelt.index;
+        navigateWith({
+          skill,
+          skillName: OPS[skill as OpKey]?.name ?? afterSkill?.name ?? skill,
+          window: resp.masteryWindow,
+          beforeCount: beforeMastery.answersCount,
+          afterCount: afterSkill?.mastery.answersCount ?? 0,
+          beforeAccuracy: beforeMastery.accuracy,
+          afterAccuracy: afterSkill?.mastery.accuracyPercent ?? 0,
+          medianSeconds: this.medianSeconds(),
+          requiredAccuracy: resp.minAccuracyPercent,
+          targetSeconds: afterBelt?.targetSeconds ?? 0,
+          promoted,
+          beltId: afterBelt?.id ?? beforeBelt?.id ?? 'white',
+          beltName: afterBelt?.name ?? beforeBelt?.name ?? '',
+          prevBeltName: beforeBelt?.name ?? '',
+          unlockedSkills: promoted
+            ? resp.skills.filter((s) => s.unlocked && !beforeUnlocked.has(s.key)).map((s) => s.name)
+            : [],
+          newTricks: promoted
+            ? (afterSkill?.lessonsByBelt?.[afterSkill.beltIndex] ?? []).map(lessonTitle)
+            : []
+        });
+      },
+      error: () => navigateWith(null)
+    });
   }
 
   /**
@@ -729,6 +836,41 @@ export class PracticeComponent implements OnDestroy {
       return owner?.key ?? null;
     }
     return this.selectedOp();
+  }
+
+  /** Current belt difficulty (1–6) for a skill, or null if progression is unknown. */
+  private beltDifficulty(skill: string): number | null {
+    return this.progression.currentBelt(skill)?.difficulty ?? null;
+  }
+
+  /** Median answer time (seconds) over this session. */
+  private medianSeconds(): number {
+    const t = this.answered.map((a) => a.seconds).sort((x, y) => x - y);
+    if (t.length === 0) return 0;
+    const mid = Math.floor(t.length / 2);
+    return t.length % 2 === 1 ? t[mid] : (t[mid - 1] + t[mid]) / 2;
+  }
+
+  /** Pick a sensible default skill for the level picker once progression loads. */
+  private initLevelDefault(): void {
+    if (this.phase() !== 'select' || this.freeMode()) return;
+    const skills = this.levelSkills();
+    if (skills.length === 0) return;
+    const next = this.progression.nextStep()?.skill;
+    const pick = skills.find((s) => s.key === next) ?? skills[0];
+    this.selectLevelSkill(pick.key, pick.difficulty);
+  }
+
+  selectLevelSkill(skill: OpKey, difficulty: number): void {
+    this.selectedOp.set(skill);
+    this.selectedGrade.set(difficulty);
+  }
+
+  setFreeMode(free: boolean): void {
+    this.freeMode.set(free);
+    if (!free) {
+      this.initLevelDefault();
+    }
   }
 
   private flash(k: string): void {

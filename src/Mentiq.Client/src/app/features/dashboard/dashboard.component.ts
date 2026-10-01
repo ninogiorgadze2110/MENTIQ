@@ -12,21 +12,7 @@ import {
   NextStepCardComponent
 } from '../../shared/ui';
 import { DailyChallengeCardComponent } from './daily-challenge-card.component';
-
-/** Lesson id → title, mirrors the learn catalogue — only for the "new trick" nudge. */
-const LESSON_TITLES: Record<string, string> = {
-  'round-up': 'მრგვალამდე მიდი, დაუმატე',
-  'left-to-right': 'მარცხნიდან მარჯვნივ',
-  'add9': '9-ის დამატება',
-  'sub-round': 'მრგვალამდე გამოკლება',
-  'halving': 'გაჩერებული განახევრება',
-  'mul5': 'გამრავლება 5-ზე',
-  'mul11': 'გამრავლება 11-ზე',
-  'mul9-fingers': '9-ზე თითებით',
-  'sq5': '5-ით დამთავრებული კვადრატი',
-  'pct10': '10%-ის გამოთვლა',
-  'pct15': '15%-ის გამოთვლა თავში'
-};
+import { LESSON_TITLES } from '../../core/data/lesson-titles';
 
 interface SkillRow {
   key: string;

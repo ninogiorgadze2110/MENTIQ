@@ -2,6 +2,7 @@ import { Component, computed, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
 import { PracticeSessionService } from '../../core/services/practice-session.service';
+import { MasteryBarComponent } from '../../shared/ui';
 
 interface Bar {
   x: number;
@@ -14,7 +15,7 @@ interface Bar {
 @Component({
   selector: 'app-results',
   standalone: true,
-  imports: [RouterLink],
+  imports: [RouterLink, MasteryBarComponent],
   template: `
     @if (session(); as s) {
       <div style="min-height:100vh; padding:56px 72px; background:var(--paper);">
@@ -26,6 +27,41 @@ interface Bar {
           <div style="text-align:right; font-family:var(--ge-serif); font-size:14px;">
             <span style="color:var(--gold);">{{ s.title }}</span></div>
         </div>
+
+        @if (prog(); as pr) {
+          @if (pr.promoted) {
+            <div class="ui-card card-primary" [attr.data-belt]="pr.beltId" style="margin:28px 0; text-align:center;">
+              <div class="ge-label on-belt">— ახალი ქამარი</div>
+              <div style="font-size:48px; line-height:1; margin:8px 0;">🎉</div>
+              <h2 style="font-family:var(--ge-serif); font-size:34px; margin:0 0 6px; font-weight:500;">{{ pr.skillName }} · {{ pr.beltName }} ქამარი!</h2>
+              <p style="font-size:14px; color:color-mix(in srgb, var(--ink) 65%, transparent); margin:0;">{{ pr.prevBeltName }} → {{ pr.beltName }} · შენ დაეუფლე ამ დონეს.</p>
+              @if (pr.newTricks.length || pr.unlockedSkills.length) {
+                <div style="margin-top:16px; padding-top:14px; border-top:1px solid color-mix(in srgb, var(--ink) 12%, transparent); display:inline-block; text-align:left;">
+                  <div class="ge-label on-belt" style="margin-bottom:6px;">გაიხსნა</div>
+                  @for (t of pr.newTricks; track t) {
+                    <div style="font-size:14px;">✦ ახალი ხრიკი: {{ t }}</div>
+                  }
+                  @for (sk of pr.unlockedSkills; track sk) {
+                    <div style="font-size:14px;">✦ ახალი უნარი: {{ sk }}</div>
+                  }
+                </div>
+              }
+            </div>
+          } @else {
+            <div class="ui-card card-secondary" [attr.data-belt]="pr.beltId" style="margin:28px 0;">
+              <div style="display:flex; align-items:baseline; gap:10px; margin-bottom:12px;">
+                <div class="ge-label">ოსტატობა · {{ pr.skillName }}</div>
+                <span class="ge-label" style="margin-left:auto;">{{ pr.beltName }} ქამარი</span>
+              </div>
+              <app-mastery-bar [value]="pr.afterAccuracy" [belt]="$any(pr.beltId)" />
+              <div class="ge-label" style="margin-top:10px; line-height:1.6;">
+                {{ pr.beforeCount }}/{{ pr.window }} → {{ pr.afterCount }}/{{ pr.window }} პასუხი ·
+                სიზუსტე {{ pr.beforeAccuracy }}% → {{ pr.afterAccuracy }}% (საჭ. {{ pr.requiredAccuracy }}%) ·
+                მედ. დრო {{ median() }}წმ (მიზანი {{ pr.targetSeconds }}წმ)
+              </div>
+            </div>
+          }
+        }
 
         <div style="display:grid; grid-template-columns: 1.2fr 1fr; gap:56px; padding: 36px 0;">
           <div>
@@ -45,9 +81,9 @@ interface Bar {
               <div style="font-size:12px; color:color-mix(in srgb, var(--ink) 55%, transparent);">{{ s.correctCount }} / {{ s.questions.length }} სწორი</div>
             </div>
             <div style="padding:22px 0 22px 24px; border-bottom:1px solid var(--hair);">
-              <div style="font-size:var(--text-xs); color:color-mix(in srgb, var(--ink) 55%, transparent);">საშუალო დრო</div>
-              <div style="font-family:var(--ge-serif); font-size:52px; margin-top:6px; font-feature-settings:'tnum';">{{ avg() }}<span style="font-size:24px; color:color-mix(in srgb, var(--ink) 50%, transparent);">წმ</span></div>
-              <div style="font-size:12px; color:color-mix(in srgb, var(--ink) 55%, transparent);">კითხვაზე</div>
+              <div style="font-size:var(--text-xs); color:color-mix(in srgb, var(--ink) 55%, transparent);">მედიანური დრო</div>
+              <div style="font-family:var(--ge-serif); font-size:52px; margin-top:6px; font-feature-settings:'tnum';">{{ median() }}<span style="font-size:24px; color:color-mix(in srgb, var(--ink) 50%, transparent);">წმ</span></div>
+              <div style="font-size:12px; color:color-mix(in srgb, var(--ink) 55%, transparent);">კითხვაზე (საშ. {{ avg() }}წმ)</div>
             </div>
             <div style="padding:22px 24px 22px 0; border-right:1px solid var(--hair);">
               <div style="font-size:var(--text-xs); color:color-mix(in srgb, var(--ink) 55%, transparent);">საერთო ქულა</div>
@@ -122,6 +158,18 @@ export class ResultsComponent {
   readonly session = inject(PracticeSessionService).session;
 
   readonly avg = computed(() => (this.session()?.avgSeconds ?? 0).toFixed(1));
+
+  /** Belt-progression outcome of this session (null for free/daily/competition). */
+  readonly prog = computed(() => this.session()?.progression ?? null);
+
+  /** Median answer time (seconds) over this session's questions. */
+  readonly median = computed(() => {
+    const t = (this.session()?.questions ?? []).map((q) => q.seconds).sort((a, b) => a - b);
+    if (t.length === 0) return '0.0';
+    const mid = Math.floor(t.length / 2);
+    const m = t.length % 2 === 1 ? t[mid] : (t[mid - 1] + t[mid]) / 2;
+    return m.toFixed(1);
+  });
 
   readonly headline = computed(() => {
     const acc = this.session()?.accuracy ?? 0;
