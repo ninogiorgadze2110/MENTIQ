@@ -20,7 +20,7 @@ interface Bar {
       <div style="min-height:100vh; padding:56px 72px; background:var(--paper);">
         <div style="display:flex; justify-content:space-between; align-items:baseline; padding-bottom:16px; border-bottom:1px solid var(--ink); gap:16px; flex-wrap:wrap;">
           <div>
-            <div style="font-family:var(--ge-serif); font-size:10px; letter-spacing:.24em; text-transform:uppercase; color:var(--gold);">— ვარჯიშის ანგარიში</div>
+            <div style="font-family:var(--ge-serif); font-size:var(--text-xs); color:var(--gold);">— ვარჯიშის ანგარიში</div>
             <div style="font-family:var(--ge-serif); font-style:italic; font-size:14px; color:color-mix(in srgb, var(--ink) 60%, transparent); margin-top:6px;">{{ dateLine() }}</div>
           </div>
           <div style="text-align:right; font-family:var(--ge-serif); font-size:14px;">
@@ -40,22 +40,22 @@ interface Bar {
 
           <div style="display:grid; grid-template-columns:repeat(2, 1fr); gap:0; border-top:1px solid var(--hair);">
             <div style="padding:22px 24px 22px 0; border-right:1px solid var(--hair); border-bottom:1px solid var(--hair);">
-              <div style="font-size:10px; letter-spacing:.22em; text-transform:uppercase; color:color-mix(in srgb, var(--ink) 55%, transparent);">სიზუსტე</div>
+              <div style="font-size:var(--text-xs); color:color-mix(in srgb, var(--ink) 55%, transparent);">სიზუსტე</div>
               <div style="font-family:var(--ge-serif); font-size:52px; margin-top:6px; font-feature-settings:'tnum';">{{ s.accuracy }}%</div>
               <div style="font-size:12px; color:color-mix(in srgb, var(--ink) 55%, transparent);">{{ s.correctCount }} / {{ s.questions.length }} სწორი</div>
             </div>
             <div style="padding:22px 0 22px 24px; border-bottom:1px solid var(--hair);">
-              <div style="font-size:10px; letter-spacing:.22em; text-transform:uppercase; color:color-mix(in srgb, var(--ink) 55%, transparent);">საშუალო დრო</div>
+              <div style="font-size:var(--text-xs); color:color-mix(in srgb, var(--ink) 55%, transparent);">საშუალო დრო</div>
               <div style="font-family:var(--ge-serif); font-size:52px; margin-top:6px; font-feature-settings:'tnum';">{{ avg() }}<span style="font-size:24px; color:color-mix(in srgb, var(--ink) 50%, transparent);">წმ</span></div>
               <div style="font-size:12px; color:color-mix(in srgb, var(--ink) 55%, transparent);">კითხვაზე</div>
             </div>
             <div style="padding:22px 24px 22px 0; border-right:1px solid var(--hair);">
-              <div style="font-size:10px; letter-spacing:.22em; text-transform:uppercase; color:color-mix(in srgb, var(--ink) 55%, transparent);">საერთო ქულა</div>
+              <div style="font-size:var(--text-xs); color:color-mix(in srgb, var(--ink) 55%, transparent);">საერთო ქულა</div>
               <div style="font-family:var(--ge-serif); font-size:52px; margin-top:6px; color:var(--gold); font-feature-settings:'tnum';">{{ s.score }}</div>
               <div style="font-size:12px; color:color-mix(in srgb, var(--ink) 55%, transparent);">{{ s.questions.length }} კითხვა</div>
             </div>
             <div style="padding:22px 0 22px 24px;">
-              <div style="font-size:10px; letter-spacing:.22em; text-transform:uppercase; color:color-mix(in srgb, var(--ink) 55%, transparent);">გრძელი სერია</div>
+              <div style="font-size:var(--text-xs); color:color-mix(in srgb, var(--ink) 55%, transparent);">გრძელი სერია</div>
               <div style="font-family:var(--ge-serif); font-size:52px; margin-top:6px; font-feature-settings:'tnum';">×{{ s.longestStreak }}</div>
               <div style="font-size:12px; color:color-mix(in srgb, var(--ink) 55%, transparent);">ზედიზედ სწორი</div>
             </div>
@@ -109,7 +109,7 @@ interface Bar {
       <!-- No session yet -->
       <div style="min-height:100vh; display:grid; place-items:center; background:var(--paper); padding:24px;">
         <div class="card elev-sm" style="max-width:420px; text-align:center; padding:40px; align-items:center;">
-          <div style="font-family:var(--ge-serif); font-size:10px; letter-spacing:.24em; text-transform:uppercase; color:var(--gold);">— ვარჯიშის ანგარიში</div>
+          <div style="font-family:var(--ge-serif); font-size:var(--text-xs); color:var(--gold);">— ვარჯიშის ანგარიში</div>
           <h2 style="font-family:var(--ge-serif); font-size:30px; margin:12px 0 8px; font-weight:500;">ჯერ სესია არ დაგისრულებია</h2>
           <p style="font-size:14px; color:color-mix(in srgb, var(--ink) 65%, transparent); margin:0 0 20px;">დაასრულე ერთი ვარჯიში და აქ ნახავ ნამდვილ შედეგს.</p>
           <a routerLink="/practice" class="btn btn-primary" style="padding:12px 24px;">დაიწყე ვარჯიში →</a>

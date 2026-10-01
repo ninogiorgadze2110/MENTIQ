@@ -152,18 +152,18 @@ const fmt = (sec: number) =>
       <!-- ══════════ 04a · ვარჯიშის არჩევა ══════════ -->
       <div style="min-height:100vh; display:flex; flex-direction:column; background:var(--paper);">
         <div style="display:flex; align-items:center; padding:22px 56px; border-bottom:1px solid var(--hair); gap:16px;">
-          <a routerLink="/dashboard" style="font-family:var(--ge); font-size:11px; letter-spacing:.22em; text-transform:uppercase; color:color-mix(in srgb, var(--ink) 55%, transparent); text-decoration:none;">← მთავარი</a>
+          <a routerLink="/dashboard" style="font-family:var(--ge); font-size:var(--text-xs); color:color-mix(in srgb, var(--ink) 55%, transparent); text-decoration:none;">← მთავარი</a>
         </div>
 
         <div style="flex:1; display:grid; place-items:center; padding:40px 24px;">
           <div style="width:100%; max-width:760px;">
             <div style="text-align:center; margin-bottom:28px;">
-              <div style="font-size:10px; letter-spacing:.24em; text-transform:uppercase; color:var(--gold); margin-bottom:12px;">— დღის ვარჯიში</div>
+              <div style="font-size:var(--text-xs); color:var(--gold); margin-bottom:12px;">— დღის ვარჯიში</div>
               <h1 style="font-family:var(--ge-serif); font-size:50px; margin:0 0 8px; font-weight:500; line-height:1.02;">აირჩიე ვარჯიში</h1>
               <p style="font-size:14px; color:color-mix(in srgb, var(--ink) 65%, transparent); margin:0;">სირთულე, ამოცანის ტიპი და რაოდენობა (ან დრო). დაიწყე და დაითვალე.</p>
             </div>
 
-            <div style="font-size:11px; letter-spacing:.16em; text-transform:uppercase; color:color-mix(in srgb, var(--ink) 55%, transparent); margin-bottom:10px;">სირთულე</div>
+            <div style="font-size:var(--text-xs); color:color-mix(in srgb, var(--ink) 55%, transparent); margin-bottom:10px;">სირთულე</div>
             <div class="grades" style="margin-bottom:26px;">
               @for (g of gradeKeys; track g) {
                 <button type="button" class="grade" [class.on]="selectedGrade() === g" (click)="selectGrade(g)">
@@ -173,7 +173,7 @@ const fmt = (sec: number) =>
               }
             </div>
 
-            <div style="font-size:11px; letter-spacing:.16em; text-transform:uppercase; color:color-mix(in srgb, var(--ink) 55%, transparent); margin-bottom:10px;">ამოცანის ტიპი</div>
+            <div style="font-size:var(--text-xs); color:color-mix(in srgb, var(--ink) 55%, transparent); margin-bottom:10px;">ამოცანის ტიპი</div>
             <div class="op-grid">
               @for (op of availableOps(); track op.key) {
                 <button type="button" class="op-card" [class.on]="selectedOp() === op.key" (click)="selectedOp.set(op.key)">
@@ -187,21 +187,21 @@ const fmt = (sec: number) =>
             </div>
 
             <div style="display:flex; align-items:center; gap:16px; margin-top:26px; flex-wrap:wrap;">
-              <span style="font-size:11px; letter-spacing:.16em; text-transform:uppercase; color:color-mix(in srgb, var(--ink) 55%, transparent);">რეჟიმი</span>
+              <span style="font-size:var(--text-xs); color:color-mix(in srgb, var(--ink) 55%, transparent);">რეჟიმი</span>
               <div class="seg">
                 <button type="button" [class.on]="mode() === 'count'" (click)="mode.set('count')">რაოდენობით</button>
                 <button type="button" [class.on]="mode() === 'time'" (click)="mode.set('time')">დროზე</button>
               </div>
 
               @if (mode() === 'count') {
-                <span style="font-size:11px; letter-spacing:.16em; text-transform:uppercase; color:color-mix(in srgb, var(--ink) 55%, transparent);">კითხვები</span>
+                <span style="font-size:var(--text-xs); color:color-mix(in srgb, var(--ink) 55%, transparent);">კითხვები</span>
                 <div class="seg">
                   @for (n of counts; track n) {
                     <button type="button" [class.on]="count() === n" (click)="count.set(n)">{{ n }}</button>
                   }
                 </div>
               } @else {
-                <span style="font-size:11px; letter-spacing:.16em; text-transform:uppercase; color:color-mix(in srgb, var(--ink) 55%, transparent);">დრო</span>
+                <span style="font-size:var(--text-xs); color:color-mix(in srgb, var(--ink) 55%, transparent);">დრო</span>
                 <div class="seg">
                   @for (t of times; track t.sec) {
                     <button type="button" [class.on]="timeLimit() === t.sec" (click)="timeLimit.set(t.sec)">{{ t.label }}</button>
@@ -223,16 +223,16 @@ const fmt = (sec: number) =>
       <!-- ══════════ 04 · ვარჯიში (+ 04b feedback) ══════════ -->
       <div style="min-height:100vh; display:flex; flex-direction:column; background:var(--paper);">
         <div style="display:grid; grid-template-columns:auto 1fr auto; gap:32px; padding:22px 56px; border-bottom:1px solid var(--gold); align-items:center; font-family:var(--ge-serif);">
-          <a [routerLink]="exitTarget()" style="font-family:var(--ge); font-size:11px; letter-spacing:.22em; text-transform:uppercase; color:color-mix(in srgb, var(--ink) 55%, transparent); text-decoration:none;">← გამოსვლა</a>
+          <a [routerLink]="exitTarget()" style="font-family:var(--ge); font-size:var(--text-xs); color:color-mix(in srgb, var(--ink) 55%, transparent); text-decoration:none;">← გამოსვლა</a>
           <div style="display:flex; align-items:center; gap:12px;">
-            <span style="font-family:var(--ge); font-size:10px; letter-spacing:.22em; text-transform:uppercase; color:var(--gold);">{{ levelLabel() }}{{ opName() }}</span>
+            <span style="font-family:var(--ge); font-size:var(--text-xs); color:var(--gold);">{{ levelLabel() }}{{ opName() }}</span>
             <div style="flex:1; height:2px; background:var(--hair); position:relative; max-width:520px;"><div [style.width.%]="progressPct()" style="height:100%; background:var(--gold); transition:width .2s ease;"></div></div>
             <span style="font-family:var(--ge); font-size:11px; font-feature-settings:'tnum'; color:color-mix(in srgb, var(--ink) 60%, transparent);">{{ numerator() }}</span>
           </div>
           <div style="display:flex; gap:24px; font-feature-settings:'tnum';">
-            <div style="text-align:right;"><div style="font-family:var(--ge); font-size:9px; letter-spacing:.18em; text-transform:uppercase; color:color-mix(in srgb, var(--ink) 55%, transparent);">დრო</div><div style="font-size:20px;" [style.color]="clockColor()">{{ clock() }}</div></div>
-            <div style="text-align:right;"><div style="font-family:var(--ge); font-size:9px; letter-spacing:.18em; text-transform:uppercase; color:color-mix(in srgb, var(--ink) 55%, transparent);">ქულა</div><div style="font-size:20px; color:var(--gold);">{{ score() }}</div></div>
-            <div style="text-align:right;"><div style="font-family:var(--ge); font-size:9px; letter-spacing:.18em; text-transform:uppercase; color:color-mix(in srgb, var(--ink) 55%, transparent);">სერია</div><div style="font-size:20px;">×{{ streak() }}</div></div>
+            <div style="text-align:right;"><div style="font-family:var(--ge); font-size:var(--text-xs); color:color-mix(in srgb, var(--ink) 55%, transparent);">დრო</div><div style="font-size:20px;" [style.color]="clockColor()">{{ clock() }}</div></div>
+            <div style="text-align:right;"><div style="font-family:var(--ge); font-size:var(--text-xs); color:color-mix(in srgb, var(--ink) 55%, transparent);">ქულა</div><div style="font-size:20px; color:var(--gold);">{{ score() }}</div></div>
+            <div style="text-align:right;"><div style="font-family:var(--ge); font-size:var(--text-xs); color:color-mix(in srgb, var(--ink) 55%, transparent);">სერია</div><div style="font-size:20px;">×{{ streak() }}</div></div>
           </div>
         </div>
 

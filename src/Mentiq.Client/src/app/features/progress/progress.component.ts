@@ -10,7 +10,7 @@ import { ProgressResponse, ProgressService } from '../../core/services/progress.
   template: `
     <div class="top">
       <div>
-        <div style="font-size:11px; letter-spacing:.16em; text-transform:uppercase; color:color-mix(in srgb, var(--ink) 55%, transparent);">შენი ისტორია</div>
+        <div style="font-size:var(--text-xs); color:color-mix(in srgb, var(--ink) 55%, transparent);">შენი ისტორია</div>
         <h2>პროგრესი</h2>
       </div>
     </div>
@@ -21,7 +21,7 @@ import { ProgressResponse, ProgressService } from '../../core/services/progress.
       @if (data(); as d) {
       @if (d.totalSessions === 0) {
         <div class="card elev-sm" style="max-width:460px; padding:36px; align-items:flex-start; gap:10px;">
-          <div style="font-family:var(--ge-serif); font-size:10px; letter-spacing:.24em; text-transform:uppercase; color:var(--gold);">— ჯერ ცარიელია</div>
+          <div style="font-family:var(--ge-serif); font-size:var(--text-xs); color:var(--gold);">— ჯერ ცარიელია</div>
           <h3 style="font-family:var(--ge-serif); font-size:26px; margin:0; font-weight:500;">დაიწყე ვარჯიში</h3>
           <p style="font-size:13.5px; color:color-mix(in srgb, var(--ink) 65%, transparent); margin:0 0 8px;">ყოველი დასრულებული სესია აქ დაგროვდება — ზედიზედ დღეები, სიზუსტე, საშუალო დრო.</p>
           <a routerLink="/practice" class="btn btn-primary" style="padding:12px 22px;">დაიწყე ვარჯიში →</a>
@@ -29,7 +29,7 @@ import { ProgressResponse, ProgressService } from '../../core/services/progress.
       } @else {
         <!-- Top: streak + weekly activity -->
         <div style="display:grid; grid-template-columns:1fr 1.4fr; gap:20px;">
-          <div style="border:1px solid var(--hair); background:#fff; padding:28px 30px; display:flex; align-items:center; gap:24px;">
+          <div class="ui-card card-secondary" style="padding:28px 30px; display:flex; align-items:center; gap:24px;">
             <div style="width:150px; height:150px; position:relative; display:grid; place-items:center; flex-shrink:0;">
               <svg viewBox="0 0 100 100" style="width:100%; height:100%; transform:rotate(-90deg);">
                 <circle cx="50" cy="50" r="44" fill="none" stroke="var(--hair)" stroke-width="2"/>
@@ -39,18 +39,18 @@ import { ProgressResponse, ProgressService } from '../../core/services/progress.
               </svg>
               <div style="position:absolute; text-align:center;">
                 <div style="font-family:var(--ge-serif); font-size:44px; color:var(--gold); line-height:1;">{{ d.dayStreak }}</div>
-                <div style="font-size:10px; letter-spacing:.16em; text-transform:uppercase; color:color-mix(in srgb, var(--ink) 60%, transparent); margin-top:6px;">დღე ზედიზედ</div>
+                <div style="font-size:var(--text-xs); color:color-mix(in srgb, var(--ink) 60%, transparent); margin-top:6px;">დღე ზედიზედ</div>
               </div>
             </div>
             <div>
-              <div style="font-size:10px; letter-spacing:.22em; text-transform:uppercase; color:var(--gold);">— სერია</div>
+              <div style="font-size:var(--text-xs); color:var(--gold);">— სერია</div>
               <div style="font-family:var(--ge-serif); font-size:20px; margin:6px 0 2px;">ყოველ დღე ივარჯიშე</div>
               <div style="font-size:12.5px; color:color-mix(in srgb, var(--ink) 60%, transparent);">საუკეთესო სერია სესიაში: ×{{ d.bestStreak }}</div>
             </div>
           </div>
 
-          <div style="border:1px solid var(--hair); background:#fff; padding:24px 28px;">
-            <div style="font-size:10px; letter-spacing:.22em; text-transform:uppercase; color:color-mix(in srgb, var(--ink) 55%, transparent); margin-bottom:16px;">ბოლო 7 დღე</div>
+          <div class="ui-card card-secondary" style="padding:24px 28px;">
+            <div style="font-size:var(--text-xs); color:color-mix(in srgb, var(--ink) 55%, transparent); margin-bottom:16px;">ბოლო 7 დღე</div>
             <div style="display:flex; gap:10px; align-items:flex-end; height:96px;">
               @for (day of week(); track $index) {
                 <div style="flex:1; display:flex; flex-direction:column; align-items:center; gap:8px; height:100%; justify-content:flex-end;">
@@ -64,23 +64,23 @@ import { ProgressResponse, ProgressService } from '../../core/services/progress.
 
         <!-- Metric row -->
         <div style="display:grid; grid-template-columns:repeat(4, 1fr); gap:20px; margin-top:20px;">
-          <div style="border:1px solid var(--hair); padding:24px 26px; background:#fff;">
-            <div style="font-size:10px; letter-spacing:.22em; text-transform:uppercase; color:color-mix(in srgb, var(--ink) 55%, transparent);">საშუალო სიზუსტე</div>
+          <div class="ui-card card-muted" style="padding:24px 26px;">
+            <div style="font-size:var(--text-xs); color:color-mix(in srgb, var(--ink) 55%, transparent);">საშუალო სიზუსტე</div>
             <div style="font-family:var(--ge-serif); font-size:44px; margin:8px 0 2px; font-feature-settings:'tnum';">{{ d.avgAccuracy }}<span style="font-size:22px; color:color-mix(in srgb, var(--ink) 50%, transparent);">%</span></div>
             <svg viewBox="0 0 200 40" style="width:100%; margin-top:10px;"><polyline [attr.points]="trendPoints()" fill="none" stroke="var(--gold)" stroke-width="1.5"/></svg>
           </div>
-          <div style="border:1px solid var(--hair); padding:24px 26px; background:#fff;">
-            <div style="font-size:10px; letter-spacing:.22em; text-transform:uppercase; color:color-mix(in srgb, var(--ink) 55%, transparent);">საშუალო დრო</div>
+          <div class="ui-card card-muted" style="padding:24px 26px;">
+            <div style="font-size:var(--text-xs); color:color-mix(in srgb, var(--ink) 55%, transparent);">საშუალო დრო</div>
             <div style="font-family:var(--ge-serif); font-size:44px; margin:8px 0 2px; font-feature-settings:'tnum';">{{ d.avgSeconds }}<span style="font-size:22px; color:color-mix(in srgb, var(--ink) 50%, transparent);">წმ</span></div>
             <div style="font-size:12px; color:color-mix(in srgb, var(--ink) 55%, transparent);">კითხვაზე</div>
           </div>
-          <div style="border:1px solid var(--hair); padding:24px 26px; background:#fff;">
-            <div style="font-size:10px; letter-spacing:.22em; text-transform:uppercase; color:color-mix(in srgb, var(--ink) 55%, transparent);">სულ ვარჯიშები</div>
+          <div class="ui-card card-muted" style="padding:24px 26px;">
+            <div style="font-size:var(--text-xs); color:color-mix(in srgb, var(--ink) 55%, transparent);">სულ ვარჯიშები</div>
             <div style="font-family:var(--ge-serif); font-size:44px; margin:8px 0 2px; color:var(--gold); font-feature-settings:'tnum';">{{ d.totalSessions }}</div>
             <div style="font-size:12px; color:color-mix(in srgb, var(--ink) 55%, transparent);">დასრულებული სესია</div>
           </div>
-          <div style="border:1px solid var(--hair); padding:24px 26px; background:#fff;">
-            <div style="font-size:10px; letter-spacing:.22em; text-transform:uppercase; color:color-mix(in srgb, var(--ink) 55%, transparent);">სულ კითხვები</div>
+          <div class="ui-card card-muted" style="padding:24px 26px;">
+            <div style="font-size:var(--text-xs); color:color-mix(in srgb, var(--ink) 55%, transparent);">სულ კითხვები</div>
             <div style="font-family:var(--ge-serif); font-size:44px; margin:8px 0 2px; font-feature-settings:'tnum';">{{ d.totalQuestions }}</div>
             <div style="font-size:12px; color:color-mix(in srgb, var(--ink) 55%, transparent);">ამოხსნილი</div>
           </div>

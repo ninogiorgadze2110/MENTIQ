@@ -15,7 +15,7 @@ import { Plan, PlansResponse } from '../../core/models/subscription.model';
     </div>
     <div style="padding:40px 72px 72px; background:var(--paper); max-width:1280px; margin:0 auto;">
       <div style="text-align:center; max-width:640px; margin:0 auto 40px;">
-        <!-- <div style="font-size:10px; letter-spacing:.24em; text-transform:uppercase; color:var(--gold);">— ფასი</div> -->
+        <!-- <div style="font-size:var(--text-xs); color:var(--gold);">— ფასი</div> -->
         <!-- <h1 style="font-family:var(--ge-serif); font-size:56px; margin:14px 0 14px; line-height:1.02; font-weight:500;">ერთი ფინჯანი ყავის ფასი,<br><em style="color:var(--gold);">უფრო სწრაფი ტვინი.</em></h1> -->
         <p style="font-size:15px; line-height:1.65; color:color-mix(in srgb, var(--ink) 70%, transparent); margin:0;">დაიწყე 7 დღიანი უფასო საცდელი ვერსიით. გადაიხადე მაშინ, როცა მზად იქნები — ან ტრიალის დასრულების შემდეგ.</p>
       </div>
@@ -49,7 +49,7 @@ import { Plan, PlansResponse } from '../../core/models/subscription.model';
                [style.background]="idx === 0 ? 'color-mix(in srgb, var(--gold) 5%, transparent)' : '#fff'"
                style="padding:36px 30px; position:relative;">
             @if (idx === 0) {
-              <!-- <div style="position:absolute; top:-12px; left:30px; background:var(--ink); color:var(--paper); font-size:10px; letter-spacing:.22em; text-transform:uppercase; padding:6px 14px;">— რეკომენდებული</div> -->
+              <!-- <div style="position:absolute; top:-12px; left:30px; background:var(--ink); color:var(--paper); font-size:var(--text-xs); padding:6px 14px;">— რეკომენდებული</div> -->
             }
             <div style="display:flex; align-items:center; gap:10px;">
               <div style="font-family:var(--ge-serif); font-size:14px; color:var(--gold); font-style:italic;">— {{ plan.name }}</div>
@@ -92,7 +92,7 @@ import { Plan, PlansResponse } from '../../core/models/subscription.model';
     @if (chosen(); as plan) {
       <div style="position:fixed; inset:0; background:color-mix(in srgb, var(--ink) 45%, transparent); display:grid; place-items:center; z-index:80; padding:20px;" (click)="chosen.set(null)">
         <div style="background:#fff; border:1px solid var(--hair); max-width:460px; width:100%; padding:32px;" (click)="$event.stopPropagation()">
-          <div style="font-size:10px; letter-spacing:.22em; text-transform:uppercase; color:var(--gold);">— {{ plan.name }} · {{ plan.price }} {{ plan.currency }}</div>
+          <div style="font-size:var(--text-xs); color:var(--gold);">— {{ plan.name }} · {{ plan.price }} {{ plan.currency }}</div>
           <h3 style="font-family:var(--ge-serif); font-size:24px; margin:10px 0 14px; font-weight:500;">გადახდა ხდება ხელით</h3>
           <p style="font-size:14px; line-height:1.6; color:color-mix(in srgb, var(--ink) 72%, transparent); margin:0 0 16px;">{{ instructions() }}</p>
           <div style="border:1px solid var(--hair); padding:14px 16px; font-size:13.5px; line-height:1.8; background:var(--paper);">

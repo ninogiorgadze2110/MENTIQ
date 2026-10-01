@@ -9,7 +9,7 @@ import { ContactMessage } from '../../core/models/contact.model';
   template: `
     <div class="top">
       <div>
-        <div style="font-size:11px; letter-spacing:.16em; text-transform:uppercase; color:var(--gold);">— ადმინი</div>
+        <div style="font-size:var(--text-xs); color:var(--gold);">— ადმინი</div>
         <h2>შემოსული კომენტარები</h2>
       </div>
       <div class="spacer"></div>

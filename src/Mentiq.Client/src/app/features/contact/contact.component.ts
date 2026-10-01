@@ -11,7 +11,7 @@ import { NotificationService } from '../../core/services/notification.service';
   template: `
     <div class="top">
       <div>
-        <div style="font-size:11px; letter-spacing:.16em; text-transform:uppercase; color:var(--gold);">— კონტაქტი</div>
+        <div style="font-size:var(--text-xs); color:var(--gold);">— კონტაქტი</div>
         <h2>დაგვიკავშირდი</h2>
       </div>
       <div class="spacer"></div>

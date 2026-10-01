@@ -23,7 +23,7 @@ import { RouterLink } from '@angular/router';
       <!-- Hero -->
       <div style="display:grid; grid-template-columns: 1.05fr 1fr; gap:56px; padding: 80px 56px 88px; align-items:center;">
         <div>
-          <div style="font-size:10px; letter-spacing:.24em; text-transform:uppercase; color:var(--gold); margin-bottom:22px;">— ტვინის ვარჯიში, ყოველდღე</div>
+          <div style="font-size:var(--text-xs); color:var(--gold); margin-bottom:22px;">— ტვინის ვარჯიში, ყოველდღე</div>
           <h1 style="font-family:var(--ge-serif); font-size:72px; line-height:1; margin:0 0 22px; letter-spacing:-.02em; font-weight:500;">იფიქრე უფრო<br><em style="font-style:italic; color:var(--gold); font-weight:500;">სწრაფად.</em><br>გამოთვალე უფრო<br><em style="font-style:italic; font-weight:500;">ჭკვიანურად.</em></h1>
           <p style="font-size:16px; line-height:1.65; max-width:42ch; color:color-mix(in srgb, var(--ink) 72%, transparent); margin:0 0 28px;">განავითარე გონებრივი მათემატიკის უნარი მოკლე, ფოკუსირებული ვარჯიშით. შვიდი წუთი დღეში — რვა კვირაში ტვინი განსხვავებულად მუშაობს.</p>
           <div style="display:flex; gap:14px; align-items:center; flex-wrap:wrap;">
@@ -36,12 +36,12 @@ import { RouterLink } from '@angular/router';
         </div>
         <!-- product preview card -->
         <div style="border:1px solid var(--hair); background:#fff; padding:24px; box-shadow: var(--shadow-md); border-radius:4px;">
-          <div style="display:flex; justify-content:space-between; font-size:10px; letter-spacing:.18em; text-transform:uppercase; color:color-mix(in srgb, var(--ink) 55%, transparent); padding-bottom:12px; border-bottom:1px solid var(--hair);">
+          <div style="display:flex; justify-content:space-between; font-size:var(--text-xs); color:color-mix(in srgb, var(--ink) 55%, transparent); padding-bottom:12px; border-bottom:1px solid var(--hair);">
             <span>დონე 4 · შეკრება</span><span>კითხვა 12 / 30</span>
           </div>
           <div style="display:flex; justify-content:space-between; padding:16px 4px 12px;">
-            <div><div style="font-size:9px; letter-spacing:.18em; text-transform:uppercase; color:color-mix(in srgb, var(--ink) 55%, transparent);">დრო</div><div style="font-family:var(--ge-serif); font-size:22px; font-feature-settings:'tnum';">00:43</div></div>
-            <div style="text-align:right;"><div style="font-size:9px; letter-spacing:.18em; text-transform:uppercase; color:color-mix(in srgb, var(--ink) 55%, transparent);">ქულა</div><div style="font-family:var(--ge-serif); font-size:22px; color:var(--gold); font-feature-settings:'tnum';">126</div></div>
+            <div><div style="font-size:var(--text-xs); color:color-mix(in srgb, var(--ink) 55%, transparent);">დრო</div><div style="font-family:var(--ge-serif); font-size:22px; font-feature-settings:'tnum';">00:43</div></div>
+            <div style="text-align:right;"><div style="font-size:var(--text-xs); color:color-mix(in srgb, var(--ink) 55%, transparent);">ქულა</div><div style="font-family:var(--ge-serif); font-size:22px; color:var(--gold); font-feature-settings:'tnum';">126</div></div>
           </div>
           <div style="text-align:center; padding: 36px 0 28px; border-top:1px solid var(--hair); border-bottom:1px solid var(--hair);">
             <div style="font-family:var(--ge-serif); font-size:80px; line-height:1; font-feature-settings:'tnum'; letter-spacing:-.02em;">47 + 28</div>

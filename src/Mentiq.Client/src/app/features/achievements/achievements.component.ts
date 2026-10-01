@@ -43,7 +43,7 @@ const CATEGORY_ORDER = ['streak', 'competition', 'speed', 'accuracy', 'volume'];
   template: `
     <div class="top">
       <div>
-        <div style="font-size:11px; letter-spacing:.16em; text-transform:uppercase; color:color-mix(in srgb, var(--ink) 55%, transparent);">Trophy Cabinet</div>
+        <div style="font-size:var(--text-xs); color:color-mix(in srgb, var(--ink) 55%, transparent);">Trophy Cabinet</div>
         <h2>მიღწევები</h2>
       </div>
     </div>
@@ -55,7 +55,7 @@ const CATEGORY_ORDER = ['streak', 'competition', 'speed', 'accuracy', 'volume'];
       <!-- summary -->
       <div style="border:1px solid var(--hair); background:#fff; padding:22px 26px; margin-bottom:26px; display:flex; align-items:center; gap:24px; flex-wrap:wrap;">
         <div>
-          <div style="font-size:10px; letter-spacing:.22em; text-transform:uppercase; color:var(--gold);">— გახსნილი</div>
+          <div style="font-size:var(--text-xs); color:var(--gold);">— გახსნილი</div>
           <div style="font-family:var(--ge-serif); font-size:44px; line-height:1; margin-top:4px; font-feature-settings:'tnum';">{{ d.unlockedCount }}<span style="font-size:22px; color:color-mix(in srgb, var(--ink) 50%, transparent);"> / {{ d.total }}</span></div>
         </div>
         <div style="flex:1; min-width:180px;">

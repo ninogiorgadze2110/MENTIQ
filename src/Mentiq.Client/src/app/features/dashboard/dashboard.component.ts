@@ -13,7 +13,7 @@ import { DailyChallengeCardComponent } from './daily-challenge-card.component';
   template: `
     <div class="top">
       <div>
-        <div style="font-size:11px; letter-spacing:.16em; text-transform:uppercase; color:color-mix(in srgb, var(--ink) 55%, transparent);">{{ today() }}</div>
+        <div class="ge-label">{{ today() }}</div>
         <h2>გამარჯობა, {{ firstName() }}.</h2>
       </div>
       <div class="spacer"></div>
@@ -22,14 +22,14 @@ import { DailyChallengeCardComponent } from './daily-challenge-card.component';
     <app-subscription-banner />
 
     <div style="display:grid; grid-template-columns: 1.5fr 1fr; gap:20px; align-items:stretch;">
-      <!-- Daily challenge (self-contained) -->
-      <div style="border:1px solid var(--hair); background:#fff; padding:32px;">
+      <!-- Daily challenge (self-contained) — next step, primary card -->
+      <div class="ui-card card-primary">
         <app-daily-challenge-card />
       </div>
 
-      <!-- Streak (separate card) -->
-      <div style="border:1px solid var(--hair); background:#fff; padding:28px 30px; display:flex; flex-direction:column;">
-        <div style="font-size:10px; letter-spacing:.22em; text-transform:uppercase; color:color-mix(in srgb, var(--ink) 55%, transparent);">— შენი სერია</div>
+      <!-- Streak (secondary card) -->
+      <div class="ui-card card-secondary" style="padding:28px 30px; display:flex; flex-direction:column;">
+        <div class="ge-label">— შენი სერია</div>
         <div style="flex:1; display:grid; place-items:center; padding:12px 0;">
           <div style="width:150px; height:150px; position:relative; display:grid; place-items:center;">
             <svg viewBox="0 0 100 100" style="width:100%; height:100%; transform:rotate(-90deg);">
@@ -38,7 +38,7 @@ import { DailyChallengeCardComponent } from './daily-challenge-card.component';
             </svg>
             <div style="position:absolute; text-align:center;">
               <div style="font-family:var(--ge-serif); font-size:44px; color:var(--gold); line-height:1;">{{ dayStreak() }}</div>
-              <div style="font-size:10px; letter-spacing:.18em; text-transform:uppercase; color:color-mix(in srgb, var(--ink) 60%, transparent); margin-top:6px;">დღიანი სერია</div>
+              <div class="ge-label" style="margin-top:6px;">დღიანი სერია</div>
             </div>
           </div>
         </div>
@@ -52,22 +52,22 @@ import { DailyChallengeCardComponent } from './daily-challenge-card.component';
     <!-- Three metrics (real progress data) -->
     <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:20px; margin-top:20px;">
       <!-- Accuracy -->
-      <div style="border:1px solid var(--hair); padding:24px 26px; background:#fff;">
-        <div style="font-size:10px; letter-spacing:.22em; text-transform:uppercase; color:color-mix(in srgb, var(--ink) 55%, transparent);">საშუალო სიზუსტე</div>
+      <div class="ui-card card-muted" style="padding:24px 26px;">
+        <div class="ge-label">საშუალო სიზუსტე</div>
         <div style="font-family:var(--ge-serif); font-size:44px; margin:8px 0 6px; font-feature-settings:'tnum';">{{ avgAccuracy() }}<span style="font-size:22px; color:color-mix(in srgb, var(--ink) 50%, transparent);">%</span></div>
         <div style="font-size:12px; color:color-mix(in srgb, var(--ink) 55%, transparent);">{{ totalSessions() }} ვარჯიშის მიხედვით</div>
         <svg viewBox="0 0 200 40" style="width:100%; margin-top:14px;"><polyline [attr.points]="accPoints()" fill="none" stroke="var(--gold)" stroke-width="1.5"/></svg>
       </div>
       <!-- Time -->
-      <div style="border:1px solid var(--hair); padding:24px 26px; background:#fff;">
-        <div style="font-size:10px; letter-spacing:.22em; text-transform:uppercase; color:color-mix(in srgb, var(--ink) 55%, transparent);">საშუალო დრო</div>
+      <div class="ui-card card-muted" style="padding:24px 26px;">
+        <div class="ge-label">საშუალო დრო</div>
         <div style="font-family:var(--ge-serif); font-size:44px; margin:8px 0 6px; font-feature-settings:'tnum';">{{ avgSeconds() }}<span style="font-size:22px; color:color-mix(in srgb, var(--ink) 50%, transparent);">წმ</span></div>
         <div style="font-size:12px; color:color-mix(in srgb, var(--ink) 55%, transparent);">კითხვაზე</div>
         <svg viewBox="0 0 200 40" style="width:100%; margin-top:14px;"><polyline [attr.points]="secPoints()" fill="none" stroke="var(--gold)" stroke-width="1.5"/></svg>
       </div>
       <!-- Weekly -->
-      <div style="border:1px solid var(--hair); padding:24px 26px; background:#fff;">
-        <div style="font-size:10px; letter-spacing:.22em; text-transform:uppercase; color:color-mix(in srgb, var(--ink) 55%, transparent);">კვირის ვარჯიშები</div>
+      <div class="ui-card card-muted" style="padding:24px 26px;">
+        <div class="ge-label">კვირის ვარჯიშები</div>
         <div style="font-family:var(--ge-serif); font-size:44px; margin:8px 0 6px; font-feature-settings:'tnum';">{{ weekActive() }}<span style="font-size:22px; color:color-mix(in srgb, var(--ink) 50%, transparent);"> / 7</span></div>
         <div style="font-size:12px; color:color-mix(in srgb, var(--ink) 55%, transparent);">აქტიური დღე ამ კვირაში</div>
         <div style="display:flex; gap:6px; margin-top:14px;">

@@ -17,7 +17,7 @@ import { DailyChallenge, DailyChallengeLeaderboard } from '../../core/models/dai
   imports: [RouterLink],
   styles: [':host { display: block; }'],
   template: `
-    <div style="font-size:10px; letter-spacing:.22em; text-transform:uppercase; color:var(--gold);">— დღის ამოცანა</div>
+    <div class="ge-label" style="color:var(--gold);">— დღის ამოცანა</div>
     <h3 style="font-family:var(--ge-serif); font-size:32px; margin:10px 0 6px; font-weight:500; line-height:1.05;">1 წუთი · შერეული</h3>
     <p style="font-size:13.5px; color:color-mix(in srgb, var(--ink) 65%, transparent); margin:0 0 16px; line-height:1.55;">
       {{ grade() }} კლასის შერეული სირთულის ტესტი. ყოველ დილით 6:00-ზე ახალი ამოცანა.

@@ -241,7 +241,7 @@ const CATEGORIES: Category[] = [
   template: `
     <div class="top">
       <div>
-        <div style="font-size:11px; letter-spacing:.16em; text-transform:uppercase; color:color-mix(in srgb, var(--ink) 55%, transparent);">გაკვეთილები</div>
+        <div class="ge-label">გაკვეთილები</div>
         <h2>ისწავლე</h2>
       </div>
     </div>
@@ -249,7 +249,7 @@ const CATEGORIES: Category[] = [
     <div class="learn-grid">
       <!-- index -->
       <div class="idx">
-        <div style="font-size:10px; letter-spacing:.22em; text-transform:uppercase; color:var(--gold); margin-bottom:8px;">— ინდექსი</div>
+        <div class="ge-label" style="color:var(--gold); margin-bottom:8px;">— ინდექსი</div>
         <h4 style="font-family:var(--ge-serif); font-size:20px; margin:0 0 18px; font-weight:500;">{{ totalLessons }} გაკვეთილი</h4>
         @for (cat of categories; track cat.key) {
           <div class="cat">§ {{ cat.name }}</div>
@@ -264,7 +264,7 @@ const CATEGORIES: Category[] = [
       <!-- lesson detail -->
       @if (selected(); as l) {
         <div class="detail">
-          <div style="font-size:10px; letter-spacing:.24em; text-transform:uppercase; color:var(--gold);">— {{ categoryName() }}</div>
+          <div class="ge-label" style="color:var(--gold);">— {{ categoryName() }}</div>
           <h1 style="font-family:var(--ge-serif); font-size:44px; margin:12px 0 8px; line-height:1.06; font-weight:500;">{{ l.title }}</h1>
           <div style="display:flex; gap:16px; font-size:12.5px; color:color-mix(in srgb, var(--ink) 60%, transparent); border-bottom:1px solid var(--hair); padding-bottom:18px; flex-wrap:wrap;">
             <span>{{ l.minutes }} წუთი</span>
@@ -276,7 +276,7 @@ const CATEGORIES: Category[] = [
             <div>
               <p style="font-family:var(--ge-serif); font-size:17px; line-height:1.6; font-style:italic; color:color-mix(in srgb, var(--ink) 78%, transparent); margin:0 0 24px; border-left:2px solid var(--gold); padding-left:18px;">{{ l.intro }}</p>
               @for (step of l.steps; track step.label) {
-                <div style="font-family:var(--ge-serif); font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--gold); margin-bottom:8px;">— {{ step.label }}</div>
+                <div style="font-family:var(--ge-serif); font-size:13px; color:var(--gold); margin-bottom:8px;">— {{ step.label }}</div>
                 <p style="font-size:14.5px; line-height:1.65; margin:0 0 20px;">{{ step.text }}</p>
               }
             </div>
@@ -290,7 +290,7 @@ const CATEGORIES: Category[] = [
                     <div style="display:grid; grid-template-columns:repeat({{ ex.parts.length }}, 1fr); gap:0; border-top:1px solid var(--hair);">
                       @for (p of ex.parts; track p.label) {
                         <div style="padding:14px 10px; text-align:center; border-right:1px solid var(--hair);">
-                          <div style="font-size:10px; letter-spacing:.16em; text-transform:uppercase; color:color-mix(in srgb, var(--ink) 55%, transparent);">{{ p.label }}</div>
+                          <div class="ge-label">{{ p.label }}</div>
                           <div style="font-family:var(--ge-serif); font-size:30px; margin-top:6px;" [style.color]="p.gold ? 'var(--gold)' : 'var(--ink)'">{{ p.value }}</div>
                         </div>
                       }

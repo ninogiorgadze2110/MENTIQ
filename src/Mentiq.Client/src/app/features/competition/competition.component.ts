@@ -32,7 +32,7 @@ import { NotificationService } from '../../core/services/notification.service';
   template: `
     <div class="top">
       <div>
-        <div style="font-size:11px; letter-spacing:.16em; text-transform:uppercase; color:color-mix(in srgb, var(--ink) 55%, transparent);">{{ myGrade() }} კლასი</div>
+        <div style="font-size:var(--text-xs); color:color-mix(in srgb, var(--ink) 55%, transparent);">{{ myGrade() }} კლასი</div>
         <h2>შეჯიბრი</h2>
       </div>
       <div class="spacer"></div>
@@ -46,14 +46,14 @@ import { NotificationService } from '../../core/services/notification.service';
     <!-- Create form -->
     @if (showCreate() && !detail()) {
       <div style="border:1px solid var(--gold); background:color-mix(in srgb, var(--gold) 4%, transparent); padding:26px 28px; margin-bottom:24px; max-width:640px;">
-        <div style="font-family:var(--ge-serif); font-size:10px; letter-spacing:.22em; text-transform:uppercase; color:var(--gold); margin-bottom:14px;">— ახალი შეჯიბრი ({{ myGrade() }} კლასი)</div>
+        <div style="font-family:var(--ge-serif); font-size:var(--text-xs); color:var(--gold); margin-bottom:14px;">— ახალი შეჯიბრი ({{ myGrade() }} კლასი)</div>
         <div class="field" style="margin-bottom:16px;">
           <label>დასახელება</label>
           <input class="input" type="text" [value]="title()" (input)="title.set($any($event.target).value)" placeholder="მაგ. საღამოს ბრძოლა" />
         </div>
         <div style="display:flex; gap:28px; flex-wrap:wrap; align-items:center;">
           <div>
-            <div style="font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:color-mix(in srgb, var(--ink) 55%, transparent); margin-bottom:6px;">კლასი</div>
+            <div style="font-size:var(--text-xs); color:color-mix(in srgb, var(--ink) 55%, transparent); margin-bottom:6px;">კლასი</div>
             <select class="input" style="width:110px;" [value]="newGrade()" (change)="newGrade.set(+$any($event.target).value)">
               @for (g of gradeOptions; track g) {
                 <option [value]="g">{{ g }} კლასი</option>
@@ -61,7 +61,7 @@ import { NotificationService } from '../../core/services/notification.service';
             </select>
           </div>
           <div>
-            <div style="font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:color-mix(in srgb, var(--ink) 55%, transparent); margin-bottom:6px;">ხანგრძლივობა</div>
+            <div style="font-size:var(--text-xs); color:color-mix(in srgb, var(--ink) 55%, transparent); margin-bottom:6px;">ხანგრძლივობა</div>
             <div class="seg">
               @for (h of hourOptions; track h) {
                 <button type="button" [class.on]="hours() === h" (click)="hours.set(h)">{{ h }}სთ</button>
@@ -69,7 +69,7 @@ import { NotificationService } from '../../core/services/notification.service';
             </div>
           </div>
           <div>
-            <div style="font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:color-mix(in srgb, var(--ink) 55%, transparent); margin-bottom:6px;">დრო</div>
+            <div style="font-size:var(--text-xs); color:color-mix(in srgb, var(--ink) 55%, transparent); margin-bottom:6px;">დრო</div>
             <div style="display:flex; align-items:center; gap:10px;">
               <div class="seg">
                 @for (t of timeOptions; track t.s) {

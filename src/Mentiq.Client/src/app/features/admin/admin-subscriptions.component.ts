@@ -16,7 +16,7 @@ import {
   template: `
     <div class="top">
       <div>
-        <div style="font-size:11px; letter-spacing:.16em; text-transform:uppercase; color:var(--gold);">— ადმინი</div>
+        <div style="font-size:var(--text-xs); color:var(--gold);">— ადმინი</div>
         <h2>გამოწერების მართვა</h2>
       </div>
       <div class="spacer"></div>
@@ -89,7 +89,7 @@ import {
 
           <!-- Activate / change -->
           <div style="margin-top:16px;">
-            <div style="font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--gold); margin-bottom:8px;">გააქტიურება / გეგმის შეცვლა</div>
+            <div style="font-size:var(--text-xs); color:var(--gold); margin-bottom:8px;">გააქტიურება / გეგმის შეცვლა</div>
             <div class="field" style="margin-bottom:8px;">
               <label>გეგმა</label>
               <select class="input" [(ngModel)]="planCode" (ngModelChange)="onPlanChange()">
@@ -116,7 +116,7 @@ import {
           <!-- History -->
           @if (d.history.length) {
             <div style="margin-top:18px; padding-top:14px; border-top:1px solid var(--hair);">
-              <div style="font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:color-mix(in srgb, var(--ink) 55%, transparent); margin-bottom:8px;">ისტორია</div>
+              <div style="font-size:var(--text-xs); color:color-mix(in srgb, var(--ink) 55%, transparent); margin-bottom:8px;">ისტორია</div>
               @for (h of d.history; track $index) {
                 <div style="font-size:11.5px; padding:6px 0; border-bottom:1px solid var(--hair); display:flex; justify-content:space-between; gap:8px;">
                   <span><strong>{{ h.action }}</strong> · {{ h.plan }} · {{ h.status }}</span>

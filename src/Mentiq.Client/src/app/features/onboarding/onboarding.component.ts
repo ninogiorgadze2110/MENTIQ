@@ -15,7 +15,7 @@ interface Goal {
       <!-- left column -->
       <div style="padding:40px 32px; border-right:1px solid var(--hair); background:color-mix(in srgb, var(--gold) 4%, var(--paper)); display:flex; flex-direction:column;">
         <div style="font-family:var(--ge-serif); font-size:22px;">MENTIQ</div>
-        <div style="margin-top:56px; font-size:10px; letter-spacing:.22em; text-transform:uppercase; color:var(--gold);">— ნაბიჯი 2 / 3</div>
+        <div style="margin-top:56px; font-size:var(--text-xs); color:var(--gold);">— ნაბიჯი 2 / 3</div>
         <h2 style="font-family:var(--ge-serif); font-size:34px; margin:10px 0 14px; font-weight:500; line-height:1.05;">მოგვიყევი შენს შესახებ.</h2>
         <p style="font-size:14px; line-height:1.6; color:color-mix(in srgb, var(--ink) 70%, transparent);">სამი პასუხი. ამის მიხედვით ვაწყობთ პირველ კვირას — გამარტივებული სავარჯიშოებით ვიწყებთ, თუ პირდაპირ გამოწვევით.</p>
         <div style="margin-top:auto; padding-top:40px; border-top:1px solid var(--hair); font-size:12px; color:color-mix(in srgb, var(--ink) 55%, transparent);">
@@ -27,7 +27,7 @@ interface Goal {
       <!-- right column -->
       <div style="padding:64px 72px;">
         <div style="max-width:520px;">
-          <div style="font-family:var(--ge-serif); font-size:12px; color:var(--gold); letter-spacing:.02em; margin-bottom:8px;">კითხვა 1 / 3</div>
+          <div style="font-family:var(--ge-serif); font-size:var(--text-xs); color:var(--gold); margin-bottom:8px;">კითხვა 1 / 3</div>
           <h3 style="font-family:var(--ge-serif); font-size:30px; margin:0 0 6px; font-weight:500;">რატომ იწყებ MENTIQ-ს?</h3>
           <p style="font-size:14px; color:color-mix(in srgb, var(--ink) 60%, transparent); margin:0 0 32px;">აირჩიე ერთი. მოგვიანებით შეგიძლია შეცვალო.</p>
           <div style="display:flex; flex-direction:column; gap:10px;">
