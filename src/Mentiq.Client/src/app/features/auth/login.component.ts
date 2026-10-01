@@ -90,8 +90,10 @@ export class LoginComponent {
     request$.subscribe({
       next: () => {
         this.notifications.success('კეთილი იყოს შენი მობრძანება MENTIQ-ში!');
-        // Preschool accounts go straight to the Kids experience.
-        this.router.navigateByUrl(this.auth.homeRoute());
+        // Return where the user was headed before the guard sent them to login,
+        // otherwise their home (preschool → Kids, others → dashboard).
+        const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl');
+        this.router.navigateByUrl(returnUrl || this.auth.homeRoute());
       },
       error: () => this.submitting.set(false)
     });

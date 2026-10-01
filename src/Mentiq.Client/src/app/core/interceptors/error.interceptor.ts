@@ -8,42 +8,68 @@ import { NotificationService } from '../services/notification.service';
 import { ApiError } from '../models/auth.model';
 
 /**
- * Centralized handling for API error responses (401, 403, 404, 422, 500).
- * Internal details are never surfaced; the backend's ApiError message is used.
+ * Centralized, Georgian, user-friendly handling of API errors. Backend messages
+ * are English, so for known cases we show a clear Georgian message instead.
+ *
+ * A failed login/registration (401/409 on the auth endpoints) is NOT a session
+ * problem — show a precise message and let the user retry, without logging out
+ * or redirecting. A 401 anywhere else means the session expired.
  */
 export const errorInterceptor: HttpInterceptorFn = (req, next) => {
   const auth = inject(AuthService);
   const router = inject(Router);
   const notifications = inject(NotificationService);
 
+  const isAuthEndpoint = /\/auth\/(login|register)/.test(req.url);
+
   return next(req).pipe(
     catchError((error: HttpErrorResponse) => {
       const apiError = error.error as ApiError | undefined;
-      const message = apiError?.message;
+      const serverMessage = apiError?.message;
 
       switch (error.status) {
         case 0:
-          notifications.error('Cannot reach the server. Please check your connection.');
+          notifications.error('სერვერთან კავშირი ვერ ხერხდება. შეამოწმე ინტერნეტ-კავშირი.');
           break;
+
+        case 400:
+          notifications.error('მოთხოვნა არასწორია. შეამოწმე მონაცემები და სცადე თავიდან.');
+          break;
+
         case 401:
-          auth.logout();
-          router.navigate(['/login']);
-          notifications.error(message ?? 'Your session has expired. Please sign in again.');
+          if (isAuthEndpoint) {
+            // Wrong email/password on a login attempt — stay on the page.
+            notifications.error('ელ-ფოსტა ან პაროლი არასწორია.');
+          } else {
+            auth.logout();
+            router.navigate(['/login']);
+            notifications.error('სესიის დრო ამოიწურა. გთხოვ, თავიდან შედი.');
+          }
           break;
+
         case 403:
-          notifications.error(message ?? 'You do not have permission to do that.');
+          notifications.error('ამ მოქმედების უფლება არ გაქვს.');
           break;
+
         case 404:
-          notifications.error(message ?? 'The requested resource was not found.');
+          notifications.error('მოთხოვნილი ვერ მოიძებნა.');
           break;
+
+        case 409:
+          notifications.error(isAuthEndpoint ? 'ამ ელ-ფოსტით ანგარიში უკვე არსებობს.' : 'მონაცემები უკვე არსებობს.');
+          break;
+
         case 422:
-          notifications.error(message ?? 'Please correct the highlighted fields.');
+          notifications.error('შეავსე ველები სწორად და სცადე თავიდან.');
           break;
+
         default:
           if (error.status >= 500) {
-            notifications.error(message ?? 'Something went wrong. Please try again later.');
-          } else if (message) {
-            notifications.error(message);
+            notifications.error('რაღაც ვერ მოხერხდა. სცადე მოგვიანებით.');
+          } else if (serverMessage) {
+            notifications.error(serverMessage);
+          } else {
+            notifications.error('მოხდა შეცდომა. სცადე თავიდან.');
           }
           break;
       }

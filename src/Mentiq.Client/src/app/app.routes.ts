@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 
 import { authGuard } from './core/guards/auth.guard';
+import { guestGuard } from './core/guards/guest.guard';
 import { subscriptionGuard } from './core/guards/subscription.guard';
 import { adminGuard } from './core/guards/admin.guard';
 import { kidsGuard } from './core/guards/kids.guard';
@@ -14,6 +15,7 @@ export const routes: Routes = [
   },
   {
     path: 'login',
+    canActivate: [guestGuard],
     loadComponent: () =>
       import('./features/auth/login.component').then((m) => m.LoginComponent)
   },
