@@ -37,6 +37,7 @@ interface SkillRow {
   beltName: string;
   accuracy: number;
   answersCount: number;
+  remaining: number;
   requiresText: string | null;
 }
 
@@ -117,7 +118,11 @@ interface SkillRow {
                   <div class="ge-label">✓ ოსტატი — უმაღლესი ქამარი</div>
                 } @else {
                   <app-mastery-bar [value]="s.accuracy" [belt]="s.beltId" />
-                  <div class="ge-label">{{ s.answersCount }}/{{ window() }} პასუხი · სიზუსტე {{ s.accuracy }}%</div>
+                  @if (s.remaining > 0) {
+                    <div class="ge-label">{{ s.answersCount }}/{{ window() }} პასუხი · სიზუსტე {{ s.accuracy }}% · კიდევ {{ s.remaining }} პასუხი</div>
+                  } @else {
+                    <div class="ge-label">{{ s.answersCount }}/{{ window() }} პასუხი · სიზუსტე {{ s.accuracy }}% · ფანჯარა სავსეა</div>
+                  }
                 }
               </a>
             } @else {
@@ -264,7 +269,13 @@ export class DashboardComponent {
     const n = this.ns();
     if (!n) return '';
     const m = this.prog.masteryProgress(n.skill);
-    return `${m.answersCount}/${this.window()} პასუხი · სიზუსტე ${m.accuracy}% (საჭიროა ${this.minAcc()}%)`;
+    const base = `${m.answersCount}/${this.window()} პასუხი · სიზუსტე ${m.accuracy}% (საჭ. ${this.minAcc()}%)`;
+    const remaining = Math.max(0, this.window() - m.answersCount);
+    if (remaining > 0) {
+      const drills = Math.ceil(remaining / 10);
+      return `${base} — კიდევ ${remaining} პასუხი (~${drills} ვარჯიში)`;
+    }
+    return `${base} — ფანჯარა სავსეა`;
   });
 
   /** A trick freshly available at the current belt (answersCount 0 = just promoted / not practised). */
@@ -293,6 +304,7 @@ export class DashboardComponent {
         beltName: belt?.name ?? '',
         accuracy: m.accuracy,
         answersCount: m.answersCount,
+        remaining: Math.max(0, (this.prog.state()?.masteryWindow ?? 20) - m.answersCount),
         requiresText: s.unlocked || !s.requires ? null : this.reqText(s.requires.skill, s.requires.beltIndex)
       };
     });
