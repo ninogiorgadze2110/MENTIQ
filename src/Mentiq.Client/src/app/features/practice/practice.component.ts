@@ -9,6 +9,7 @@ import { DailyChallengeService } from '../../core/services/daily-challenge.servi
 import { DailyPlanSegment } from '../../core/models/daily-challenge.model';
 import { AuthService } from '../../core/services/auth.service';
 import { lessonTitle } from '../../core/data/lesson-titles';
+import { TRICK_GENERATORS } from '../../core/data/trick-generators';
 import { Belt as BeltColor, BeltBadgeComponent } from '../../shared/ui';
 
 type OpKey = 'add' | 'sub' | 'mul' | 'div' | 'cmp' | 'miss' | 'chain';
@@ -59,6 +60,15 @@ interface TrickDef { name: string; prompt: string; hint: string; count: number; 
 const numQ = (before: string, display: string, answer: number, after = ''): Question =>
   ({ before, after, display, answer, mode: 'num' });
 
+/** Build a drill Question from a shared trick generator (see trick-generators). */
+const trickQ = (key: string): Question => {
+  const ex = TRICK_GENERATORS[key](Math.random);
+  if (ex.choice) {
+    return { before: `${ex.expr}`, after: '', display: `${ex.expr}`, answer: ex.answer, mode: 'choice', choices: ['კი', 'არა'] };
+  }
+  return numQ(`${ex.expr} = `, `${ex.expr}`, Number(ex.answer));
+};
+
 const TRICKS: Record<string, TrickDef> = {
   mul11: {
     name: 'გამრავლება 11-ზე', prompt: 'გაამრავლე 11-ზე', hint: 'ხრიკი — ორი ციფრი გვერდზე, შუაში მათი ჯამი', count: 10,
@@ -79,6 +89,64 @@ const TRICKS: Record<string, TrickDef> = {
   sq5: {
     name: 'კვადრატი (5-ით)', prompt: 'იპოვე კვადრატი', hint: 'ხრიკი — n × (n+1), ბოლოში მიაწერე 25', count: 9,
     gen: () => { const t = rnd(1, 9); const n = t * 10 + 5; return numQ(`${n}² = `, `${n}²`, n * n); }
+  },
+
+  // ---- 14 new tricks (share the generators in core/data/trick-generators) ----
+  mul4: {
+    name: 'გამრავლება 4-ზე', prompt: 'გაამრავლე 4-ზე', hint: 'ხრიკი — ორჯერ გააორმაგე', count: 10,
+    gen: () => trickQ('mul4')
+  },
+  mul25: {
+    name: 'გამრავლება 25-ზე', prompt: 'გაამრავლე 25-ზე', hint: 'ხრიკი — ÷4, მერე ×100', count: 10,
+    gen: () => trickQ('mul25')
+  },
+  mul99: {
+    name: 'გამრავლება 99-ზე', prompt: 'გაამრავლე 99-ზე', hint: 'ხრიკი — ×100, მერე −რიცხვი', count: 10,
+    gen: () => trickQ('mul99')
+  },
+  mulSameTen: {
+    name: 'ერთი ათეული, ჯამი 10', prompt: 'გაამრავლე', hint: 'ხრიკი — ათეული × მომდევნო, ერთეულები ერთმანეთზე', count: 10,
+    gen: () => trickQ('mulSameTen')
+  },
+  doubleHalve: {
+    name: 'გაორმაგება-განახევრება', prompt: 'გაამრავლე', hint: 'ხრიკი — ერთი განახევრე, მეორე გააორმაგე', count: 10,
+    gen: () => trickQ('doubleHalve')
+  },
+  tenPairs: {
+    name: 'ათეულის წყვილები', prompt: 'შეკრიბე', hint: 'ხრიკი — იპოვე წყვილები ჯამით 10', count: 10,
+    gen: () => trickQ('tenPairs')
+  },
+  add99Big: {
+    name: '99-ის დამატება', prompt: 'დაუმატე 99', hint: 'ხრიკი — +100, მერე −1', count: 10,
+    gen: () => trickQ('add99Big')
+  },
+  sub1000: {
+    name: '1000-დან გამოკლება', prompt: 'გამოაკელი 1000-დან', hint: 'ხრიკი — ციფრები 9-ს, ბოლო 10-ს', count: 10,
+    gen: () => trickQ('sub1000')
+  },
+  countUp: {
+    name: 'ზევით დათვლა', prompt: 'გამოაკელი', hint: 'ხრიკი — დათვალე ზევით მომდევნო ათეულამდე', count: 10,
+    gen: () => trickQ('countUp')
+  },
+  div5: {
+    name: 'გაყოფა 5-ზე', prompt: 'გაყავი 5-ზე', hint: 'ხრიკი — ×2, მერე ÷10', count: 10,
+    gen: () => trickQ('div5')
+  },
+  div3check: {
+    name: 'იყოფა თუ არა 3-ზე?', prompt: 'იყოფა 3-ზე?', hint: 'ხრიკი — შეკრიბე ციფრები', count: 10,
+    gen: () => trickQ('div3check')
+  },
+  pctFlip: {
+    name: 'პროცენტის გადატრიალება', prompt: 'იპოვე პროცენტი', hint: 'ხრიკი — x-ის y% = y-ის x%', count: 10,
+    gen: () => trickQ('pctFlip')
+  },
+  pct5: {
+    name: '5%-ის გამოთვლა', prompt: 'იპოვე 5%', hint: 'ხრიკი — 10%, მერე ÷2', count: 10,
+    gen: () => trickQ('pct5')
+  },
+  sqNeighbor: {
+    name: 'მეზობელი კვადრატი', prompt: 'იპოვე კვადრატი', hint: 'ხრიკი — (10k)² + 10k + (10k+1)', count: 9,
+    gen: () => trickQ('sqNeighbor')
   }
 };
 
