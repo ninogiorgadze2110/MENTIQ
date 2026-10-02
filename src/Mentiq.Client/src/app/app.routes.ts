@@ -19,12 +19,6 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./features/auth/login.component').then((m) => m.LoginComponent)
   },
-  {
-    path: 'pricing',
-    loadComponent: () =>
-      import('./features/pricing/pricing.component').then((m) => m.PricingComponent)
-  },
-
   // ---- MENTIQ Kids (0 კლასი) — separate full-screen experience ----
   {
     path: 'kids',
@@ -116,6 +110,12 @@ export const routes: Routes = [
         canActivate: [subscriptionGuard],
         loadComponent: () =>
           import('./features/results/results.component').then((m) => m.ResultsComponent)
+      },
+      {
+        // Upsell page — no subscriptionGuard (it's where lapsed users land).
+        path: 'pricing',
+        loadComponent: () =>
+          import('./features/pricing/pricing.component').then((m) => m.PricingComponent)
       },
       {
         path: 'learn',

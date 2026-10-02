@@ -23,10 +23,10 @@ import { Plan, PlansResponse } from '../../core/models/subscription.model';
     `
   ],
   template: `
-    <div style="padding:32px 56px 0; max-width:1280px; margin:0 auto;">
+    <div style="padding:0; max-width:1280px; margin:0 auto;">
       <a [routerLink]="homeLink()" style="font-family:var(--ge-serif); font-size:20px; color:var(--ink); text-decoration:none;">← MENTIQ</a>
     </div>
-    <div style="padding:40px 72px 72px; background:var(--paper); max-width:1280px; margin:0 auto;">
+    <div style="padding:28px 0 56px; background:var(--paper); max-width:1280px; margin:0 auto;">
       <div style="text-align:center; max-width:640px; margin:0 auto 36px;">
         <div class="ge-label" style="color:var(--gold); margin-bottom:12px;">— {{ beta() ? 'ბეტა' : 'ფასი' }}</div>
         @if (beta()) {
