@@ -223,8 +223,8 @@ const fmt = (sec: number) =>
   template: `
     @if (phase() === 'select') {
       <!-- ══════════ 04a · ვარჯიშის არჩევა ══════════ -->
-      <div style="min-height:100vh; display:flex; flex-direction:column; background:var(--paper);">
-        <div style="display:flex; align-items:center; padding:22px 56px; border-bottom:1px solid var(--hair); gap:16px;">
+      <div style="min-height:calc(100vh - 64px); display:flex; flex-direction:column; background:var(--paper);">
+        <div style="display:flex; align-items:center; padding:0 0 16px; border-bottom:1px solid var(--hair); gap:16px;">
           <a routerLink="/dashboard" style="font-family:var(--ge); font-size:var(--text-xs); color:color-mix(in srgb, var(--ink) 55%, transparent); text-decoration:none;">← მთავარი</a>
         </div>
 
@@ -321,8 +321,8 @@ const fmt = (sec: number) =>
       </div>
     } @else {
       <!-- ══════════ 04 · ვარჯიში (+ 04b feedback) ══════════ -->
-      <div style="min-height:100vh; display:flex; flex-direction:column; background:var(--paper);">
-        <div style="display:grid; grid-template-columns:auto 1fr auto; gap:32px; padding:22px 56px; border-bottom:1px solid var(--gold); align-items:center; font-family:var(--ge-serif);">
+      <div style="min-height:calc(100vh - 64px); display:flex; flex-direction:column; background:var(--paper);">
+        <div style="display:grid; grid-template-columns:auto 1fr auto; gap:32px; padding:0 0 18px; border-bottom:1px solid var(--gold); align-items:center; font-family:var(--ge-serif);">
           <a [routerLink]="exitTarget()" style="font-family:var(--ge); font-size:var(--text-xs); color:color-mix(in srgb, var(--ink) 55%, transparent); text-decoration:none;">← გამოსვლა</a>
           <div style="display:flex; align-items:center; gap:12px;">
             <span style="font-family:var(--ge); font-size:var(--text-xs); color:var(--gold);">{{ levelLabel() }}{{ opName() }}</span>
@@ -379,7 +379,7 @@ const fmt = (sec: number) =>
           </div>
         </div>
 
-        <div style="padding:18px 56px; border-top:1px solid var(--hair); display:flex; align-items:center; font-size:12px; color:color-mix(in srgb, var(--ink) 60%, transparent); flex-wrap:wrap; gap:12px;">
+        <div style="padding:18px 0; border-top:1px solid var(--hair); display:flex; align-items:center; font-size:12px; color:color-mix(in srgb, var(--ink) 60%, transparent); flex-wrap:wrap; gap:12px;">
           <span style="display:flex; gap:6px; align-items:center;">✓ სწორი: {{ correctCount() }} · ✗ შეცდომა: {{ wrongCount() }}</span>
           <span style="margin-left:auto; font-family:var(--ge-serif); font-style:italic; color:var(--gold);">{{ trick() }}</span>
         </div>

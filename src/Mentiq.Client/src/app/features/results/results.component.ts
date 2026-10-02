@@ -18,7 +18,7 @@ interface Bar {
   imports: [RouterLink, MasteryBarComponent],
   template: `
     @if (session(); as s) {
-      <div style="min-height:100vh; padding:56px 72px; background:var(--paper);">
+      <div style="min-height:calc(100vh - 64px); padding:0; background:var(--paper);">
         <div style="display:flex; justify-content:space-between; align-items:baseline; padding-bottom:16px; border-bottom:1px solid var(--ink); gap:16px; flex-wrap:wrap;">
           <div>
             <div style="font-family:var(--ge-serif); font-size:var(--text-xs); color:var(--gold);">— ვარჯიშის ანგარიში</div>
@@ -143,7 +143,7 @@ interface Bar {
       </div>
     } @else {
       <!-- No session yet -->
-      <div style="min-height:100vh; display:grid; place-items:center; background:var(--paper); padding:24px;">
+      <div style="min-height:calc(100vh - 64px); display:grid; place-items:center; background:var(--paper); padding:24px;">
         <div class="card elev-sm" style="max-width:420px; text-align:center; padding:40px; align-items:center;">
           <div style="font-family:var(--ge-serif); font-size:var(--text-xs); color:var(--gold);">— ვარჯიშის ანგარიში</div>
           <h2 style="font-family:var(--ge-serif); font-size:30px; margin:12px 0 8px; font-weight:500;">ჯერ სესია არ დაგისრულებია</h2>

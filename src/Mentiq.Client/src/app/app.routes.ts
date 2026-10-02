@@ -25,21 +25,6 @@ export const routes: Routes = [
       import('./features/pricing/pricing.component').then((m) => m.PricingComponent)
   },
 
-  // ---- Authenticated full-screen focus modes (no sidebar) ----
-  // Premium: require an active trial or paid subscription (backend-enforced).
-  {
-    path: 'practice',
-    canActivate: [authGuard, subscriptionGuard],
-    loadComponent: () =>
-      import('./features/practice/practice.component').then((m) => m.PracticeComponent)
-  },
-  {
-    path: 'results',
-    canActivate: [authGuard, subscriptionGuard],
-    loadComponent: () =>
-      import('./features/results/results.component').then((m) => m.ResultsComponent)
-  },
-
   // ---- MENTIQ Kids (0 კლასი) — separate full-screen experience ----
   {
     path: 'kids',
@@ -118,6 +103,19 @@ export const routes: Routes = [
         path: 'dashboard',
         loadComponent: () =>
           import('./features/dashboard/dashboard.component').then((m) => m.DashboardComponent)
+      },
+      // Premium: require an active trial or paid subscription (backend-enforced).
+      {
+        path: 'practice',
+        canActivate: [subscriptionGuard],
+        loadComponent: () =>
+          import('./features/practice/practice.component').then((m) => m.PracticeComponent)
+      },
+      {
+        path: 'results',
+        canActivate: [subscriptionGuard],
+        loadComponent: () =>
+          import('./features/results/results.component').then((m) => m.ResultsComponent)
       },
       {
         path: 'learn',
