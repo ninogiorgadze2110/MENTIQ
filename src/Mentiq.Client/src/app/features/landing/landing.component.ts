@@ -234,8 +234,8 @@ import { RouterLink } from '@angular/router';
   styles: [`
     /* Palette scoped to the landing page only — does not touch the app theme. */
     .lp {
-      --navy: //#102A56;
-      --blue: #2a52be; //#2864E8;
+      --navy: #102A56;
+      --blue: #2a52be;
       --teal: #36B88A;
       --coral: #FF927A;
       --bg: #FAFAF7;

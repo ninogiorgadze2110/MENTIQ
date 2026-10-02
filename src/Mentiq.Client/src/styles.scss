@@ -13,8 +13,8 @@
   --color-bg: #FAFAF7;
   --color-surface: #ffffff;
   --color-text: #102A56;         /* deep navy */
-  --color-accent: #2864E8;       /* brand blue */
-  --color-accent-2: #1d54cf;
+  --color-accent: #2a52be;       /* brand blue */
+  --color-accent-2: #22418f;
   --color-divider: color-mix(in srgb, #102A56 14%, transparent);
 
   --color-neutral-100: #f6f7f9;
@@ -33,8 +33,8 @@
   --color-accent-300: #9cc0fb;
   --color-accent-400: #6f9bf4;
   --color-accent-500: #3f76ee;
-  --color-accent-600: #2864E8;
-  --color-accent-700: #1d4fc4;
+  --color-accent-600: #2a52be;
+  --color-accent-700: #203f85;
   --color-accent-800: #1b3d70;
   --color-accent-900: #102A56;
 
@@ -91,7 +91,7 @@
   --belt-white: #94a3b8;  --belt-white-bg: #eef2f7;  --belt-white-text: #46536b;
   --belt-yellow: #e0a52a; --belt-yellow-bg: #fbf1d9; --belt-yellow-text: #7a5410;
   --belt-green: #36B88A;  --belt-green-bg: #e2f5ec;  --belt-green-text: #1f7a56;
-  --belt-blue: #2864E8;   --belt-blue-bg: #e6eefe;   --belt-blue-text: #1b3d70;
+  --belt-blue: #2a52be;   --belt-blue-bg: #e6ecfa;   --belt-blue-text: #1c346f;
   --belt-black: #102A56;  --belt-black-bg: #e7eaf1;  --belt-black-text: #102A56;
 
   /* Current-belt accent (default = brand gold; overridden by [data-belt]). */
