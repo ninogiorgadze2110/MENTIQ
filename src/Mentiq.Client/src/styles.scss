@@ -7,33 +7,36 @@
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Georgian:wght@400;500;600;700&family=Noto+Serif+Georgian:wght@400;500;600&family=Cormorant+Garamond:wght@400;600&family=Lora:wght@400;600&display=swap');
 
 :root {
-  /* ---- Classical tokens ---- */
-  --color-bg: #f3f2f2;
-  --color-surface: #eae9e9;
-  --color-text: #201f1d;
-  --color-accent: #b68235;
-  --color-accent-2: #ac803e;
-  --color-divider: color-mix(in srgb, #201f1d 16%, transparent);
+  /* ---- MENTIQ brand tokens (navy / blue / warm-white) ----
+     Shared by the whole school/app surface. Landing scopes its own richer
+     palette under `.lp`; Kids keeps its own `--k-*` tokens. */
+  --color-bg: #FAFAF7;
+  --color-surface: #ffffff;
+  --color-text: #102A56;         /* deep navy */
+  --color-accent: #2864E8;       /* brand blue */
+  --color-accent-2: #1d54cf;
+  --color-divider: color-mix(in srgb, #102A56 14%, transparent);
 
-  --color-neutral-100: #f8f4f4;
-  --color-neutral-200: #eae7e7;
-  --color-neutral-300: #d7d3d3;
-  --color-neutral-400: #bab6b6;
-  --color-neutral-500: #9b9797;
-  --color-neutral-600: #7d7979;
-  --color-neutral-700: #605d5d;
-  --color-neutral-800: #444141;
-  --color-neutral-900: #2d2b2b;
+  --color-neutral-100: #f6f7f9;
+  --color-neutral-200: #eceef2;
+  --color-neutral-300: #d9dde4;
+  --color-neutral-400: #b9c0cc;
+  --color-neutral-500: #97a0b0;
+  --color-neutral-600: #788294;
+  --color-neutral-700: #5c6678;
+  --color-neutral-800: #3f4858;
+  --color-neutral-900: #223049;
 
-  --color-accent-100: #fff3e4;
-  --color-accent-200: #ffe3bf;
-  --color-accent-300: #facb8d;
-  --color-accent-400: #e1ad66;
-  --color-accent-500: #c28d41;
-  --color-accent-600: #a06f24;
-  --color-accent-700: #7d5411;
-  --color-accent-800: #5a3b0a;
-  --color-accent-900: #3a270d;
+  /* Blue accent ramp (light bg → readable dark). */
+  --color-accent-100: #E6EEFE;
+  --color-accent-200: #cfe0fd;
+  --color-accent-300: #9cc0fb;
+  --color-accent-400: #6f9bf4;
+  --color-accent-500: #3f76ee;
+  --color-accent-600: #2864E8;
+  --color-accent-700: #1d4fc4;
+  --color-accent-800: #1b3d70;
+  --color-accent-900: #102A56;
 
   --font-heading: "Cormorant Garamond", system-ui, sans-serif;
   --font-heading-weight: 600;

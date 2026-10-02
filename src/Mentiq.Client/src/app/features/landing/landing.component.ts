@@ -200,29 +200,17 @@ import { RouterLink } from '@angular/router';
         </div>
       </section>
 
-      <!-- ===== MENTIQ Book ===== -->
+      <!-- ===== MENTIQ Book (coming soon) ===== -->
       <section id="books" class="lp-section">
         <div class="lp-head">
-          <h2>MENTIQ Book <span class="lp-soon-tag">მალე</span></h2>
+          <h2>MENTIQ Book</h2>
           <p>აღმოაჩინე მათემატიკა კლასის მიხედვით.</p>
         </div>
 
-        <div class="lp-book-grid">
-          @for (b of books; track b.grade) {
-            <article class="lp-book lp-book--soon" [attr.data-accent]="b.accent">
-              <div class="lp-book__cover">
-                <span class="lp-book__cover-grade">{{ b.grade }}</span>
-                <span class="lp-book__cover-sym" aria-hidden="true">{{ b.sym }}</span>
-                <span class="lp-book__soon">მალე</span>
-              </div>
-              <div class="lp-book__body">
-                <span class="lp-book__grade">{{ b.label }}</span>
-                <p class="lp-book__desc">{{ b.desc }}</p>
-                <span class="lp-book__lessons">{{ b.lessons }} გაკვეთილი</span>
-                <span class="lp-book__more lp-book__more--soon">მალე დაემატება</span>
-              </div>
-            </article>
-          }
+        <div class="lp-soon">
+          <span class="lp-soon__ico" aria-hidden="true">📚</span>
+          <h3 class="lp-soon__title">დაემატება მალე</h3>
+          <p class="lp-soon__text">MENTIQ Book-ის ინტერაქტიული წიგნები I–IV კლასისთვის მზადდება.</p>
         </div>
       </section>
 
@@ -425,40 +413,15 @@ import { RouterLink } from '@angular/router';
     .lp-feat h3 { font-size: 20px; font-weight: 700; margin: 0 0 8px; }
     .lp-feat p { font-size: 15.5px; line-height: 1.55; color: color-mix(in srgb, var(--navy) 65%, transparent); }
 
-    /* ---- books ---- */
-    .lp-book-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 22px; }
-    .lp-book { background: var(--surface); border: 1px solid var(--line); border-radius: 18px; overflow: hidden; display: flex; flex-direction: column; }
-    .lp-book__cover {
-      position: relative; aspect-ratio: 3 / 4; display: grid; place-items: center;
-      background: var(--b-soft); color: var(--b-main);
+    /* ---- books: coming-soon panel ---- */
+    .lp-soon {
+      max-width: 620px; margin: 0 auto; text-align: center;
+      background: var(--surface); border: 1px dashed color-mix(in srgb, var(--blue) 30%, var(--line));
+      border-radius: 20px; padding: 44px 28px;
     }
-    .lp-book__cover-grade { font-size: 64px; font-weight: 700; line-height: 1; }
-    .lp-book__cover-sym { position: absolute; bottom: 14px; right: 16px; font-size: 26px; opacity: .55; }
-    .lp-book[data-accent="blue"]  { --b-main: #2864E8; --b-soft: #E6EEFE; }
-    .lp-book[data-accent="green"] { --b-main: #1F8E64; --b-soft: #E2F5EC; }
-    .lp-book[data-accent="coral"] { --b-main: #E26A4F; --b-soft: #FDEBE6; }
-    .lp-book[data-accent="amber"] { --b-main: #C38A1C; --b-soft: #FBF1D9; }
-    .lp-book__body { padding: 18px 18px 20px; display: flex; flex-direction: column; gap: 6px; flex: 1; }
-    .lp-book__grade { font-size: 13px; font-weight: 700; color: var(--b-main); text-transform: uppercase; letter-spacing: .04em; }
-    .lp-book__desc { font-size: 14.5px; line-height: 1.5; color: color-mix(in srgb, var(--navy) 65%, transparent); flex: 1; }
-    .lp-book__lessons { font-size: 13px; color: color-mix(in srgb, var(--navy) 55%, transparent); }
-    .lp-book__more { text-decoration: none; color: var(--b-main); font-weight: 700; font-size: 14.5px; margin-top: 4px; }
-    .lp-book__more:hover { text-decoration: underline; }
-
-    /* ---- "coming soon" (books not live yet) ---- */
-    .lp-soon-tag {
-      display: inline-block; vertical-align: middle; margin-left: 8px; font-size: 13px; font-weight: 700;
-      color: var(--blue); background: color-mix(in srgb, var(--blue) 12%, transparent);
-      padding: 3px 11px; border-radius: 999px; letter-spacing: 0;
-    }
-    .lp-book__soon {
-      position: absolute; top: 12px; left: 12px; font-size: 12px; font-weight: 700; color: var(--navy);
-      background: rgba(255,255,255,.92); padding: 4px 10px; border-radius: 999px;
-      box-shadow: 0 2px 6px rgba(16,42,86,.12);
-    }
-    .lp-book--soon .lp-book__cover-grade { opacity: .72; }
-    .lp-book__more--soon { color: color-mix(in srgb, var(--navy) 45%, transparent); cursor: default; }
-    .lp-book__more--soon:hover { text-decoration: none; }
+    .lp-soon__ico { font-size: 40px; line-height: 1; }
+    .lp-soon__title { font-size: 24px; font-weight: 700; color: var(--blue); margin: 14px 0 8px; }
+    .lp-soon__text { font-size: 16px; line-height: 1.6; color: color-mix(in srgb, var(--navy) 62%, transparent); margin: 0; }
 
     /* ---- about ---- */
     .lp-about { max-width: 760px; margin: 0 auto; padding: 48px 24px 80px; text-align: center; }
@@ -488,14 +451,12 @@ import { RouterLink } from '@angular/router';
       .lp-hero__title { font-size: 40px; }
       .lp-pointer, .lp-mascot { display: none; }
       .lp-feat-grid { grid-template-columns: 1fr; }
-      .lp-book-grid { grid-template-columns: repeat(2, 1fr); }
       .lp-nav { display: none; }
     }
     @media (max-width: 560px) {
       .lp-hero__title { font-size: 33px; }
       .lp-card__q { font-size: 38px; }
       .lp-head h2, .lp-about h2 { font-size: 28px; }
-      .lp-book-grid { grid-template-columns: 1fr; }
       .lp-hdr__inner { gap: 12px; }
       .lp-login { display: none; }
     }
@@ -523,11 +484,4 @@ export class LandingComponent {
   pick(value: number): void {
     this.picked.set(value);
   }
-
-  readonly books = [
-    { grade: 1, label: 'I კლასი', accent: 'blue', sym: '+', lessons: 24, desc: 'რიცხვები, შეკრება და გამოკლება — მყარი საფუძველი.' },
-    { grade: 2, label: 'II კლასი', accent: 'green', sym: '−', lessons: 28, desc: 'ორნიშნა რიცხვები და სწრაფი გამოთვლა.' },
-    { grade: 3, label: 'III კლასი', accent: 'coral', sym: '×', lessons: 30, desc: 'გამრავლება, გაყოფა და ლოგიკური ამოცანები.' },
-    { grade: 4, label: 'IV კლასი', accent: 'amber', sym: '÷', lessons: 32, desc: 'წილადები, პროცენტები და აზროვნების ხრიკები.' }
-  ];
 }
