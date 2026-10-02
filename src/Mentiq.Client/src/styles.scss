@@ -88,11 +88,11 @@
   --shadow-pop: 0 18px 44px -20px rgba(45,43,43,.34);
 
   /* Belt palette — each: main / light bg / readable text. */
-  --belt-white: #b8b2a6;  --belt-white-bg: #f4f2ec;  --belt-white-text: #5c564c;
-  --belt-yellow: #e3a81f; --belt-yellow-bg: #fdf1cf; --belt-yellow-text: #6b4c08;
-  --belt-green: #3f9a63;  --belt-green-bg: #e2f2e7;  --belt-green-text: #215536;
-  --belt-blue: #3a72c4;   --belt-blue-bg: #e2ebf8;   --belt-blue-text: #1b3d70;
-  --belt-black: #3a362f;  --belt-black-bg: #e7e4de;  --belt-black-text: #27231e;
+  --belt-white: #94a3b8;  --belt-white-bg: #eef2f7;  --belt-white-text: #46536b;
+  --belt-yellow: #e0a52a; --belt-yellow-bg: #fbf1d9; --belt-yellow-text: #7a5410;
+  --belt-green: #36B88A;  --belt-green-bg: #e2f5ec;  --belt-green-text: #1f7a56;
+  --belt-blue: #2864E8;   --belt-blue-bg: #e6eefe;   --belt-blue-text: #1b3d70;
+  --belt-black: #102A56;  --belt-black-bg: #e7eaf1;  --belt-black-text: #102A56;
 
   /* Current-belt accent (default = brand gold; overridden by [data-belt]). */
   --belt: var(--gold);
