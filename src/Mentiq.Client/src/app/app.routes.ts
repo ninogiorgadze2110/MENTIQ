@@ -20,11 +20,6 @@ export const routes: Routes = [
       import('./features/auth/login.component').then((m) => m.LoginComponent)
   },
   {
-    path: 'onboarding',
-    loadComponent: () =>
-      import('./features/onboarding/onboarding.component').then((m) => m.OnboardingComponent)
-  },
-  {
     path: 'pricing',
     loadComponent: () =>
       import('./features/pricing/pricing.component').then((m) => m.PricingComponent)

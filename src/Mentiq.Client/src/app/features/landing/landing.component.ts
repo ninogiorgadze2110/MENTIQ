@@ -37,7 +37,7 @@ import { RouterLink } from '@angular/router';
 
           <div class="lp-hdr__cta">
             <a routerLink="/login" class="lp-login">შესვლა</a>
-            <a routerLink="/onboarding" class="lp-btn lp-btn--primary">რეგისტრაცია</a>
+            <a routerLink="/login" [queryParams]="{ register: 1 }" class="lp-btn lp-btn--primary">რეგისტრაცია</a>
           </div>
         </div>
       </header>
@@ -58,7 +58,7 @@ import { RouterLink } from '@angular/router';
             სწრაფი გამოთვლის ვარჯიშებით.
           </p>
           <div class="lp-hero__actions">
-            <a routerLink="/onboarding" class="lp-btn lp-btn--primary lp-btn--lg">
+            <a routerLink="/login" [queryParams]="{ register: 1 }" class="lp-btn lp-btn--primary lp-btn--lg">
               დაიწყე უფასოდ <span class="lp-btn__ico" aria-hidden="true">→</span>
             </a>
             <a href="#books" class="lp-btn lp-btn--ghost lp-btn--lg">
@@ -203,22 +203,23 @@ import { RouterLink } from '@angular/router';
       <!-- ===== MENTIQ Book ===== -->
       <section id="books" class="lp-section">
         <div class="lp-head">
-          <h2>MENTIQ Book</h2>
+          <h2>MENTIQ Book <span class="lp-soon-tag">მალე</span></h2>
           <p>აღმოაჩინე მათემატიკა კლასის მიხედვით.</p>
         </div>
 
         <div class="lp-book-grid">
           @for (b of books; track b.grade) {
-            <article class="lp-book" [attr.data-accent]="b.accent">
+            <article class="lp-book lp-book--soon" [attr.data-accent]="b.accent">
               <div class="lp-book__cover">
                 <span class="lp-book__cover-grade">{{ b.grade }}</span>
                 <span class="lp-book__cover-sym" aria-hidden="true">{{ b.sym }}</span>
+                <span class="lp-book__soon">მალე</span>
               </div>
               <div class="lp-book__body">
                 <span class="lp-book__grade">{{ b.label }}</span>
                 <p class="lp-book__desc">{{ b.desc }}</p>
                 <span class="lp-book__lessons">{{ b.lessons }} გაკვეთილი</span>
-                <a routerLink="/learn" class="lp-book__more">დეტალურად →</a>
+                <span class="lp-book__more lp-book__more--soon">მალე დაემატება</span>
               </div>
             </article>
           }
@@ -232,7 +233,7 @@ import { RouterLink } from '@angular/router';
           MENTIQ არ არის მხოლოდ სწორი პასუხი — მთავარია, როგორ ფიქრობ, რამდენად
           სწრაფად და მარტივად. ავაშენოთ აზროვნება, ნაბიჯ-ნაბიჯ.
         </p>
-        <a routerLink="/onboarding" class="lp-btn lp-btn--primary lp-btn--lg">დაიწყე უფასოდ</a>
+        <a routerLink="/login" [queryParams]="{ register: 1 }" class="lp-btn lp-btn--primary lp-btn--lg">დაიწყე უფასოდ</a>
       </section>
 
       <!-- ===== Footer ===== -->
@@ -443,6 +444,21 @@ import { RouterLink } from '@angular/router';
     .lp-book__lessons { font-size: 13px; color: color-mix(in srgb, var(--navy) 55%, transparent); }
     .lp-book__more { text-decoration: none; color: var(--b-main); font-weight: 700; font-size: 14.5px; margin-top: 4px; }
     .lp-book__more:hover { text-decoration: underline; }
+
+    /* ---- "coming soon" (books not live yet) ---- */
+    .lp-soon-tag {
+      display: inline-block; vertical-align: middle; margin-left: 8px; font-size: 13px; font-weight: 700;
+      color: var(--blue); background: color-mix(in srgb, var(--blue) 12%, transparent);
+      padding: 3px 11px; border-radius: 999px; letter-spacing: 0;
+    }
+    .lp-book__soon {
+      position: absolute; top: 12px; left: 12px; font-size: 12px; font-weight: 700; color: var(--navy);
+      background: rgba(255,255,255,.92); padding: 4px 10px; border-radius: 999px;
+      box-shadow: 0 2px 6px rgba(16,42,86,.12);
+    }
+    .lp-book--soon .lp-book__cover-grade { opacity: .72; }
+    .lp-book__more--soon { color: color-mix(in srgb, var(--navy) 45%, transparent); cursor: default; }
+    .lp-book__more--soon:hover { text-decoration: none; }
 
     /* ---- about ---- */
     .lp-about { max-width: 760px; margin: 0 auto; padding: 48px 24px 80px; text-align: center; }

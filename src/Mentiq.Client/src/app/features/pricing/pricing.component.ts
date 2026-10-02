@@ -82,7 +82,7 @@ import { Plan, PlansResponse } from '../../core/models/subscription.model';
             <h3 style="font-family:var(--ge-serif); font-size:26px; margin:8px 0 12px; font-weight:500;">7 დღე უფასოდ</h3>
             <div style="font-family:var(--ge-serif); font-size:44px; line-height:1; font-feature-settings:'tnum';">0<span style="font-size:18px; color:color-mix(in srgb, var(--ink) 50%, transparent);"> ₾</span></div>
             <div style="font-size:12.5px; color:color-mix(in srgb, var(--ink) 55%, transparent); margin-top:4px;">სრული წვდომა · ბარათი არ არის საჭირო</div>
-            <a routerLink="/onboarding" class="btn btn-secondary btn-block" style="padding:12px; margin-top:22px;">დაწყება</a>
+            <a routerLink="/login" [queryParams]="{ register: 1 }" class="btn btn-secondary btn-block" style="padding:12px; margin-top:22px;">დაწყება</a>
           </div>
           @if (mainPlan(); as p) {
             <div class="plan-card primary">
